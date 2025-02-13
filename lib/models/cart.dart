@@ -1,17 +1,16 @@
-class Product {
+class CartProduct {
   final String id;
   final String title;
   final String description;
   final double price;
   final String imageUrl;
-  //int quantity;
-
-  Product({
+  int quantity;
+  CartProduct({
     required this.id,
     required this.title,
     required this.description,
     required this.price,
     required this.imageUrl,
-    // this.quantity =1
+    this.quantity = 1,
   });
 }

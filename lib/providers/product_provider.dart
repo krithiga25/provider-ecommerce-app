@@ -9,18 +9,19 @@ class ProductProvider with ChangeNotifier {
       title: 'Laptop',
       description: 'A high-performance laptop for professionals.',
       price: 999.99,
-      imageUrl: 'https://via.placeholder.com/150',
+      imageUrl: 'https://unsplash.com/photos/shallow-focus-photography-of-books-lUaaKCUANVI',
     ),
     Product(
       id: 'p2',
       title: 'Smartphone',
       description: 'Latest smartphone with amazing features.',
       price: 799.99,
-      imageUrl: 'https://via.placeholder.com/150',
+      imageUrl: 'https://unsplash.com/photos/shallow-focus-photography-of-books-lUaaKCUANVI',
     ),
   ];
 
   // Getter to access products
+  // i think it is required to wrap this with the consumer widget of the provider. 
   List<Product> get products {
     return [..._products]; // Returns a copy to prevent direct modification
   }
