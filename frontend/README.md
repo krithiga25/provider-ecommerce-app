@@ -1,3 +1,3 @@
 ## Description
 
-A practice ecommerce application using Provider library in Flutter. 
+A frontend for an ecommerce application using Provider library in Flutter. 
