@@ -1,5 +1,10 @@
 // the DB CRUD operations will be performed here
-const UserModel = require("../model/user_model");
+const createUserModel = require("../model/user_model");
+
+async function getUsersModel() {
+  const UserModel = await createUserModel("ecomdb");
+  return UserModel;
+}
 
 class UsersService {
   //we will call this function and then get the email and password
@@ -8,6 +13,7 @@ class UsersService {
     try {
       //in the user model class we have the scheme, which is the template for creating a new document.
       // so like everytime the user is created, the document will be created.
+      const UserModel = await getUsersModel();
       const createUser = new UserModel({ email, password });
       return await createUser.save();
     } catch (err) {

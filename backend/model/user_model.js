@@ -35,7 +35,16 @@ const userSchema = new Schema({
 
 // the db here is the connection function in the database file,
 // that db will be calling the built in model function in the node
-const UserModel = db.model("users", userSchema);
+//const UserModel = db.model("users", userSchema);
 
 //exporting the user model which is going to be used for registering the users in the schema.
-module.exports = UserModel;
+//module.exports = UserModel;
+
+async function createUserModel(dbName) {
+  await db(dbName);
+  const UserModel = mongoose.model("users", userSchema);
+  return UserModel;
+}
+
+module.exports = createUserModel;
+
