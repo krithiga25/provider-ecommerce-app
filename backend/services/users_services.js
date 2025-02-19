@@ -1,5 +1,6 @@
 // the DB CRUD operations will be performed here
 const createUserModel = require("../model/user_model");
+const jwt = require("jsonwebtoken");
 
 async function getUsersModel() {
   const UserModel = await createUserModel("ecomdb");
@@ -19,6 +20,19 @@ class UsersService {
     } catch (err) {
       throw err;
     }
+  }
+
+  static async checkUser(email) {
+    try {
+      const UserModel = await getUsersModel();
+      return await UserModel.findOne({ email });
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  static async generateToken(tokenData, secretKey, jwt_expiry) {
+      return jwt.sign(tokenData,secretKey, {expiresIn: jwt_expiry});
   }
 }
 

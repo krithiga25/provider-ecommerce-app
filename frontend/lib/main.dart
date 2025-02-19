@@ -1,4 +1,5 @@
 import 'package:ecommerce_provider/providers/wish_list_provider.dart';
+import 'package:ecommerce_provider/screens/register.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import './providers/product_provider.dart';
@@ -22,7 +23,8 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Provider Demo',
         theme: ThemeData(primarySwatch: Colors.green),
-        home: ProductsScreen(),
+       // home: ProductsScreen(),
+       home: RegistrationScreen(),
       ),
     );
   }

@@ -5,17 +5,29 @@ import 'package:ecommerce_provider/providers/wish_list_provider.dart';
 import 'package:ecommerce_provider/screens/cart_screen.dart';
 import 'package:ecommerce_provider/screens/wish_list_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:provider/provider.dart';
 import '../providers/product_provider.dart';
 
 class ProductsScreen extends StatefulWidget {
-  const ProductsScreen({super.key});
+  final token;
+  const ProductsScreen({super.key, this.token});
 
   @override
   State<ProductsScreen> createState() => _ProductsScreenState();
 }
 
 class _ProductsScreenState extends State<ProductsScreen> {
+  late String email;
+
+  @override
+  void initState() {
+    super.initState();
+    // we are decoding the email id from the token we generated in the backend using the same email and secret key
+    Map<String, dynamic> decodedToken = JwtDecoder.decode(widget.token);
+    email = decodedToken['email'];
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<CartProvider>(
@@ -27,7 +39,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
               final products = productProvider.products;
               return Scaffold(
                 appBar: AppBar(
-                  title: Text('Products'),
+                  title: Text(email),
                   actions: [
                     IconButton(
                       onPressed: () {

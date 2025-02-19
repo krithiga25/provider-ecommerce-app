@@ -6,5 +6,6 @@ const controller = require('../controller/users_controller');
 
 // calling the register method in the controller to register the user, whenever it is the registration page
 router.post('/registration', controller.register);
+router.post('/login',controller.login );
 
 module.exports = router;
