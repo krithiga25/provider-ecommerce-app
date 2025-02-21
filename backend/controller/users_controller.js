@@ -22,7 +22,7 @@ exports.login = async (req, res, next) => {
   try {
     // we are getting the email and the password from the request body.
     const { email, password } = req.body;
-    //checks for the user. 
+    //checks for the user.
     const user = await UsersService.checkUser(email);
 
     if (!user) {
@@ -47,6 +47,51 @@ exports.login = async (req, res, next) => {
 
     //sending the reponse with token
     res.status(200).json({ status: true, token: token });
+  } catch (err) {
+    throw err;
+  }
+};
+exports.addProduct = async (req, res, next) => {
+  try {
+    const { id, productName, price, description } = req.body;
+    const successRes = await UsersService.addProduct(
+      id,
+      productName,
+      price,
+      description
+    );
+
+    res.json({ status: true, success: "Product added successfully" });
+  } catch (err) {
+    throw err;
+  }
+};
+
+// controller for getting the products.
+exports.getProducts = async (req, res, next) => {
+  try {
+    const successRes = await UsersService.getProducts();
+    res.json({
+      status: true,
+      success: "Products received successfully",
+      products: successRes,
+    });
+  } catch (err) {
+    throw err;
+  }
+};
+
+exports.addWishlist = async (req, res, next) => {
+  try {
+    const { userId, products } = req.body;
+    console.log(req.body);
+    console.log(products);
+    console.log(userId);
+    const successRes = await UsersService.addWishlist(userId, products);
+    res.json({
+      status: true,
+      success: "Added to wishlist",
+    });
   } catch (err) {
     throw err;
   }

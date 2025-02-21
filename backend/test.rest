@@ -1,7 +1,8 @@
-POST http://localhost:3000/login
+POST  http://localhost:3000/wishlist
 Content-Type: application/json
 
 {
-    "email": "checkinglogin@gmail.com",
-    "password" : "kir@1234"
+    "userId": "kavitha@gmail.com",
+    /// only one product at a time is getting added
+    "products" : ["PRD1", "PRD2"]
 }

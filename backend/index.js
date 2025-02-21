@@ -1,18 +1,15 @@
 const app = require("./app");
 
 //run this to connect with mongo db
-const db = require("./config/database");
-//run this to create the schema.
-//const UserModel = require("./model/user_model");
-
+const connection = require("./config/database");
 
 const port = 3000;
 
 app.get("/", (req, res) => {
-  res.send("heeloo world");
+  res.send("Backend for E-com app");
 });
 
-
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+app.listen(3000, async () => {
+  console.log("Server started on port 3000");
+  await connection("ecomdb");
 });
