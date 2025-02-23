@@ -12,8 +12,10 @@ router.post('/addproduct', controller.addProduct);
 //crete a get method to get all the products. 
 router.get('/products', controller.getProducts);
 
-//router.get('/wishlist', controller.getWishlist);
-
 router.post('/wishlist', controller.addWishlist);
+
+router.get('/wishlist/:userId', controller.getWishlist);
+
+router.delete('/wishlist/:userId/:productId', controller.deleteWishlist);
 
 module.exports = router;

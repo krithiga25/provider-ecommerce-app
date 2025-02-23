@@ -1,39 +1,37 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import '../models/product.dart';
+import 'package:http/http.dart' as http;
 
 class ProductProvider with ChangeNotifier {
   // Sample product list
-  final List<Product> _products = [
-    Product(
-      id: 'p1',
-      title: 'Laptop',
-      description: 'A high-performance laptop for professionals.',
-      price: 999.99,
-      imageUrl: 'https://unsplash.com/photos/shallow-focus-photography-of-books-lUaaKCUANVI',
-    ),
-    Product(
-      id: 'p2',
-      title: 'Smartphone',
-      description: 'Latest smartphone with amazing features.',
-      price: 799.99,
-      imageUrl: 'https://unsplash.com/photos/shallow-focus-photography-of-books-lUaaKCUANVI',
-    ),
-  ];
+  List<Product> _products = [];
 
   // Getter to access products
-  // i think it is required to wrap this with the consumer widget of the provider. 
+  // i think it is required to wrap this with the consumer widget of the provider.
   List<Product> get products {
     return [..._products]; // Returns a copy to prevent direct modification
   }
 
-  // Function to add a new product
-  void addProduct(Product product) {
-    _products.add(product);
-    notifyListeners(); // Notify listeners about the change
-  }
+  Future<void> fetchProducts() async {
+    final response =
+        await http.get(Uri.parse('http://192.168.29.93:3000/products'));
 
-  void removeProduct(Product product) {
-    _products.remove(product);
-    notifyListeners(); // Notify listeners about the change
+    if (response.statusCode == 200) {
+      final jsonResponse = jsonDecode(response.body);
+      final jsonData = jsonResponse['products'];
+      _products = jsonData
+          .map<Product>((product) => Product.fromJson(product))
+          .toList();
+      // _products = jsonData
+      //     .map((product) => Product.fromJson(product))
+      //     .toList()
+      //     .cast<Product>();
+      print(_products);
+      notifyListeners();
+    } else {
+      throw Exception('Failed to load products');
+    }
   }
 }

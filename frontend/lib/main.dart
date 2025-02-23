@@ -23,8 +23,8 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Provider Demo',
         theme: ThemeData(primarySwatch: Colors.green),
-       // home: ProductsScreen(),
-       home: RegistrationScreen(),
+        home: ProductsScreen(),
+       //home: RegistrationScreen(),
       ),
     );
   }

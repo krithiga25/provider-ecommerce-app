@@ -84,13 +84,44 @@ exports.getProducts = async (req, res, next) => {
 exports.addWishlist = async (req, res, next) => {
   try {
     const { userId, products } = req.body;
-    console.log(req.body);
-    console.log(products);
-    console.log(userId);
+    // console.log(req.body);
+    // console.log(products);
+    // console.log(userId);
     const successRes = await UsersService.addWishlist(userId, products);
     res.json({
       status: true,
       success: "Added to wishlist",
+    });
+  } catch (err) {
+    throw err;
+  }
+};
+exports.getWishlist = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+    console.log(userId);
+    const successRes = await UsersService.getWishlist(userId);
+    res.json({
+      status: true,
+      success: "wish list received successfully",
+      products: successRes,
+    });
+  } catch (err) {
+    throw err;
+  }
+};
+
+exports.deleteWishlist = async (req, res, next) => {
+  try {
+    const  userId  = req.params.userId;
+    const  productId  = req.params.productId;
+    console.log(req.params);
+    //console.log(userId);
+    const successRes = await UsersService.deleteWishlist(userId, productId);
+    res.json({
+      status: true,
+      success: "wish list item deleted successfully",
+      //products: successRes,
     });
   } catch (err) {
     throw err;

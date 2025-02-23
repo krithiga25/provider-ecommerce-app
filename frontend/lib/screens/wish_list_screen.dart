@@ -5,8 +5,22 @@ import 'package:ecommerce_provider/screens/cart_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class WishListScreen extends StatelessWidget {
+class WishListScreen extends StatefulWidget {
   const WishListScreen({super.key});
+
+  @override
+  State<WishListScreen> createState() => _WishListScreenState();
+}
+
+class _WishListScreenState extends State<WishListScreen> {
+  @override
+  void initState() {
+    super.initState();
+   
+    // we are decoding the email id from the token we generated in the backend using the same email and secret key
+    //Map<String, dynamic> decodedToken = JwtDecoder.decode(widget.token);
+    //email = decodedToken['email'];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,10 +58,10 @@ class WishListScreen extends StatelessWidget {
                                   id: item.id,
                                   title: item.title,
                                   description: item.description,
-                                  price: item.price,
-                                  imageUrl: item.imageUrl,
+                                  price: item.price.toDouble(),
+                                  //imageUrl: item.imageUrl,
                                 ));
-                                wishListProvider.removeProduct(item.id);
+                                wishListProvider.removeProduct(item.id, "checkinglogin@gmail.com");
                               },
                             );
                           },
@@ -58,7 +72,7 @@ class WishListScreen extends StatelessWidget {
                         trailing: IconButton(
                           icon: Icon(Icons.delete, color: Colors.red),
                           onPressed: () {
-                            wishListProvider.removeProduct(item.id);
+                            wishListProvider.removeProduct(item.id, "checkinglogin@gmail.com");
                           },
                         ));
                   },

@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import '../providers/product_provider.dart';
 
 class ProductsScreen extends StatefulWidget {
+  // ignore: prefer_typing_uninitialized_variables
   final token;
   const ProductsScreen({super.key, this.token});
 
@@ -23,9 +24,12 @@ class _ProductsScreenState extends State<ProductsScreen> {
   @override
   void initState() {
     super.initState();
+    Provider.of<ProductProvider>(context, listen: false).fetchProducts();
+    Provider.of<WishListProvider>(context, listen: false)
+        .fetchWishlistProducts("checkinglogin@gmail.com");
     // we are decoding the email id from the token we generated in the backend using the same email and secret key
-    Map<String, dynamic> decodedToken = JwtDecoder.decode(widget.token);
-    email = decodedToken['email'];
+    //Map<String, dynamic> decodedToken = JwtDecoder.decode(widget.token);
+    //email = decodedToken['email'];
   }
 
   @override
@@ -39,7 +43,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
               final products = productProvider.products;
               return Scaffold(
                 appBar: AppBar(
-                  title: Text(email),
+                  title: Text("checkinglogin@gmail.com"),
                   actions: [
                     IconButton(
                       onPressed: () {
@@ -93,8 +97,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
                                 final cartProduct = CartProduct(
                                   id: product.id,
                                   title: product.title,
-                                  price: product.price,
-                                  imageUrl: product.imageUrl,
+                                  price: product.price.toDouble(),
+                                  //imageUrl: "",
                                   description: product.description,
                                 );
                                 cartProvider.addProduct(cartProduct);
@@ -135,16 +139,17 @@ class _ProductsScreenState extends State<ProductsScreen> {
                             ),
                             onPressed: () {
                               if (isFavorite) {
-                                wishListProvider.removeProduct(product.id);
+                                wishListProvider.removeProduct(product.id, "checkinglogin@gmail.com");
                               } else {
                                 final wishListProduct = WishListItems(
                                   id: product.id,
                                   title: product.title,
                                   price: product.price,
-                                  imageUrl: product.imageUrl,
+                                  //imageUrl: "",
                                   description: product.description,
                                 );
-                                wishListProvider.addProduct(wishListProduct);
+                                wishListProvider.addProduct(
+                                    wishListProduct, "checkinglogin@gmail.com");
                               }
                             },
                           ),
