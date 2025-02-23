@@ -18,4 +18,10 @@ router.get('/wishlist/:userId', controller.getWishlist);
 
 router.delete('/wishlist/:userId/:productId', controller.deleteWishlist);
 
+router.post('/cart', controller.addToCart);
+
+//router.get('/wishlist/:userId', controller.getWishlist);
+
+//router.delete('/wishlist/:userId/:productId', controller.deleteWishlist);
+
 module.exports = router;

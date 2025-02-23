@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:ecommerce_provider/models/cart.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class CartProvider with ChangeNotifier {
   // this is private list, which can be accessed only from this class.
@@ -17,6 +20,7 @@ class CartProvider with ChangeNotifier {
     } else {
       _cartProducts.add(product); // Add new product
     }
+    addToCart("checkinglogin@gmail.com", product.id, product.quantity);
     notifyListeners();
   }
 
@@ -57,5 +61,22 @@ class CartProvider with ChangeNotifier {
           quantity: 0),
     );
     return product.quantity;
+  }
+
+  Future<void> addToCart(user, prodId, quantity) async {
+    var reqBody = {
+      "userId": user,
+      "products": [
+        {"product": prodId, "quantity": 1}
+      ]
+    };
+    final response = await http.post(
+        Uri.parse('http://192.168.29.93:3000/cart'),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(reqBody));
+    var jsonReponse = jsonDecode(response.body);
+    if (jsonReponse['status']) {
+      print("add successfully");
+    }
   }
 }

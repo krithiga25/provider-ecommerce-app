@@ -47,6 +47,22 @@ const wishlistSchema = new mongoose.Schema(
   }
 );
 
+//cart schema:
+const cartSchema = new mongoose.Schema(
+  {
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
+    products: [
+      {
+        product: { type: mongoose.Schema.Types.ObjectId, ref: "products" },
+        quantity: Number,
+      },
+    ],
+  },
+  {
+    timestamps: true,
+  }
+);
+
 //encrypting the password
 userSchema.pre("save", async function () {
   try {
@@ -74,4 +90,6 @@ const ProductModel = mongoose.model("products", productSchema);
 
 const WishlistModel = mongoose.model("wishlist", wishlistSchema);
 
-module.exports = { UserModel, ProductModel, WishlistModel };
+const CartModel = mongoose.model("cart", cartSchema);
+
+module.exports = { UserModel, ProductModel, WishlistModel, CartModel };

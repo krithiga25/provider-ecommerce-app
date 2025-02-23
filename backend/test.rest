@@ -1,1 +1,11 @@
-DELETE  http://localhost:3000/wishlist/checkinglogin@gmail.com/PRD1
+POST http://localhost:3000/cart
+Content-Type: application/json
+
+{
+    "userId" : "checkinglogin@gmail.com",
+    "products": [{
+        "product" : "PRD1",
+        "quantity": 1
+    }]
+    
+}

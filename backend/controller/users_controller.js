@@ -113,8 +113,8 @@ exports.getWishlist = async (req, res, next) => {
 
 exports.deleteWishlist = async (req, res, next) => {
   try {
-    const  userId  = req.params.userId;
-    const  productId  = req.params.productId;
+    const userId = req.params.userId;
+    const productId = req.params.productId;
     console.log(req.params);
     //console.log(userId);
     const successRes = await UsersService.deleteWishlist(userId, productId);
@@ -122,6 +122,23 @@ exports.deleteWishlist = async (req, res, next) => {
       status: true,
       success: "wish list item deleted successfully",
       //products: successRes,
+    });
+  } catch (err) {
+    throw err;
+  }
+};
+
+exports.addToCart = async (req, res, next) => {
+  try {
+    const  userId  = req.body.userId;
+    const products = req.body.products;
+    console.log(req.body);
+    console.log(userId);
+    console.log(products);
+    const successRes = await UsersService.addToCart(userId, products);
+    res.json({
+      status: true,
+      success: "Added to cart",
     });
   } catch (err) {
     throw err;

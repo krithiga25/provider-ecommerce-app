@@ -61,6 +61,8 @@ class _WishListScreenState extends State<WishListScreen> {
                                   price: item.price.toDouble(),
                                   //imageUrl: item.imageUrl,
                                 ));
+                                //here instead of the remove product from the wishlist, we need to include
+                                // move to cart from the wishlist method, or an API. 
                                 wishListProvider.removeProduct(item.id, "checkinglogin@gmail.com");
                               },
                             );

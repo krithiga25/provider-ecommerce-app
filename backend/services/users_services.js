@@ -3,6 +3,7 @@ const {
   UserModel,
   ProductModel,
   WishlistModel,
+  CartModel,
 } = require("../model/user_model");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
@@ -108,8 +109,8 @@ class UsersService {
       const user = await UserModel.findOne({ email: email });
       const userId = user._id;
       console.log(userId);
-      //find only one based on what is give as the parameter, 
-      // find - will return all the doucments based on the given parameter. 
+      //find only one based on what is give as the parameter,
+      // find - will return all the doucments based on the given parameter.
       const product = await ProductModel.findOne({ id: id });
       const productId = product._id;
       console.log(productId);
@@ -117,6 +118,42 @@ class UsersService {
         { userId },
         { $pull: { products: productId } }
       );
+    } catch (err) {
+      throw err;
+    }
+  }
+  static async addToCart(email, products) {
+    try {
+      //we need to reterive the user's email and find relevant object id and the productname and find relevant object id
+      // Check if the wishlist exists
+      const user = await UserModel.findOne({ email });
+      const userId = user._id;
+      let cartList = await CartModel.findOne({ userId });
+      if (!cartList) {
+        console.log("true");
+        cartList = new CartModel({ userId, products: [] });
+        await cartList.save();
+      }
+
+      // Loop through each product ID and add it to the cart
+      for (const product of products) {
+        const id = product.product;
+        const productDoc = await ProductModel.findOne({ id });
+        const productId = productDoc._id;
+        console.log(product.quantity);
+        await CartModel.updateOne(
+          { userId },
+          {
+            $push: {
+              products: { product: productId, quantity: product.quantity },
+            },
+          }
+        );
+      }
+
+      //need to update the quantity.
+
+      return { success: true, message: "Product added to cart" };
     } catch (err) {
       throw err;
     }

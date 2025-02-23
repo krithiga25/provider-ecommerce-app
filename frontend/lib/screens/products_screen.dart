@@ -139,7 +139,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
                             ),
                             onPressed: () {
                               if (isFavorite) {
-                                wishListProvider.removeProduct(product.id, "checkinglogin@gmail.com");
+                                wishListProvider.removeProduct(
+                                    product.id, "checkinglogin@gmail.com");
                               } else {
                                 final wishListProduct = WishListItems(
                                   id: product.id,
