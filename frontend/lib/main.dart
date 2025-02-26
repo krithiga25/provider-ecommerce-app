@@ -1,5 +1,5 @@
 import 'package:ecommerce_provider/providers/wish_list_provider.dart';
-import 'package:ecommerce_provider/screens/register.dart';
+//import 'package:ecommerce_provider/screens/register.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import './providers/product_provider.dart';

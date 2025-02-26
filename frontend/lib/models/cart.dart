@@ -2,7 +2,7 @@ class CartProduct {
   final String id;
   final String title;
   final String description;
-  final double price;
+  final int price;
   //final String imageUrl;
   int quantity;
   CartProduct({
@@ -13,4 +13,17 @@ class CartProduct {
     //required this.imageUrl,
     this.quantity = 1,
   });
+
+  factory CartProduct.fromJson(Map<String, dynamic> json) {
+    final product = json['product'];
+    final quantity = json['quantity'];
+
+    return CartProduct(
+      title: product['productName'],
+      id: product['id'],
+      description: product['description'],
+      price: product['price'],
+      quantity: quantity,
+    );
+  }
 }

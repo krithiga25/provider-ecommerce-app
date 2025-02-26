@@ -1,21 +1,26 @@
+import 'package:ecommerce_provider/models/wish_list.dart';
 import 'package:ecommerce_provider/providers/cart_provider.dart';
+import 'package:ecommerce_provider/providers/wish_list_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class CartScreen extends StatelessWidget {
+class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    //final cartProvider = Provider.of<CartProvider>(context);
-    // final cartProducts = cartProvider.cartItems; // Get the product list
+  State<CartScreen> createState() => _CartScreenState();
+}
 
+class _CartScreenState extends State<CartScreen> {
+  String? _deleteOption;
+  @override
+  Widget build(BuildContext context) {
+    
     return Scaffold(
       appBar: AppBar(title: Text('Cart screen')),
       body: Consumer<CartProvider>(
         builder: (context, cartProvider, child) {
           final cartItems = cartProvider.cartProducts;
-
           return cartItems.isEmpty
               ? Center(child: Text('Your cart is empty!'))
               : ListView.builder(
@@ -23,8 +28,9 @@ class CartScreen extends StatelessWidget {
                   itemBuilder: (ctx, index) {
                     final item = cartItems[index];
                     final quantity = cartProvider.getQuantity(item.id);
-                    return Card(
-                      child: Column(
+                    return Card(child: Consumer<WishListProvider>(
+                        builder: (context, wishListProvider, child) {
+                      return Column(
                         children: [
                           Text(item.title),
                           Text('\$${item.price.toStringAsFixed(2)}'),
@@ -45,6 +51,18 @@ class CartScreen extends StatelessWidget {
                             IconButton(
                               icon: Icon(Icons.delete, color: Colors.red),
                               onPressed: () {
+                                showProductDialog(context);
+                                if (_deleteOption == 'wishlist') {
+                                  wishListProvider.addProduct(
+                                      WishListItems(
+                                        id: item.id,
+                                        title: item.title,
+                                        description: item.description,
+                                        price: item.price,
+                                        //imageUrl: item.imageUrl,
+                                      ),
+                                      "checkinglogin@gmail.com");
+                                }
                                 cartProvider.removeProduct(item.id);
                               },
                             ),
@@ -54,15 +72,45 @@ class CartScreen extends StatelessWidget {
                           TextButton(
                               onPressed: () {},
                               child: Text("Procced to place order")),
-                          TextButton(
-                              onPressed: () {}, child: Text("Move to wishlist"))
                         ],
-                      ),
-                    );
+                      );
+                    }));
                   },
                 );
         },
       ),
+    );
+  }
+
+  void showProductDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Product Options"),
+          content: Text("What would you like to do?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                setState(() {
+                  _deleteOption = "delete";
+                });
+              },
+              child: Text("Delete Product"),
+            ),
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  _deleteOption = "wishlist";
+                });
+                Navigator.pop(context);
+              },
+              child: Text("Move to Wishlist"),
+            ),
+          ],
+        );
+      },
     );
   }
 }

@@ -4,9 +4,6 @@ import 'package:ecommerce_provider/models/wish_list.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-//Here, you are creating a new instance of CartProvider manually instead of using the one provided by Provider.
-//CartProvider cartProvider = CartProvider();
-
 class WishListProvider with ChangeNotifier {
   List<WishListItems> _wishListItems = [];
   List<WishListItems> get wishListItems {
@@ -16,15 +13,19 @@ class WishListProvider with ChangeNotifier {
   // Function to add a new product
   void addProduct(WishListItems wishListItem, String userId) {
     _wishListItems.add(wishListItem);
-    // call the api to add the product on wishlist schema
     addWishlist(userId, wishListItem.id);
     notifyListeners();
   }
 
   void removeProduct(String productId, String email) {
     _wishListItems.removeWhere((product) => product.id == productId);
-    // call the api to add the product on wishlist schema
     removeWishlist(email, productId);
+    notifyListeners();
+  }
+
+  void clearWishList(String productId, String email) {
+    _wishListItems.removeWhere((product) => product.id == productId);
+    moveToCart(email, productId);
     notifyListeners();
   }
 
@@ -68,14 +69,20 @@ class WishListProvider with ChangeNotifier {
       _wishListItems = jsonData
           .map<WishListItems>((product) => WishListItems.fromJson(product))
           .toList();
-      // _products = jsonData
-      //     .map((product) => Product.fromJson(product))
-      //     .toList()
-      //     .cast<Product>();
       print(_wishListItems);
       notifyListeners();
     } else {
       throw Exception('Failed to load products');
+    }
+  }
+
+  Future<void> moveToCart(user, prodId) async {
+    final response = await http.patch(
+      Uri.parse('http://192.168.29.93:3000/cart/$user/$prodId'),
+    );
+    var jsonReponse = jsonDecode(response.body);
+    if (jsonReponse['status']) {
+      print("Moved to cart successfully");
     }
   }
 }

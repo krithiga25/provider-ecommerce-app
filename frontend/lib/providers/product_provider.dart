@@ -5,13 +5,10 @@ import '../models/product.dart';
 import 'package:http/http.dart' as http;
 
 class ProductProvider with ChangeNotifier {
-  // Sample product list
   List<Product> _products = [];
 
-  // Getter to access products
-  // i think it is required to wrap this with the consumer widget of the provider.
   List<Product> get products {
-    return [..._products]; // Returns a copy to prevent direct modification
+    return [..._products]; 
   }
 
   Future<void> fetchProducts() async {
@@ -24,10 +21,6 @@ class ProductProvider with ChangeNotifier {
       _products = jsonData
           .map<Product>((product) => Product.fromJson(product))
           .toList();
-      // _products = jsonData
-      //     .map((product) => Product.fromJson(product))
-      //     .toList()
-      //     .cast<Product>();
       print(_products);
       notifyListeners();
     } else {

@@ -56,8 +56,6 @@ class UsersService {
 
   static async addWishlist(email, ids) {
     try {
-      //we need to reterive the user's email and find relevant object id and the productname and find relevant object id
-      // Check if the wishlist exists
       const user = await UserModel.findOne({ email });
       const userId = user._id;
       let wishlist = await WishlistModel.findOne({ userId });
@@ -72,7 +70,7 @@ class UsersService {
         const productId = product._id;
         await WishlistModel.updateOne(
           { userId },
-          { $addToSet: { products: productId } } // Store only productId
+          { $addToSet: { products: productId } } 
         );
       }
 
@@ -124,8 +122,6 @@ class UsersService {
   }
   static async addToCart(email, products) {
     try {
-      //we need to reterive the user's email and find relevant object id and the productname and find relevant object id
-      // Check if the wishlist exists
       const user = await UserModel.findOne({ email });
       const userId = user._id;
       let cartList = await CartModel.findOne({ userId });
@@ -134,29 +130,153 @@ class UsersService {
         cartList = new CartModel({ userId, products: [] });
         await cartList.save();
       }
-
-      // Loop through each product ID and add it to the cart
       for (const product of products) {
         const id = product.product;
         const productDoc = await ProductModel.findOne({ id });
         const productId = productDoc._id;
         console.log(product.quantity);
-        await CartModel.updateOne(
-          { userId },
-          {
-            $push: {
-              products: { product: productId, quantity: product.quantity },
-            },
-          }
-        );
+        const productExists = await CartModel.findOne({
+          userId,
+          "products.product": productId,
+        });
+
+        if (productExists) {
+          await CartModel.updateOne(
+            { userId, "products.product": productId },
+            {
+              $inc: { "products.$.quantity": 1 },
+            }
+          );
+        } else {
+          await CartModel.updateOne(
+            { userId },
+            {
+              $push: {
+                products: { product: productId, quantity: product.quantity },
+              },
+            }
+          );
+        }
       }
-
-      //need to update the quantity.
-
       return { success: true, message: "Product added to cart" };
     } catch (err) {
       throw err;
     }
+  }
+
+  static async getCart(email) {
+    try {
+      const user = await UserModel.findOne({ email });
+      const userId = user._id;
+      const cartProducts = await CartModel.find({ userId }, "products");
+      console.log(cartProducts);
+      const productsList = [];
+      for (const cartProduct of cartProducts) {
+        console.log(cartProduct);
+        for (const productId of cartProduct.products) {
+          console.log(productId);
+          const product = await ProductModel.findById(
+            new mongoose.Types.ObjectId(productId.product)
+          );
+          const productWithQuantity = {
+            product,
+            quantity: productId.quantity,
+          };
+          productsList.push(productWithQuantity);
+        }
+      }
+      return productsList;
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  static async deleteCart(email, id) {
+    try {
+      const user = await UserModel.findOne({ email: email });
+      const userId = user._id;
+      const product = await ProductModel.findOne({ id: id });
+      const productId = product._id;
+      const cart = await CartModel.findOne({ userId });
+      console.log(productId);
+      const productInCart = cart.products.find((p) =>
+        p.product.equals(productId)
+      );
+      //console.log(productInCart.quantity);
+      const quantity = productInCart.quantity;
+
+      if (quantity > 1) {
+        await CartModel.updateOne(
+          { userId, "products.product": productId },
+          { $inc: { "products.$.quantity": -1 } }
+        );
+      } else {
+        await CartModel.updateOne(
+          { userId },
+          { $pull: { products: { product: productId } } }
+        );
+      }
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  static async moveToCart(email, id) {
+    const user = await UserModel.findOne({ email: email });
+    const userId = user._id;
+    const product = await ProductModel.findOne({ id: id });
+    const productId = product._id;
+    const wishlist = await WishlistModel.findOne({ userId });
+    console.log(wishlist);
+    //add the product to the cart:
+    let cart = await CartModel.findOne({ userId });
+    if (!cart) {
+      // Create a new cart document if it doesn't exist
+      cart = new CartModel({ userId, products: [] });
+      await cart.save();
+      cart.products.push({ product: productId, quantity: 1 });
+      await cart.save();
+    } else {
+      await CartModel.updateOne(
+        { userId },
+        { $push: { products: { product: productId, quantity: 1 } } }
+      );
+    }
+    //removing the product from this wishlist.
+    await WishlistModel.updateOne(
+      { userId },
+      { $pull: { products: productId } }
+    );
+    return;
+  }
+
+  static async moveToWishlist(email, id) {
+    const user = await UserModel.findOne({ email: email });
+    const userId = user._id;
+    const product = await ProductModel.findOne({ id: id });
+    const productId = product._id;
+    const cart = await CartModel.findOne({ userId });
+    console.log(cart);
+    if (cart) {
+      await CartModel.updateOne(
+        { userId },
+        { $pull: { products: { product: productId } } }
+      );
+    }
+    
+    let wishlist = await WishlistModel.findOne({ userId });
+    if (!wishlist) {
+      wishlist = new WishlistModel({ userId, products: [] });
+      await wishlist.save();
+      wishlist.products.push(productId);
+      await wishlist.save();
+    } else {
+      await WishlistModel.updateOne(
+        { userId },
+        { $push: { products: productId } }
+      );
+    }
+    return;
   }
 }
 module.exports = UsersService;

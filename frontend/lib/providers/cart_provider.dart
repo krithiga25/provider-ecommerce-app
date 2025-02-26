@@ -6,19 +6,18 @@ import 'package:http/http.dart' as http;
 
 class CartProvider with ChangeNotifier {
   // this is private list, which can be accessed only from this class.
-  final List<CartProduct> _cartProducts = [];
+  List<CartProduct> _cartProducts = [];
 
   List<CartProduct> get cartProducts {
     return [..._cartProducts];
   }
 
-  // Function to add a new product
   void addProduct(CartProduct product) {
     final index = _cartProducts.indexWhere((item) => item.id == product.id);
     if (index >= 0) {
-      _cartProducts[index].quantity++; // Increase quantity if already in cart
+      _cartProducts[index].quantity++;
     } else {
-      _cartProducts.add(product); // Add new product
+      _cartProducts.add(product);
     }
     addToCart("checkinglogin@gmail.com", product.id, product.quantity);
     notifyListeners();
@@ -27,6 +26,7 @@ class CartProvider with ChangeNotifier {
   void increaseQuantity(String productId) {
     final product = _cartProducts.firstWhere((item) => item.id == productId);
     product.quantity++;
+    addToCart("checkinglogin@gmail.com", product.id, product.quantity);
     notifyListeners();
   }
 
@@ -35,13 +35,23 @@ class CartProvider with ChangeNotifier {
     if (product.quantity > 1) {
       product.quantity--;
     } else {
-      removeProduct(productId); // Remove when quantity reaches 0
+      removeProduct(productId);
     }
+    removeCartProduct("checkinglogin@gmail.com", product.id);
     notifyListeners();
   }
 
   void removeProduct(String productId) {
     _cartProducts.removeWhere((item) => item.id == productId);
+    removeCartProduct("checkinglogin@gmail.com", productId);
+    notifyListeners();
+  }
+
+  void clearCart(email, prodId) {
+    //clearing the cart
+    _cartProducts.removeWhere((item) => item.id == prodId);
+    //moving the wishlist, updated in db, but not reflected in the ui - since we are not creating the product object here.
+    moveToWishlist(email, prodId);
     notifyListeners();
   }
 
@@ -77,6 +87,48 @@ class CartProvider with ChangeNotifier {
     var jsonReponse = jsonDecode(response.body);
     if (jsonReponse['status']) {
       print("add successfully");
+    }
+  }
+
+  Future<void> fetchCartProducts(String user) async {
+    final response = await http.get(
+      Uri.parse('http://192.168.29.93:3000/cart/$user'),
+    );
+
+    if (response.statusCode == 200) {
+      final jsonResponse = jsonDecode(response.body);
+      print(jsonResponse);
+      final jsonData =
+          jsonResponse['products']; // this itself contains the quantity
+      print(jsonResponse['quantity']); //null
+      print(jsonData);
+      _cartProducts = jsonData
+          .map<CartProduct>((product) => CartProduct.fromJson(product))
+          .toList();
+      print(_cartProducts);
+      notifyListeners();
+    } else {
+      throw Exception('Failed to load products');
+    }
+  }
+
+  Future<void> removeCartProduct(user, prodId) async {
+    final response = await http.delete(
+      Uri.parse('http://192.168.29.93:3000/cart/$user/$prodId'),
+    );
+    var jsonReponse = jsonDecode(response.body);
+    if (jsonReponse['status']) {
+      print("deleted successfully");
+    }
+  }
+
+  Future<void> moveToWishlist(user, prodId) async {
+    final response = await http.patch(
+      Uri.parse('http://192.168.29.93:3000/wishlist/$user/$prodId'),
+    );
+    var jsonReponse = jsonDecode(response.body);
+    if (jsonReponse['status']) {
+      print("Moved to wishlist successfully");
     }
   }
 }

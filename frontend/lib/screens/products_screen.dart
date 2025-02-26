@@ -5,7 +5,7 @@ import 'package:ecommerce_provider/providers/wish_list_provider.dart';
 import 'package:ecommerce_provider/screens/cart_screen.dart';
 import 'package:ecommerce_provider/screens/wish_list_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
+//import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:provider/provider.dart';
 import '../providers/product_provider.dart';
 
@@ -27,6 +27,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
     Provider.of<ProductProvider>(context, listen: false).fetchProducts();
     Provider.of<WishListProvider>(context, listen: false)
         .fetchWishlistProducts("checkinglogin@gmail.com");
+    Provider.of<CartProvider>(context, listen: false)
+        .fetchCartProducts("checkinglogin@gmail.com");
     // we are decoding the email id from the token we generated in the backend using the same email and secret key
     //Map<String, dynamic> decodedToken = JwtDecoder.decode(widget.token);
     //email = decodedToken['email'];
@@ -80,16 +82,6 @@ class _ProductsScreenState extends State<ProductsScreen> {
                         children: [
                           Text(product.title),
                           Text('\$${product.price.toStringAsFixed(2)}'),
-                          // this should have add to cart intially
-                          // after variable check: it should display this "add" button and a delete button to delete - remove from cart.
-                          // add button should increase the quantity, not add the same the product again.
-
-                          //if the product's quantity is 0, it will show "add to cart", else it will show the following widget:
-                          // contains quantity, add button, remove button.
-                          // add button increases the count of the product.
-                          // remove button - removes the product from the cart list - then shows the "add to cart" button.
-
-                          // If NOT in cart, show "Add to Cart" button
                           if (!isInCart)
                             TextButton(
                               child: Text("Add to Cart"),
@@ -97,7 +89,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                                 final cartProduct = CartProduct(
                                   id: product.id,
                                   title: product.title,
-                                  price: product.price.toDouble(),
+                                  price: product.price,
                                   //imageUrl: "",
                                   description: product.description,
                                 );
