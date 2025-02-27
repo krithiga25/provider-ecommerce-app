@@ -7,6 +7,9 @@ const {
 } = require("../model/user_model");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
+const stripe = require("stripe")(
+  "sk_test_51QvBubL4gE1upbxJIoEnTIhPLlHL7kaPPWMFyQ3dL7YiWXu9acLqAWXKdQCCpvauqO6uVvevze1c0o2xsk73IGOI00ZWuncfi8"
+);
 
 class UsersService {
   //we will call this function and then get the email and password
@@ -70,7 +73,7 @@ class UsersService {
         const productId = product._id;
         await WishlistModel.updateOne(
           { userId },
-          { $addToSet: { products: productId } } 
+          { $addToSet: { products: productId } }
         );
       }
 
@@ -263,7 +266,7 @@ class UsersService {
         { $pull: { products: { product: productId } } }
       );
     }
-    
+
     let wishlist = await WishlistModel.findOne({ userId });
     if (!wishlist) {
       wishlist = new WishlistModel({ userId, products: [] });
@@ -277,6 +280,34 @@ class UsersService {
       );
     }
     return;
+  }
+
+  static async createPayment(amount) {
+    //console.log(createdUser);
+
+    try {
+      const session = await stripe.checkout.sessions.create({
+        payment_method_types: ["card"],
+        line_items: [
+          {
+            price_data: {
+              currency: "usd",
+              product_data: {
+                name: "Total Order Payment",
+              },
+              unit_amount: amount * 100, // Convert to cents
+            },
+            quantity: 1,
+          },
+        ],
+        mode: "payment",
+        success_url: "http://localhost:3000/success",
+        cancel_url: "http://localhost:3000/cancel",
+      });
+      return session.id;
+    } catch (error) {
+      return "payment failed";
+    }
   }
 }
 module.exports = UsersService;

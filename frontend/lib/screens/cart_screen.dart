@@ -1,6 +1,9 @@
+import 'package:ecommerce_provider/models/payment.dart';
 import 'package:ecommerce_provider/models/wish_list.dart';
 import 'package:ecommerce_provider/providers/cart_provider.dart';
 import 'package:ecommerce_provider/providers/wish_list_provider.dart';
+import 'package:ecommerce_provider/screens/orders_screen.dart';
+import 'package:ecommerce_provider/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -15,7 +18,6 @@ class _CartScreenState extends State<CartScreen> {
   String? _deleteOption;
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       appBar: AppBar(title: Text('Cart screen')),
       body: Consumer<CartProvider>(
@@ -70,7 +72,49 @@ class _CartScreenState extends State<CartScreen> {
                           //this will lead to the order page consisting of all the order items and then a payment method?
                           // for now => the list of cart items will be put in the orders page as in Map Data strcuture, with oder id as the key.
                           TextButton(
-                              onPressed: () {},
+                              onPressed: () async {
+                                int totalQuantity =
+                                    cartItems.fold(0, (a, b) => a + b.price);
+                                final status =
+                                    await initPaymentSheet(totalQuantity);
+                                if (status == "success") {
+                                  Navigator.push(
+                                    // ignore: use_build_context_synchronously
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            OrderStatusSplashScreen(
+                                                status: 'success')),
+                                  );
+                                  Future.delayed(Duration(milliseconds: 2000),
+                                      () {
+                                    Navigator.pushReplacement(
+                                      // ignore: use_build_context_synchronously
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => OrdersPage()),
+                                    );
+                                  });
+                                } else {
+                                  Navigator.push(
+                                    // ignore: use_build_context_synchronously
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            OrderStatusSplashScreen(
+                                                status: 'failed')),
+                                  );
+                                  Future.delayed(Duration(milliseconds: 2000),
+                                      () {
+                                    Navigator.pushReplacement(
+                                      // ignore: use_build_context_synchronously
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => CartScreen()),
+                                    );
+                                  });
+                                }
+                              },
                               child: Text("Procced to place order")),
                         ],
                       );

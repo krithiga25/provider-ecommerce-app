@@ -2,6 +2,9 @@
 // and then hit the services layer
 
 const UsersService = require("../services/users_services");
+const stripe = require("stripe")(
+  "sk_test_51QvBubL4gE1upbxJIoEnTIhPLlHL7kaPPWMFyQ3dL7YiWXu9acLqAWXKdQCCpvauqO6uVvevze1c0o2xsk73IGOI00ZWuncfi8"
+);
 
 exports.register = async (req, res, next) => {
   try {
@@ -205,5 +208,51 @@ exports.moveToWishlist = async (req, res, next) => {
     });
   } catch (err) {
     throw err;
+  }
+};
+
+exports.paymentSheet = async (req, res) => {
+  try {
+    console.log("strip");
+    const { email, name, amount } = req.body;
+    console.log(email);
+    let customer;
+    const customers = await stripe.customers.list({
+      email: email,
+    });
+    customer = customers.data.find((customer) => customer.email === email);
+    if (customer == undefined) {
+      console.log("new customer");
+      customer = await stripe.customers.create({
+        email: email,
+        name: name,
+      });
+    }
+
+    const ephemeralKey = await stripe.ephemeralKeys.create(
+      { customer: customer.id },
+      { apiVersion: "2023-10-16" }
+    );
+    //const amountInCents = stripe.convertAmountToInteger("100.00", "inr");
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: amount*100, // amount should be the current cart - total
+      currency: "inr",
+      customer: customer.id,
+      description: "Your transaction description here",
+      automatic_payment_methods: {
+        enabled: true,
+      },
+    });
+
+    res.json({
+      paymentIntent: paymentIntent.client_secret,
+      ephemeralKey: ephemeralKey.secret,
+      customer: customer.id,
+      publishableKey:
+        "pk_test_51QvBubL4gE1upbxJftPvLWy2vQBXi1ciQwgS4eaZBQY9iV9m49N5BtSIK84nc9R7ruiHQau2GFm8fkmx7kNLmRZk00ZGZaIetJ",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.json({ error: true, message: error.message, data: null });
   }
 };

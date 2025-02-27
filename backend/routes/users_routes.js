@@ -30,4 +30,7 @@ router.delete("/cart/:userId/:productId", controller.deleteCart);
 //move to wishlist from the cart
 //router.patch('/wishlist/:userId/:productId', controller.moveToWishlist);  //not neccessary
 
+//payment api:
+router.post("/createpayment", controller.paymentSheet);
+
 module.exports = router;

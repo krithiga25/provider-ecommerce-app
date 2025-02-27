@@ -29,5 +29,14 @@
 # PATCH http://localhost:3000/cart/checkinglogin@gmail.com/PRD2
 # Content-Type: application/json
 
-PATCH http://localhost:3000/wishlist/checkinglogin@gmail.com/PRD1
+# PATCH http://localhost:3000/wishlist/checkinglogin@gmail.com/PRD1
+# Content-Type: application/json
+
+#payment:
+POST http://localhost:3000/createpayment
 Content-Type: application/json
+
+# {
+#     "email" : "newcustomer@gmail.com",
+#     "name" : "newcustomer"
+# }

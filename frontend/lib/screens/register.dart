@@ -10,11 +10,13 @@ final uri = 'http://192.168.29.93:3000/';
 final url = "${uri}registration";
 
 class RegistrationScreen extends StatefulWidget {
+  const RegistrationScreen({super.key});
+
   @override
-  _RegistrationScreenState createState() => _RegistrationScreenState();
+  RegistrationScreenState createState() => RegistrationScreenState();
 }
 
-class _RegistrationScreenState extends State<RegistrationScreen> {
+class RegistrationScreenState extends State<RegistrationScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isValidate = false;
@@ -34,6 +36,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       print(jsonReponse['status']);
       if (jsonReponse['status']) {
         Navigator.push(
+            // ignore: use_build_context_synchronously
             context, MaterialPageRoute(builder: (context) => LoginScreen()));
         //set some notification - logged in!
       } else {
