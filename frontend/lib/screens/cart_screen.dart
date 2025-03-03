@@ -61,7 +61,7 @@ class _CartScreenState extends State<CartScreen> {
                                         title: item.title,
                                         description: item.description,
                                         price: item.price,
-                                        //imageUrl: item.imageUrl,
+                                        imageUrl: item.imageUrl,
                                       ),
                                       "checkinglogin@gmail.com");
                                 }
@@ -73,7 +73,7 @@ class _CartScreenState extends State<CartScreen> {
                           // for now => the list of cart items will be put in the orders page as in Map Data strcuture, with oder id as the key.
                           TextButton(
                               onPressed: () async {
-                                int totalQuantity =
+                                double totalQuantity =
                                     cartItems.fold(0, (a, b) => a + b.price);
                                 final status =
                                     await initPaymentSheet(totalQuantity);

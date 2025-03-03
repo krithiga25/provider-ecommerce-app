@@ -3,14 +3,14 @@ class CartProduct {
   final String title;
   final String description;
   final int price;
-  //final String imageUrl;
+  final String imageUrl;
   int quantity;
   CartProduct({
     required this.id,
     required this.title,
     required this.description,
     required this.price,
-    //required this.imageUrl,
+    required this.imageUrl,
     this.quantity = 1,
   });
 
@@ -23,6 +23,7 @@ class CartProduct {
       id: product['id'],
       description: product['description'],
       price: product['price'],
+      imageUrl: product['image'],
       quantity: quantity,
     );
   }

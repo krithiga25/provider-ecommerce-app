@@ -66,7 +66,7 @@ class CartProvider with ChangeNotifier {
           id: '',
           title: '',
           price: 0,
-          //imageUrl: '',
+          imageUrl: '',
           description: '',
           quantity: 0),
     );

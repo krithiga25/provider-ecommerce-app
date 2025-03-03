@@ -5,7 +5,7 @@
 #     "userId" : "checkinglogin@gmail.com",
 #     "products": [{
 #         "product" : "PRD1",
-#         "quantity": 4
+#         "quantity": 1
 #     }]
     
 # }
@@ -15,7 +15,7 @@
 
 # {
 #     "userId" : "checkinglogin@gmail.com",
-#     "products": ["PRD2"]
+#     "products": ["PRD1"]
     
 # }
 
@@ -32,11 +32,28 @@
 # PATCH http://localhost:3000/wishlist/checkinglogin@gmail.com/PRD1
 # Content-Type: application/json
 
-#payment:
-POST http://localhost:3000/createpayment
-Content-Type: application/json
+# DELETE http://localhost:3000/wishlist/checkinglogin@gmail.com/PRD1
+# Content-Type: application/json
+
+# #payment:
+# POST http://localhost:3000/createpayment
+# Content-Type: application/json
 
 # {
 #     "email" : "newcustomer@gmail.com",
 #     "name" : "newcustomer"
 # }
+
+# add to cart
+POST http://localhost:3000/addproduct
+Content-Type: application/json
+
+{
+    "id": "PRD5",
+    "productName": "Women's Gold & Silver Bracelet",
+    "price": 6950,
+    "description": "A very cool bracelet.",
+    "image": "https://fakestoreapi.com/img/71pWzhdJNwL._AC_UL640_QL65_ML3_.jpg",
+    "rating": 4,
+    "category": "jewelry"
+  }

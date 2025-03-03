@@ -32,8 +32,19 @@ const productSchema = new Schema({
     required: true,
   },
   //need to change it to double
-  price: Number,
+  price: {
+    type: Number,
+    required: true,
+  },
   description: String,
+  image: String,
+  rating: {
+    type: Number,
+    required: true,
+    min: 1,
+    max: 5,
+  },
+  category: String,
 });
 
 //wishlist schema:

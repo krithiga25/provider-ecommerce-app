@@ -56,12 +56,15 @@ exports.login = async (req, res, next) => {
 };
 exports.addProduct = async (req, res, next) => {
   try {
-    const { id, productName, price, description } = req.body;
+    const { id, productName, price, description, image, rating, category } = req.body;
     const successRes = await UsersService.addProduct(
       id,
       productName,
       price,
-      description
+      description,
+      image,
+      rating,
+      category
     );
 
     res.json({ status: true, success: "Product added successfully" });

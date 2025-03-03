@@ -37,9 +37,9 @@ class UsersService {
     return jwt.sign(tokenData, secretKey, { expiresIn: jwt_expiry });
   }
 
-  static async addProduct(id, productName, price, description) {
+  static async addProduct(id, productName, price, description, image, rating, category) {
     try {
-      const product = new ProductModel({ id, productName, price, description });
+      const product = new ProductModel({ id, productName, price, description, image, rating, category  });
       return await product.save();
     } catch (err) {
       throw err;

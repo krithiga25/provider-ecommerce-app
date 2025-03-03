@@ -37,6 +37,15 @@ android {
             signingConfig = signingConfigs.debug
         }
     }
+    
+    dependencies {
+        implementation 'com.google.android.gms:play-services-wallet:19.2.1'
+        implementation 'com.stripe:stripe-android:20.34.4'
+        def emoji2_version = "1.4.0"
+        implementation("androidx.emoji2:emoji2:$emoji2_version")
+        implementation("androidx.emoji2:emoji2-views:$emoji2_version")
+        implementation("androidx.emoji2:emoji2-views-helper:$emoji2_version")
+    }
 }
 
 flutter {

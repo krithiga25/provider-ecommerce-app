@@ -4,7 +4,7 @@ import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:http/http.dart' as http;
 
 // need to check the issue without retrieving the customer object.
-Future<String> initPaymentSheet(int amount) async {
+Future<String> initPaymentSheet(double amount) async {
   String status = '';
   try {
     var reqBody = {"email": "newcustomer@gmail.com", "name": "newcustomer", "amount": amount};
