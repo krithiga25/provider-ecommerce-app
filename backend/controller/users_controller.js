@@ -2,9 +2,6 @@
 // and then hit the services layer
 
 const UsersService = require("../services/users_services");
-const stripe = require("stripe")(
-  "sk_test_51QvBubL4gE1upbxJIoEnTIhPLlHL7kaPPWMFyQ3dL7YiWXu9acLqAWXKdQCCpvauqO6uVvevze1c0o2xsk73IGOI00ZWuncfi8"
-);
 
 exports.register = async (req, res, next) => {
   try {
@@ -13,14 +10,19 @@ exports.register = async (req, res, next) => {
 
     // sending the email and password to the service layer
     //awaiting its response
-    const successRes = await UsersService.registerUser(email, password);
-
-    res.json({ status: true, success: "User registered successfully" });
-  } catch (err) {
-    throw err;
+    const response = await UsersService.registerUser(email, password);
+    res.status(200).json(response);
+    //res.json({ status: true, success: "User registered successfully" });
+  } catch (error) {
+    res.status(400).json({
+      status: false,
+      message: "Error in registering the user in",
+      error: error.message,
+    });
   }
 };
 
+// check this one
 exports.login = async (req, res, next) => {
   try {
     // we are getting the email and the password from the request body.
@@ -50,14 +52,20 @@ exports.login = async (req, res, next) => {
 
     //sending the reponse with token
     res.status(200).json({ status: true, token: token });
-  } catch (err) {
-    throw err;
+  } catch (error) {
+    res.status(400).json({
+      status: false,
+      message: "Error in logging in",
+      error: error.message,
+    });
   }
 };
+
 exports.addProduct = async (req, res, next) => {
   try {
-    const { id, productName, price, description, image, rating, category } = req.body;
-    const successRes = await UsersService.addProduct(
+    const { id, productName, price, description, image, rating, category } =
+      req.body;
+    const response = await UsersService.addProduct(
       id,
       productName,
       price,
@@ -66,51 +74,53 @@ exports.addProduct = async (req, res, next) => {
       rating,
       category
     );
-
-    res.json({ status: true, success: "Product added successfully" });
-  } catch (err) {
-    throw err;
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(400).json({
+      status: false,
+      message: "Error in adding the item to wishlist",
+      error: error.message,
+    });
   }
 };
 
-// controller for getting the products.
 exports.getProducts = async (req, res, next) => {
   try {
-    const successRes = await UsersService.getProducts();
-    res.json({
-      status: true,
-      success: "Products received successfully",
-      products: successRes,
+    const response = await UsersService.getProducts();
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(400).json({
+      status: false,
+      message: "Error in adding the item to wishlist",
+      error: error.message,
     });
-  } catch (err) {
-    throw err;
   }
 };
 
 exports.addWishlist = async (req, res, next) => {
   try {
     const { userId, products } = req.body;
-    const successRes = await UsersService.addWishlist(userId, products);
-    res.json({
-      status: true,
-      success: "Added to wishlist",
+    const response = await UsersService.addWishlist(userId, products);
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(400).json({
+      status: false,
+      message: "Error in adding the item to wishlist",
+      error: error.message,
     });
-  } catch (err) {
-    throw err;
   }
 };
 exports.getWishlist = async (req, res, next) => {
   try {
     const { userId } = req.params;
-    console.log(userId);
-    const successRes = await UsersService.getWishlist(userId);
-    res.json({
-      status: true,
-      success: "wish list received successfully",
-      products: successRes,
+    const response = await UsersService.getWishlist(userId);
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(400).json({
+      status: false,
+      message: "Error in getting the wishlist items",
+      error: error.message,
     });
-  } catch (err) {
-    throw err;
   }
 };
 
@@ -118,16 +128,14 @@ exports.deleteWishlist = async (req, res, next) => {
   try {
     const userId = req.params.userId;
     const productId = req.params.productId;
-    console.log(req.params);
-    //console.log(userId);
-    const successRes = await UsersService.deleteWishlist(userId, productId);
-    res.json({
-      status: true,
-      success: "wish list item deleted successfully",
-      //products: successRes,
+    const response = await UsersService.deleteWishlist(userId, productId);
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(400).json({
+      status: false,
+      message: "Error in deleting an item from wishlist",
+      error: error.message,
     });
-  } catch (err) {
-    throw err;
   }
 };
 
@@ -135,31 +143,28 @@ exports.addToCart = async (req, res, next) => {
   try {
     const userId = req.body.userId;
     const products = req.body.products;
-    console.log(req.body);
-    console.log(userId);
-    console.log(products);
-    const successRes = await UsersService.addToCart(userId, products);
-    res.json({
-      status: true,
-      success: "Added to cart",
+    const response = await UsersService.addToCart(userId, products);
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(400).json({
+      status: false,
+      message: "Error in adding item to cart",
+      error: error.message,
     });
-  } catch (err) {
-    throw err;
   }
 };
 
 exports.getCart = async (req, res, next) => {
   try {
     const { userId } = req.params;
-    console.log(userId);
-    const successRes = await UsersService.getCart(userId);
-    res.json({
-      status: true,
-      success: "cart received successfully",
-      products: successRes,
+    const response = await UsersService.getCart(userId);
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(400).json({
+      status: false,
+      message: "Error in accessing cart items",
+      error: error.message,
     });
-  } catch (err) {
-    throw err;
   }
 };
 
@@ -167,95 +172,52 @@ exports.deleteCart = async (req, res, next) => {
   try {
     const userId = req.params.userId;
     const productId = req.params.productId;
-    console.log(req.params);
-    //console.log(userId);
-    const successRes = await UsersService.deleteCart(userId, productId);
-    res.json({
-      status: true,
-      success: "cart item deleted successfully",
-      //products: successRes,
-    });
-  } catch (err) {
-    throw err;
-  }
-};
-
-exports.moveToCart = async (req, res, next) => {
-  try {
-    const userId = req.params.userId;
-    const productId = req.params.productId;
-    console.log(req.params);
-    //console.log(userId);
-    const successRes = await UsersService.moveToCart(userId, productId);
-    res.json({
-      status: true,
-      success: "Moved to cart successfully",
-      //products: successRes,
-    });
-  } catch (err) {
-    throw err;
-  }
-};
-
-exports.moveToWishlist = async (req, res, next) => {
-  try {
-    const userId = req.params.userId;
-    const productId = req.params.productId;
-    console.log(req.params);
-    //console.log(userId);
-    const successRes = await UsersService.moveToWishlist(userId, productId);
-    res.json({
-      status: true,
-      success: "Moved to wishlist successfully",
-      //products: successRes,
-    });
-  } catch (err) {
-    throw err;
-  }
-};
-
-exports.paymentSheet = async (req, res) => {
-  try {
-    console.log("strip");
-    const { email, name, amount } = req.body;
-    console.log(email);
-    let customer;
-    const customers = await stripe.customers.list({
-      email: email,
-    });
-    customer = customers.data.find((customer) => customer.email === email);
-    if (customer == undefined) {
-      console.log("new customer");
-      customer = await stripe.customers.create({
-        email: email,
-        name: name,
-      });
-    }
-
-    const ephemeralKey = await stripe.ephemeralKeys.create(
-      { customer: customer.id },
-      { apiVersion: "2023-10-16" }
-    );
-    //const amountInCents = stripe.convertAmountToInteger("100.00", "inr");
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: amount*100, // amount should be the current cart - total
-      currency: "inr",
-      customer: customer.id,
-      description: "Your transaction description here",
-      automatic_payment_methods: {
-        enabled: true,
-      },
-    });
-
-    res.json({
-      paymentIntent: paymentIntent.client_secret,
-      ephemeralKey: ephemeralKey.secret,
-      customer: customer.id,
-      publishableKey:
-        "pk_test_51QvBubL4gE1upbxJftPvLWy2vQBXi1ciQwgS4eaZBQY9iV9m49N5BtSIK84nc9R7ruiHQau2GFm8fkmx7kNLmRZk00ZGZaIetJ",
-    });
+    const response = await UsersService.deleteCart(userId, productId);
+    res.status(200).json(response);
   } catch (error) {
-    console.log(error);
-    return res.json({ error: true, message: error.message, data: null });
+    res.status(400).json({
+      status: false,
+      message: "Unable to delete cart item",
+      error: error.message,
+    });
+  }
+};
+
+// exports.moveToCart = async (req, res, next) => {
+//   try {
+//     const userId = req.params.userId;
+//     const productId = req.params.productId;
+//     const response = await UsersService.moveToCart(userId, productId);
+//     res.status(200).json(response);
+//   } catch (error) {
+//     res.status(400).json({
+//       status: false,
+//       message: "Unable to move to wishlist",
+//       error: error.message,
+//     });
+//   }
+// };
+
+// exports.moveToWishlist = async (req, res, next) => {
+//   try {
+//     const userId = req.params.userId;
+//     const productId = req.params.productId;
+//     const response = await UsersService.moveToWishlist(userId, productId);
+//     res.status(200).json(response);
+//   } catch (error) {
+//     res.status(400).json({
+//       status: false,
+//       message: "Unable to move to wishlist",
+//       error: error.message,
+//     });
+//   }
+// };
+
+exports.payment = async (req, res) => {
+  try {
+    const paymentResponse = await UsersService.payment(req.body);
+    res.status[200].json(paymentResponse);
+  } catch (error) {
+    res.status(400).json({ message: "Payment failed", error: error.message });
   }
 };

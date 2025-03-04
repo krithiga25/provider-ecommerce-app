@@ -35,25 +35,31 @@
 # DELETE http://localhost:3000/wishlist/checkinglogin@gmail.com/PRD1
 # Content-Type: application/json
 
-# #payment:
+# # #payment:
 # POST http://localhost:3000/createpayment
 # Content-Type: application/json
 
 # {
 #     "email" : "newcustomer@gmail.com",
-#     "name" : "newcustomer"
+#     "name" : "newcustomer",
+#     "amount" : 100
 # }
 
-# add to cart
-POST http://localhost:3000/addproduct
-Content-Type: application/json
+# # add to cart
+# POST http://localhost:3000/addproduct
+# Content-Type: application/json
 
-{
-    "id": "PRD5",
-    "productName": "Women's Gold & Silver Bracelet",
-    "price": 6950,
-    "description": "A very cool bracelet.",
-    "image": "https://fakestoreapi.com/img/71pWzhdJNwL._AC_UL640_QL65_ML3_.jpg",
-    "rating": 4,
-    "category": "jewelry"
-  }
+#  {
+#     "id": "PRD15",
+#     "productName": "Canon EOS 80D DSLR Camera",
+#     "price": 49999,
+#     "description": "A mid-range DSLR camera with a 24.2MP APS-C sensor.",
+#     "image": "https://fakestoreapi.com/img/61sbMiUnoGL._AC_UL640_QL65_ML3_.jpg",
+#     "rating": 4,
+#     "category": "electronics"
+#   }
+
+
+#get products
+GET http://localhost:3000/products
+Content-Type: application/json

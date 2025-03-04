@@ -5,11 +5,12 @@ const {
   WishlistModel,
   CartModel,
 } = require("../model/user_model");
+
+require("dotenv").config();
+
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
-const stripe = require("stripe")(
-  "sk_test_51QvBubL4gE1upbxJIoEnTIhPLlHL7kaPPWMFyQ3dL7YiWXu9acLqAWXKdQCCpvauqO6uVvevze1c0o2xsk73IGOI00ZWuncfi8"
-);
+const stripe = require("stripe")(process.env.STRIPE_S_KEY);
 
 class UsersService {
   //we will call this function and then get the email and password
@@ -19,7 +20,8 @@ class UsersService {
       // creating a new document in the users collection.
       // we are using the model that we created.
       const createUser = new UserModel({ email, password });
-      return await createUser.save();
+      await createUser.save();
+      return { status: true, success: "User registered successfully" };
     } catch (err) {
       throw err;
     }
@@ -37,10 +39,30 @@ class UsersService {
     return jwt.sign(tokenData, secretKey, { expiresIn: jwt_expiry });
   }
 
-  static async addProduct(id, productName, price, description, image, rating, category) {
+  static async addProduct(
+    id,
+    productName,
+    price,
+    description,
+    image,
+    rating,
+    category
+  ) {
     try {
-      const product = new ProductModel({ id, productName, price, description, image, rating, category  });
-      return await product.save();
+      const product = new ProductModel({
+        id,
+        productName,
+        price,
+        description,
+        image,
+        rating,
+        category,
+      });
+      await product.save();
+      return {
+        success: true,
+        message: "Product added successfully",
+      };
     } catch (err) {
       throw err;
     }
@@ -51,7 +73,11 @@ class UsersService {
       // category based
       //  const products = await ProductModel.find({ category: 'electronics' })
       const products = await ProductModel.find();
-      return products;
+      return {
+        success: true,
+        message: "Products received successfully",
+        products: products,
+      };
     } catch (err) {
       throw err;
     }
@@ -97,9 +123,11 @@ class UsersService {
           productsList.push(product);
         }
       }
-
-      console.log(productsList);
-      return productsList;
+      return {
+        success: true,
+        message: "Wishlist items received successfully",
+        products: productsList,
+      };
     } catch (err) {
       throw err;
     }
@@ -119,6 +147,7 @@ class UsersService {
         { userId },
         { $pull: { products: productId } }
       );
+      return { success: true, message: "Product deleted from wishlist" };
     } catch (err) {
       throw err;
     }
@@ -188,7 +217,11 @@ class UsersService {
           productsList.push(productWithQuantity);
         }
       }
-      return productsList;
+      return {
+        status: true,
+        message: "Deleted the product from cart successfully",
+        products: productsList,
+      };
     } catch (err) {
       throw err;
     }
@@ -219,94 +252,126 @@ class UsersService {
           { $pull: { products: { product: productId } } }
         );
       }
+      return {
+        status: true,
+        message: "Deleted the product from cart successfully",
+      };
     } catch (err) {
       throw err;
     }
   }
 
   static async moveToCart(email, id) {
-    const user = await UserModel.findOne({ email: email });
-    const userId = user._id;
-    const product = await ProductModel.findOne({ id: id });
-    const productId = product._id;
-    const wishlist = await WishlistModel.findOne({ userId });
-    console.log(wishlist);
-    //add the product to the cart:
-    let cart = await CartModel.findOne({ userId });
-    if (!cart) {
-      // Create a new cart document if it doesn't exist
-      cart = new CartModel({ userId, products: [] });
-      await cart.save();
-      cart.products.push({ product: productId, quantity: 1 });
-      await cart.save();
-    } else {
-      await CartModel.updateOne(
+    try {
+      const user = await UserModel.findOne({ email: email });
+      const userId = user._id;
+      const product = await ProductModel.findOne({ id: id });
+      const productId = product._id;
+      const wishlist = await WishlistModel.findOne({ userId });
+      console.log(wishlist);
+      //add the product to the cart:
+      let cart = await CartModel.findOne({ userId });
+      if (!cart) {
+        // Create a new cart document if it doesn't exist
+        cart = new CartModel({ userId, products: [] });
+        await cart.save();
+        cart.products.push({ product: productId, quantity: 1 });
+        await cart.save();
+      } else {
+        await CartModel.updateOne(
+          { userId },
+          { $push: { products: { product: productId, quantity: 1 } } }
+        );
+      }
+      //removing the product from this wishlist.
+      await WishlistModel.updateOne(
         { userId },
-        { $push: { products: { product: productId, quantity: 1 } } }
+        { $pull: { products: productId } }
       );
+      return {
+        status: true,
+        message: "Moved to cart successfully",
+      };
+    } catch (error) {
+      throw error;
     }
-    //removing the product from this wishlist.
-    await WishlistModel.updateOne(
-      { userId },
-      { $pull: { products: productId } }
-    );
-    return;
   }
 
   static async moveToWishlist(email, id) {
-    const user = await UserModel.findOne({ email: email });
-    const userId = user._id;
-    const product = await ProductModel.findOne({ id: id });
-    const productId = product._id;
-    const cart = await CartModel.findOne({ userId });
-    console.log(cart);
-    if (cart) {
-      await CartModel.updateOne(
-        { userId },
-        { $pull: { products: { product: productId } } }
-      );
-    }
+    try {
+      const user = await UserModel.findOne({ email: email });
+      const userId = user._id;
+      const product = await ProductModel.findOne({ id: id });
+      const productId = product._id;
+      const cart = await CartModel.findOne({ userId });
+      console.log(cart);
+      if (cart) {
+        await CartModel.updateOne(
+          { userId },
+          { $pull: { products: { product: productId } } }
+        );
+      }
 
-    let wishlist = await WishlistModel.findOne({ userId });
-    if (!wishlist) {
-      wishlist = new WishlistModel({ userId, products: [] });
-      await wishlist.save();
-      wishlist.products.push(productId);
-      await wishlist.save();
-    } else {
-      await WishlistModel.updateOne(
-        { userId },
-        { $push: { products: productId } }
-      );
+      let wishlist = await WishlistModel.findOne({ userId });
+      if (!wishlist) {
+        wishlist = new WishlistModel({ userId, products: [] });
+        await wishlist.save();
+        wishlist.products.push(productId);
+        await wishlist.save();
+      } else {
+        await WishlistModel.updateOne(
+          { userId },
+          { $push: { products: productId } }
+        );
+      }
+      return {
+        status: true,
+        message: "Moved to wishlist successfully",
+      };
+    } catch (error) {
+      throw error;
     }
-    return;
   }
 
-  static async createPayment(amount) {
-    //console.log(createdUser);
-
+  static async payment(paymentDetails) {
     try {
-      const session = await stripe.checkout.sessions.create({
-        payment_method_types: ["card"],
-        line_items: [
-          {
-            price_data: {
-              currency: "usd",
-              product_data: {
-                name: "Total Order Payment",
-              },
-              unit_amount: amount * 100, // Convert to cents
-            },
-            quantity: 1,
-          },
-        ],
-        mode: "payment",
-        success_url: "http://localhost:3000/success",
-        cancel_url: "http://localhost:3000/cancel",
+      const { email, name, amount } = paymentDetails;
+      let customer;
+      const customers = await stripe.customers.list({
+        email: email,
       });
-      return session.id;
+      customer = customers.data.find((customer) => customer.email === email);
+      if (customer == undefined) {
+        console.log("new customer");
+        customer = await stripe.customers.create({
+          email: email,
+          name: name,
+        });
+      }
+
+      const ephemeralKey = await stripe.ephemeralKeys.create(
+        { customer: customer.id },
+        { apiVersion: "2023-10-16" }
+      );
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: amount * 100,
+        currency: "inr",
+        customer: customer.id,
+        description: "Your transaction description here",
+        automatic_payment_methods: {
+          enabled: true,
+        },
+      });
+
+      return {
+        paymentIntent: paymentIntent.client_secret,
+        ephemeralKey: ephemeralKey.secret,
+        customer: customer.id,
+        publishableKey: process.env.PUBLISH_KEY,
+        // "pk_test_51QvBubL4gE1upbxJftPvLWy2vQBXi1ciQwgS4eaZBQY9iV9m49N5BtSIK84nc9R7ruiHQau2GFm8fkmx7kNLmRZk00ZGZaIetJ",
+      };
     } catch (error) {
-      return "payment failed";
+      throw error;
     }
   }
 }
