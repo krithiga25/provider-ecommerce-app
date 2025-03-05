@@ -221,3 +221,33 @@ exports.payment = async (req, res) => {
     res.status(400).json({ message: "Payment failed", error: error.message });
   }
 };
+
+exports.paymentSheet = async (req, res) => {
+  try {
+    const { email, name, amount } = req.body;
+
+    // Create Customer if Not Exists
+    let customer;
+    const customers = await stripe.customers.list({ email: email });
+    customer = customers.data.find((c) => c.email === email);
+    if (!customer) {
+      customer = await stripe.customers.create({ email: email, name: name });
+    }
+
+    // Create Payment Intent
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: amount * 100, // Convert to cents
+      currency: "inr",
+      customer: customer.id,
+      payment_method_types: ["card"],
+      confirmation_method: "manual",
+      confirm: false,
+    });
+
+    res.json({
+      paymentIntent: paymentIntent.client_secret,
+    });
+  } catch (error) {
+    res.json({ error: true, message: error.message });
+  }
+};

@@ -73,6 +73,40 @@ const cartSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+const orderSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  products: [
+    {
+      product: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
+      quantity: { type: Number, required: true },
+      price: { type: Number, required: true },
+    },
+  ],
+  subtotal: { type: Number, required: true },
+  tax: { type: Number, required: true },
+  total: { type: Number, required: true },
+  paymentMethod: { type: String, required: true },
+  paymentStatus: {
+    type: String,
+    required: true,
+    enum: ["pending", "paid", "failed"],
+  },
+  orderStatus: {
+    type: String,
+    required: true,
+    enum: ["pending", "shipped", "delivered", "cancelled"],
+  },
+  shippingAddress: {
+    name: { type: String, required: true },
+    address: { type: String, required: true },
+    city: { type: String, required: true },
+    state: { type: String, required: true },
+    zip: { type: String, required: true },
+    country: { type: String, required: true },
+  },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
+});
 
 //encrypting the password
 userSchema.pre("save", async function () {
@@ -103,4 +137,12 @@ const WishlistModel = mongoose.model("wishlist", wishlistSchema);
 
 const CartModel = mongoose.model("cart", cartSchema);
 
-module.exports = { UserModel, ProductModel, WishlistModel, CartModel };
+const OrderModel = mongoose.model("Order", orderSchema);
+
+module.exports = {
+  UserModel,
+  ProductModel,
+  WishlistModel,
+  CartModel,
+  OrderModel,
+};

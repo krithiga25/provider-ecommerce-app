@@ -8,7 +8,7 @@ const app = express();
 
 const cors = require("cors");
 
-const whiteList = ["http://localhost:3000"];
+const whiteList = ["http://192.168.29.93:3000"];
 const corsOption = {
   origin: (origin, callback) => {
     if (whiteList.indexOf(origin) !== -1 || !origin) {
