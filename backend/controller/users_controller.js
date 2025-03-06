@@ -216,7 +216,7 @@ exports.deleteCart = async (req, res, next) => {
 exports.payment = async (req, res) => {
   try {
     const paymentResponse = await UsersService.payment(req.body);
-    res.status[200].json(paymentResponse);
+    res.status(200).json(paymentResponse);
   } catch (error) {
     res.status(400).json({ message: "Payment failed", error: error.message });
   }
