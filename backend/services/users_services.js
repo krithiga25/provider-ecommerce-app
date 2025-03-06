@@ -12,6 +12,23 @@ const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 const stripe = require("stripe")(process.env.STRIPE_S_KEY);
 
+function tokenizeSearchQuery(searchQuery) {
+  const tokens = searchQuery.split(" ");
+  return tokens.map((token) => token.toLowerCase());
+}
+
+function rankProducts(products, tokens) {
+  return products
+    .map((product) => {
+      const productNameWords = product.productName.toLowerCase().split(" ");
+      const descriptionWords = product.description.toLowerCase().split(" ");
+      const allWords = productNameWords.concat(descriptionWords);
+      const matchingTokens = allWords.filter((word) => tokens.includes(word));
+      return { product, score: matchingTokens.length };
+    })
+    .sort((a, b) => b.score - a.score);
+}
+
 class UsersService {
   //we will call this function and then get the email and password
   static async registerUser(email, password) {
@@ -60,7 +77,7 @@ class UsersService {
       });
       await product.save();
       return {
-        success: true,
+        status: true,
         message: "Product added successfully",
       };
     } catch (err) {
@@ -74,7 +91,7 @@ class UsersService {
       //  const products = await ProductModel.find({ category: 'electronics' })
       const products = await ProductModel.find();
       return {
-        success: true,
+        status: true,
         message: "Products received successfully",
         products: products,
       };
@@ -103,7 +120,11 @@ class UsersService {
         );
       }
 
-      return { success: true, message: "Products added to wishlist" };
+      return {
+        status: true,
+        message: "Products added to wishlist",
+        status: "true",
+      };
     } catch (err) {
       throw err;
     }
@@ -124,7 +145,7 @@ class UsersService {
         }
       }
       return {
-        success: true,
+        status: true,
         message: "Wishlist items received successfully",
         products: productsList,
       };
@@ -147,7 +168,7 @@ class UsersService {
         { userId },
         { $pull: { products: productId } }
       );
-      return { success: true, message: "Product deleted from wishlist" };
+      return { status: true, message: "Product deleted from wishlist" };
     } catch (err) {
       throw err;
     }
@@ -190,7 +211,7 @@ class UsersService {
           );
         }
       }
-      return { success: true, message: "Product added to cart" };
+      return { status: true, message: "Product added to cart" };
     } catch (err) {
       throw err;
     }
@@ -370,6 +391,23 @@ class UsersService {
         publishableKey: process.env.PUBLISH_KEY,
         // "pk_test_51QvBubL4gE1upbxJftPvLWy2vQBXi1ciQwgS4eaZBQY9iV9m49N5BtSIK84nc9R7ruiHQau2GFm8fkmx7kNLmRZk00ZGZaIetJ",
       };
+    } catch (error) {
+      throw error;
+    }
+  }
+  // Tokenize search query function
+  static async search(searchDetails) {
+    try {
+      console.log(searchDetails);
+      const tokens = tokenizeSearchQuery(searchDetails);
+      const products = await ProductModel.find({
+        $or: [
+          { productName: { $regex: tokens.join("|"), $options: "i" } },
+          { description: { $regex: tokens.join("|"), $options: "i" } },
+        ],
+      });
+      const rankedProducts = rankProducts(products, tokens);
+      return { searchResults: rankedProducts };
     } catch (error) {
       throw error;
     }

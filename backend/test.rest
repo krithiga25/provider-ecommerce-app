@@ -15,7 +15,7 @@
 
 # {
 #     "userId" : "checkinglogin@gmail.com",
-#     "products": ["PRD1"]
+#     "products": ["PRD2"]
     
 # }
 
@@ -32,7 +32,7 @@
 # PATCH http://localhost:3000/wishlist/checkinglogin@gmail.com/PRD1
 # Content-Type: application/json
 
-# DELETE http://localhost:3000/wishlist/checkinglogin@gmail.com/PRD1
+# DELETE http://localhost:3000/wishlist/checkinglogin@gmail.com/PRD2
 # Content-Type: application/json
 
 # # #payment:
@@ -61,5 +61,13 @@
 
 
 #get products
-GET http://localhost:3000/products
+# GET http://localhost:3000/products
+# Content-Type: application/json
+
+
+GET http://localhost:3000/search/shirt
 Content-Type: application/json
+
+# {
+#     "searchQuery" : "shirt"
+# }

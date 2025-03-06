@@ -218,7 +218,9 @@ exports.payment = async (req, res) => {
     const paymentResponse = await UsersService.payment(req.body);
     res.status(200).json(paymentResponse);
   } catch (error) {
-    res.status(400).json({ message: "Payment failed", error: error.message });
+    res
+      .status(400)
+      .json({ status: false, message: "Payment failed", error: error.message });
   }
 };
 
@@ -249,5 +251,16 @@ exports.paymentSheet = async (req, res) => {
     });
   } catch (error) {
     res.json({ error: true, message: error.message });
+  }
+};
+
+exports.search = async (req, res) => {
+  try {
+    const searchResponse = await UsersService.search(req.params.searchItem);
+    res.status(200).json(searchResponse);
+  } catch (error) {
+    res
+      .status(400)
+      .json({ status: false, message: "Search failed", error: error.message });
   }
 };

@@ -33,4 +33,7 @@ router.delete("/cart/:userId/:productId", controller.deleteCart);
 //payment api:
 router.post("/createpayment", controller.payment);
 
+//search:
+router.get("/search/:searchItem", controller.search);
+
 module.exports = router;
