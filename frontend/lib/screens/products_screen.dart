@@ -68,6 +68,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                           return Padding(
                             padding: const EdgeInsets.only(top: 16),
                             child: Card(
+                              color: Colors.white,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(16.0),
                               ),
@@ -75,10 +76,13 @@ class _ProductsScreenState extends State<ProductsScreen> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceEvenly,
                                 children: [
-                                  CachedNetworkImage(
-                                    imageUrl: product.imageUrl,
-                                    fit: BoxFit.cover,
-                                    height: 200,
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: CachedNetworkImage(
+                                      imageUrl: product.imageUrl,
+                                      fit: BoxFit.cover,
+                                      height: 200,
+                                    ),
                                   ),
                                   Column(
                                     children: [
@@ -117,9 +121,18 @@ class _ProductsScreenState extends State<ProductsScreen> {
                                       Row(
                                         children: [
                                           if (!isInCart)
-                                            TextButton(
-                                              child: Text("Add to Cart"),
-                                              onPressed: () {
+                                            ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor:
+                                                    Colors
+                                                        .purpleAccent
+                                                        .shade100,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                ),
+                                              ),
+                                              onPressed: () async {
                                                 final cartProduct = CartProduct(
                                                   id: product.id,
                                                   title: product.title,
@@ -129,59 +142,62 @@ class _ProductsScreenState extends State<ProductsScreen> {
                                                       product.description,
                                                   rating: product.rating,
                                                 );
-                                                cartProvider.addProduct(cartProduct).then((
-                                                  status,
-                                                ) {
-                                                  if (status) {
-                                                    showCustomSnackBar(
-                                                      // ignore: use_build_context_synchronously
-                                                      context,
-                                                      "Product added to cart!",
-                                                    );
-                                                  } else {
-                                                    showCustomSnackBar(
-                                                      // ignore: use_build_context_synchronously
-                                                      context,
-                                                      "Failed to add to cart!",
-                                                    );
-                                                  }
-                                                });
+                                                final status =
+                                                    await cartProvider
+                                                        .addProduct(
+                                                          cartProduct,
+                                                        );
+                                                showCustomSnackBar(
+                                                  context,
+                                                  status
+                                                      ? "Product added to cart!"
+                                                      : "Failed to add to cart!",
+                                                );
                                               },
+                                              child: Text(
+                                                "Add to Cart",
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
                                             ),
                                           if (isInCart)
-                                            Row(
-                                              children: [
-                                                IconButton(
-                                                  icon: Icon(Icons.remove),
-                                                  onPressed: () {
-                                                    cartProvider
-                                                        .decreaseQuantity(
-                                                          product.id,
-                                                        );
-                                                  },
+                                            Container(
+                                              // padding: EdgeInsets.all(10),
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                  color: Colors.grey,
                                                 ),
-                                                Text('$quantity'),
-                                                IconButton(
-                                                  icon: Icon(Icons.add),
-                                                  onPressed: () {
-                                                    cartProvider
-                                                        .increaseQuantity(
-                                                          product.id,
-                                                        );
-                                                  },
-                                                ),
-                                                IconButton(
-                                                  icon: Icon(
-                                                    Icons.delete,
-                                                    color: Colors.red,
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
+                                              child: Row(
+                                                children: [
+                                                  IconButton(
+                                                    icon: Icon(Icons.remove),
+                                                    onPressed:
+                                                        () => cartProvider
+                                                            .decreaseQuantity(
+                                                              product.id,
+                                                            ),
                                                   ),
-                                                  onPressed: () {
-                                                    cartProvider.removeProduct(
-                                                      product.id,
-                                                    );
-                                                  },
-                                                ),
-                                              ],
+                                                  Text(
+                                                    '$quantity',
+                                                    style: TextStyle(
+                                                      fontSize: 18,
+                                                    ),
+                                                  ),
+                                                  IconButton(
+                                                    icon: Icon(Icons.add),
+                                                    onPressed:
+                                                        () => cartProvider
+                                                            .increaseQuantity(
+                                                              product.id,
+                                                            ),
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           IconButton(
                                             icon: Icon(
@@ -193,41 +209,37 @@ class _ProductsScreenState extends State<ProductsScreen> {
                                                       ? Colors.red
                                                       : null,
                                             ),
-                                            onPressed: () {
+                                            onPressed: () async {
                                               if (isFavorite) {
                                                 wishListProvider.removeProduct(
                                                   product.id,
                                                   "checkinglogin@gmail.com",
                                                 );
                                               } else {
-                                                wishListProvider
-                                                    .addProduct(
-                                                      WishListItems(
-                                                        id: product.id,
-                                                        title: product.title,
-                                                        price: product.price,
-                                                        imageUrl:
-                                                            product.imageUrl,
-                                                        description:
-                                                            product.description,
-                                                        rating: product.rating,
-                                                      ),
-                                                      "checkinglogin@gmail.com",
-                                                    )
-                                                    .then((status) {
-                                                      if (status) {
-                                                        ScaffoldMessenger.of(
-                                                          // ignore: use_build_context_synchronously
-                                                          context,
-                                                        ).showSnackBar(
-                                                          SnackBar(
-                                                            content: Text(
-                                                              'Product added to wishlist',
-                                                            ),
-                                                          ),
+                                                final wishlistProduct =
+                                                    WishListItems(
+                                                      id: product.id,
+                                                      title: product.title,
+                                                      price: product.price,
+                                                      imageUrl:
+                                                          product.imageUrl,
+                                                      description:
+                                                          product.description,
+                                                      rating: product.rating,
+                                                    );
+
+                                                final status =
+                                                    await wishListProvider
+                                                        .addProduct(
+                                                          wishlistProduct,
+                                                          "checkinglogin@gmail.com",
                                                         );
-                                                      }
-                                                    });
+                                                showCustomSnackBar(
+                                                  context,
+                                                  status
+                                                      ? "Product added to wishlist!"
+                                                      : "Failed to add to wishlist!",
+                                                );
                                               }
                                             },
                                           ),
@@ -347,7 +359,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
                                         id: product.id,
                                         title: product.title,
                                         price: product.price,
-                                        imageUrl: "",
+                                        //no image url.
+                                        imageUrl: "assets/jacket2.jpg",
                                         description: product.description,
                                         rating: product.rating,
                                       );
@@ -403,7 +416,7 @@ Widget _searchWidget(ProductProvider productProvider, BuildContext context) {
                 productProvider.searchProduct(controller.text);
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => SearchedProductsScreen(),
+                    builder: (context) => SearchedProductsScreen(searchQuery: controller.text,),
                   ),
                 );
               },

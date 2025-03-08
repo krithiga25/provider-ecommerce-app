@@ -86,7 +86,7 @@ class _NavigationExampleState extends State<NavigationExample> {
         message,
         style: TextStyle(color: Colors.white, fontSize: 16),
       ),
-      backgroundColor: Colors.black45,
+      backgroundColor: Colors.black87,
       behavior: SnackBarBehavior.floating,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       margin: EdgeInsets.all(16),
