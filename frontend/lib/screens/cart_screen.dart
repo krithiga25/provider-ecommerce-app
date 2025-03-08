@@ -62,6 +62,7 @@ class _CartScreenState extends State<CartScreen> {
                                         description: item.description,
                                         price: item.price,
                                         imageUrl: item.imageUrl,
+                                        rating: 3 
                                       ),
                                       "checkinglogin@gmail.com");
                                 }
@@ -69,14 +70,13 @@ class _CartScreenState extends State<CartScreen> {
                               },
                             ),
                           ]),
-                          //this will lead to the order page consisting of all the order items and then a payment method?
-                          // for now => the list of cart items will be put in the orders page as in Map Data strcuture, with oder id as the key.
                           TextButton(
                               onPressed: () async {
                                 double totalQuantity =
                                     cartItems.fold(0, (a, b) => a + b.price);
                                 final status =
                                     await initPaymentSheet(totalQuantity);
+                                print(status);
                                 if (status == "success") {
                                   Navigator.push(
                                     // ignore: use_build_context_synchronously

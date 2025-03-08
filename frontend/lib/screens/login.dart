@@ -2,12 +2,10 @@
 
 import 'dart:convert';
 import 'package:ecommerce_provider/screens/products_screen.dart';
+import 'package:ecommerce_provider/screens/shared.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-final uri = 'http://192.168.29.93:3000/';
-final url = "${uri}login";
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -39,7 +37,7 @@ class LoginScreenState extends State<LoginScreen> {
         "password": _passwordController.text
       };
 
-      var response = await http.post(Uri.parse(url),
+      var response = await http.post(Uri.parse('$url/login'),
           headers: {"Content-Type": "application/json"},
           body: jsonEncode(reqBody));
 

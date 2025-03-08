@@ -123,7 +123,6 @@ class UsersService {
       return {
         status: true,
         message: "Products added to wishlist",
-        status: "true",
       };
     } catch (err) {
       throw err;

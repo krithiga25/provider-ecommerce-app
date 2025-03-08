@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:ecommerce_provider/models/wish_list.dart';
+import 'package:ecommerce_provider/screens/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -11,16 +12,17 @@ class WishListProvider with ChangeNotifier {
   }
 
   // Function to add a new product
-  void addProduct(WishListItems wishListItem, String userId) {
+  Future<bool> addProduct(WishListItems wishListItem, String userId) async {
     _wishListItems.add(wishListItem);
-    addWishlist(userId, wishListItem.id);
     notifyListeners();
+    return await addWishlist(userId, wishListItem.id);
   }
 
-  void removeProduct(String productId, String email) {
+  Future<bool> removeProduct(String productId, String email) async {
     _wishListItems.removeWhere((product) => product.id == productId);
-    removeWishlist(email, productId);
+
     notifyListeners();
+    return await removeWishlist(email, productId);
   }
 
   void clearWishList(String productId, String email) {
@@ -33,42 +35,38 @@ class WishListProvider with ChangeNotifier {
     return _wishListItems.any((item) => item.id == productId);
   }
 
-  Future<void> addWishlist(user, prodId) async {
+  Future<bool> addWishlist(user, prodId) async {
     var reqBody = {
       "userId": user,
-      "products": [prodId]
+      "products": [prodId],
     };
     final response = await http.post(
-        Uri.parse('http://192.168.29.93:3000/wishlist'),
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode(reqBody));
-    var jsonReponse = jsonDecode(response.body);
-    if (jsonReponse['status']) {
-      print("add successfully");
-    }
-  }
-
-  Future<void> removeWishlist(user, prodId) async {
-    final response = await http.delete(
-      Uri.parse('http://192.168.29.93:3000/wishlist/$user/$prodId'),
+      Uri.parse('$url/wishlist'),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode(reqBody),
     );
     var jsonReponse = jsonDecode(response.body);
-    if (jsonReponse['status']) {
-      print("deleted successfully");
-    }
+    return jsonReponse['status'];
+  }
+
+  Future<bool> removeWishlist(user, prodId) async {
+    final response = await http.delete(
+      Uri.parse('$url/wishlist/$user/$prodId'),
+    );
+    var jsonReponse = jsonDecode(response.body);
+    return jsonReponse['status'];
   }
 
   Future<void> fetchWishlistProducts(String user) async {
-    final response = await http.get(
-      Uri.parse('http://192.168.29.93:3000/wishlist/$user'),
-    );
+    final response = await http.get(Uri.parse('$url/wishlist/$user'));
 
     if (response.statusCode == 200) {
       final jsonResponse = jsonDecode(response.body);
       final jsonData = jsonResponse['products'];
-      _wishListItems = jsonData
-          .map<WishListItems>((product) => WishListItems.fromJson(product))
-          .toList();
+      _wishListItems =
+          jsonData
+              .map<WishListItems>((product) => WishListItems.fromJson(product))
+              .toList();
       print(_wishListItems);
       notifyListeners();
     } else {
@@ -77,9 +75,7 @@ class WishListProvider with ChangeNotifier {
   }
 
   Future<void> moveToCart(user, prodId) async {
-    final response = await http.patch(
-      Uri.parse('http://192.168.29.93:3000/cart/$user/$prodId'),
-    );
+    final response = await http.patch(Uri.parse('$url/cart/$user/$prodId'));
     var jsonReponse = jsonDecode(response.body);
     if (jsonReponse['status']) {
       print("Moved to cart successfully");

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:ecommerce_provider/screens/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:http/http.dart' as http;
@@ -7,9 +8,13 @@ import 'package:http/http.dart' as http;
 Future<String> initPaymentSheet(double amount) async {
   String status = '';
   try {
-    var reqBody = {"email": "newcustomer@gmail.com", "name": "newcustomer", "amount": amount};
+    var reqBody = {
+      "email": "newcustomer@gmail.com",
+      "name": "newcustomer",
+      "amount": amount
+    };
     final response = await http.post(
-      Uri.parse('http://192.168.29.93:3000/createpayment'),
+      Uri.parse('$url/createpayment'),
       headers: {"Content-Type": "application/json"},
       body: jsonEncode(reqBody),
     );
@@ -33,43 +38,46 @@ Future<String> initPaymentSheet(double amount) async {
       ),
       // Other billing details
     );
-    try{
+    try {
       await Stripe.instance.initPaymentSheet(
-      paymentSheetParameters: SetupPaymentSheetParameters(
-        customFlow: false,
-        merchantDisplayName: 'KRITHIGA',
-        paymentIntentClientSecret: paymentIntent,
-        customerEphemeralKeySecret: ephemeralKey,
-        customerId: customer,
-        style: ThemeMode.light,
-        billingDetails: billingDetails,
-        googlePay: const PaymentSheetGooglePay(
-          merchantCountryCode: 'IN',
-          currencyCode: 'inr',
-          testEnv: true,
+        paymentSheetParameters: SetupPaymentSheetParameters(
+          customFlow: false,
+          merchantDisplayName: 'KRITHIGA',
+          paymentIntentClientSecret: paymentIntent,
+          customerEphemeralKeySecret: ephemeralKey,
+          customerId: customer,
+          style: ThemeMode.light,
+          billingDetails: billingDetails,
+          googlePay: const PaymentSheetGooglePay(
+            merchantCountryCode: 'IN',
+            currencyCode: 'inr',
+            testEnv: true,
+          ),
         ),
-      ),
-    );
-    }catch(e){
+      );
+    } catch (e) {
       print(e.toString());
     }
-    await Stripe.instance.presentPaymentSheet().then((value) {
-      status = "success";
-    }).onError((error, stackTrace) {
-      if (error is StripeException) {
-        // ScaffoldMessenger.of().showSnackBar(
-        //   SnackBar(content: Text('${error.error.localizedMessage}')),
-        // );
-        status = ('${error.error.localizedMessage}');
-        print('${error.error.localizedMessage}');
-      } else {
-        // ScaffoldMessenger.of(Get.context!).showSnackBar(
-        //   SnackBar(content: Text('Stripe Error: $error')),
-        // );
-         status = ('Stripe Error: $error');
-        print('Stripe Error: $error');
-      }
-    });
+    await Stripe.instance
+        .presentPaymentSheet()
+        .then((value) {
+          status = "success";
+        })
+        .onError((error, stackTrace) {
+          if (error is StripeException) {
+            // ScaffoldMessenger.of().showSnackBar(
+            //   SnackBar(content: Text('${error.error.localizedMessage}')),
+            // );
+            status = ('${error.error.localizedMessage}');
+            print('${error.error.localizedMessage}');
+          } else {
+            // ScaffoldMessenger.of(Get.context!).showSnackBar(
+            //   SnackBar(content: Text('Stripe Error: $error')),
+            // );
+            status = ('Stripe Error: $error');
+            print('Stripe Error: $error');
+          }
+        });
     return status;
   } catch (e) {
     // ScaffoldMessenger.of(Get.context!).showSnackBar(
@@ -78,7 +86,7 @@ Future<String> initPaymentSheet(double amount) async {
     // ScaffoldMessenger.of(Get.context!).showSnackBar(
     //   SnackBar(content: Text(e.toString())),
     // );
+    print('Error initializing payment: $e');
     return ('Error initializing payment: $e');
-    //print('Error initializing payment: $e');
   }
 }

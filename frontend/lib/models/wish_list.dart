@@ -4,6 +4,7 @@ class WishListItems {
   final String description;
   final int price;
   final String imageUrl;
+  final int rating;
 
   WishListItems({
     required this.id,
@@ -11,6 +12,7 @@ class WishListItems {
     required this.description,
     required this.price,
     required this.imageUrl,
+    required this.rating,
   });
     factory WishListItems.fromJson(Map<String, dynamic> json) {
     return WishListItems(
@@ -19,6 +21,7 @@ class WishListItems {
       description: json['description'],
       price: json['price'],
       imageUrl: json['image'],
+      rating:  json['rating'],
     );
   }
 }

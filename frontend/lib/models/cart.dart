@@ -4,6 +4,7 @@ class CartProduct {
   final String description;
   final int price;
   final String imageUrl;
+  final int rating;
   int quantity;
   CartProduct({
     required this.id,
@@ -11,6 +12,7 @@ class CartProduct {
     required this.description,
     required this.price,
     required this.imageUrl,
+    required this.rating,
     this.quantity = 1,
   });
 
@@ -25,6 +27,7 @@ class CartProduct {
       price: product['price'],
       imageUrl: product['image'],
       quantity: quantity,
+      rating: product['rating'],
     );
   }
 }

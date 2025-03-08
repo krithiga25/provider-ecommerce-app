@@ -1,8 +1,16 @@
+import 'package:ecommerce_provider/providers/cart_provider.dart';
+import 'package:ecommerce_provider/providers/product_provider.dart';
+import 'package:ecommerce_provider/providers/wish_list_provider.dart';
 import 'package:ecommerce_provider/screens/cart_screen.dart';
 import 'package:ecommerce_provider/screens/orders_screen.dart';
 import 'package:ecommerce_provider/screens/products_screen.dart';
 import 'package:ecommerce_provider/screens/wish_list_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+final url =
+    //'http://192.168.29.93:3000'
+    'https://fs-ecommerce-app.onrender.com';
 
 class NavigationExample extends StatefulWidget {
   const NavigationExample({super.key});
@@ -12,8 +20,22 @@ class NavigationExample extends StatefulWidget {
 }
 
 class _NavigationExampleState extends State<NavigationExample> {
-  int currentPageIndex = 0;
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<ProductProvider>(context, listen: false).fetchProducts();
+    Provider.of<WishListProvider>(
+      context,
+      listen: false,
+    ).fetchWishlistProducts("checkinglogin@gmail.com");
+    Provider.of<CartProvider>(
+      context,
+      listen: false,
+    ).fetchCartProducts("checkinglogin@gmail.com");
+  }
 
+  int currentPageIndex = 0;
+  CartProvider cartProvider = CartProvider();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,40 +45,54 @@ class _NavigationExampleState extends State<NavigationExample> {
             currentPageIndex = index;
           });
         },
-        indicatorColor: Colors.amber,
+        indicatorColor: Colors.purpleAccent.shade100,
         selectedIndex: currentPageIndex,
         destinations: const <Widget>[
-          NavigationDestination(
-            label: 'Home',
-            icon: Icon(Icons.home),
-          ),
-          NavigationDestination(
-            label: 'wishlist',
-            icon: Icon(Icons.favorite),
-          ),
+          NavigationDestination(label: 'Home', icon: Icon(Icons.home_outlined)),
+          NavigationDestination(label: 'wishlist', icon: Icon(Icons.favorite)),
           NavigationDestination(
             label: 'cart',
-            icon: Icon(Icons.shopping_cart),
+            icon: Badge(
+              label: Text('2'),
+              backgroundColor: Colors.blueGrey,
+              child: Icon(Icons.shopping_cart),
+            ),
           ),
-          NavigationDestination(
-            label: 'Profile',
-            icon: Icon(Icons.person),
-          ),
+          NavigationDestination(label: 'Orders', icon: Icon(Icons.receipt)),
         ],
       ),
-      body: <Widget>[
-        /// Home page
-        ProductsScreen(),
+      body:
+          <Widget>[
+            /// Home page
+            ProductsScreen(),
 
-        /// wishlist page
-        WishListScreen(),
+            /// wishlist page
+            WishListScreen(),
 
-        /// cart screen
-        CartScreen(),
+            /// cart screen
+            CartScreen(),
 
-        /// orders page:
-        OrdersPage(),
-      ][currentPageIndex],
+            /// orders page:
+            OrdersPage(),
+          ][currentPageIndex],
     );
   }
 }
+
+
+    void showCustomSnackBar(BuildContext context, String message) {
+    final snackBar = SnackBar(
+      content: Text(
+        message,
+        style: TextStyle(color: Colors.white, fontSize: 16),
+      ),
+      backgroundColor: Colors.black45,
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      margin: EdgeInsets.all(16),
+      elevation: 6,
+      duration: Duration(seconds: 3),
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }

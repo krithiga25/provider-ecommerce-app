@@ -3,11 +3,9 @@
 import 'dart:convert';
 
 import 'package:ecommerce_provider/screens/login.dart';
+import 'package:ecommerce_provider/screens/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-
-final uri = 'http://192.168.29.93:3000/';
-final url = "${uri}registration";
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({super.key});
@@ -28,7 +26,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
         "password": _passwordController.text
       };
 
-      var response = await http.post(Uri.parse(url),
+      var response = await http.post(Uri.parse('$url/registration'),
           headers: {"Content-Type": "application/json"},
           body: jsonEncode(regBody));
       var jsonReponse = jsonDecode(response.body);
