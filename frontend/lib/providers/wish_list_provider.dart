@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:ecommerce_provider/models/wish_list.dart';
 import 'package:ecommerce_provider/screens/shared.dart';
@@ -58,19 +59,33 @@ class WishListProvider with ChangeNotifier {
   }
 
   Future<void> fetchWishlistProducts(String user) async {
-    final response = await http.get(Uri.parse('$url/wishlist/$user'));
-
-    if (response.statusCode == 200) {
-      final jsonResponse = jsonDecode(response.body);
-      final jsonData = jsonResponse['products'];
-      _wishListItems =
-          jsonData
-              .map<WishListItems>((product) => WishListItems.fromJson(product))
-              .toList();
-      print(_wishListItems);
-      notifyListeners();
-    } else {
-      throw Exception('Failed to load products');
+    // int retries = 0;
+    // const int maxRetries = 3;
+    const int delay = 500;
+    while (true) {
+      try {
+        final response = await http.get(Uri.parse('$url/wishlist/$user'));
+        if (response.statusCode == 200) {
+          final jsonResponse = jsonDecode(response.body);
+          final jsonData = jsonResponse['products'];
+          _wishListItems =
+              jsonData
+                  .map<WishListItems>(
+                    (product) => WishListItems.fromJson(product),
+                  )
+                  .toList();
+          print(_wishListItems);
+          notifyListeners();
+          break;
+        } else {
+          //retries++;
+          await Future.delayed(Duration(milliseconds: delay));
+        }
+      } on SocketException {
+        // Handle SocketException, retry
+        // retries++;
+        await Future.delayed(Duration(milliseconds: delay));
+      }
     }
   }
 

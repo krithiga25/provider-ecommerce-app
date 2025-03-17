@@ -11,19 +11,19 @@ import 'package:ecommerce_provider/screens/wish_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class SearchedProductsScreen extends StatefulWidget {
-  const SearchedProductsScreen({super.key, required this.searchQuery});
-  final String searchQuery;
+class CategoryProductsScreen extends StatefulWidget {
+  const CategoryProductsScreen({super.key, required this.categoryName});
+  final String categoryName;
 
   @override
-  State<SearchedProductsScreen> createState() => _SearchedProductsScreenState();
+  State<CategoryProductsScreen> createState() => _CategoryProductsScreenState();
 }
 
-class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
+class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
   List<Product> sortedProducts = [];
   List<Product> _originalProducts = [];
   String? _selectedCategory;
-  RangeValues _priceRange = const RangeValues(50, 30000);
+  RangeValues _priceRange = const RangeValues(50, 5000);
   bool _showFilterPanel = false;
   int _selectedFilterIndex = 0;
   int? _selectedRating;
@@ -35,7 +35,10 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
       context,
       listen: false,
     );
-    _originalProducts = productProvider.searchProducts;
+    _originalProducts =
+        productProvider.products
+            .where((product) => product.category == widget.categoryName)
+            .toList();
     sortedProducts = _originalProducts;
   }
 
@@ -70,13 +73,9 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
           icon: Icon(Icons.arrow_back_ios_new_outlined),
         ),
         automaticallyImplyLeading: false,
-        title: Text('Search for "${widget.searchQuery}"'),
+        title: Text('Search for "${widget.categoryName}"'),
       ),
-      body:
-      // Consumer<ProductProvider>(
-      //   builder: (context, productProvider, child) {
-      //final productsList = productProvider.searchProducts;
-      Consumer<CartProvider>(
+      body: Consumer<CartProvider>(
         builder: (context, cartProvider, child) {
           return Consumer<WishListProvider>(
             builder: (context, wishListProvider, child) {
@@ -87,7 +86,7 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
                         child: Text('Can not find products for your search!'),
                       )
                       : GridView.builder(
-                        padding: const EdgeInsets.only(top: 60.0, bottom: 60),
+                        padding: const EdgeInsets.only(top: 60, bottom: 60),
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           mainAxisExtent: 320,
                           crossAxisCount: 2,
@@ -253,14 +252,14 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
                                 },
                                 labelType: NavigationRailLabelType.all,
                                 destinations: const [
-                                  NavigationRailDestination(
-                                    padding: EdgeInsets.only(
-                                      left: 25,
-                                      right: 25,
-                                    ),
-                                    icon: Icon(Icons.category),
-                                    label: Text('Category'),
-                                  ),
+                                  // NavigationRailDestination(
+                                  //   padding: EdgeInsets.only(
+                                  //     left: 25,
+                                  //     right: 25,
+                                  //   ),
+                                  //   icon: Icon(Icons.category),
+                                  //   label: Text('Category'),
+                                  // ),
                                   NavigationRailDestination(
                                     padding: EdgeInsets.only(
                                       left: 25,
@@ -310,46 +309,24 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
           );
         },
       ),
-      //   },
-      // ),
+      //},
     );
+    //   },
+    // );
   }
 
   Widget _buildFilterOptions() {
     switch (_selectedFilterIndex) {
+      // no category case, since it is already from the category data.
+      // case 0:
+      //   return _buildCategoryFilter();
       case 0:
-        return _buildCategoryFilter();
-      case 1:
         return _buildPriceFilter();
-      case 2:
+      case 1:
         return _buildRatingFilter();
       default:
         return const SizedBox();
     }
-  }
-
-  Widget _buildCategoryFilter() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Select Category:',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 12),
-        ...['Footwear', 'Clothes', 'Accessories'].map((category) {
-          return CheckboxListTile(
-            value: _selectedCategory == category,
-            onChanged: (value) {
-              setState(() {
-                _selectedCategory = value! ? category : null;
-              });
-            },
-            title: Text(category),
-          );
-        }),
-      ],
-    );
   }
 
   Widget _buildPriceFilter() {
@@ -363,7 +340,7 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
         RangeSlider(
           values: _priceRange,
           min: 50,
-          max: 30000,
+          max: 5000,
           divisions: 59,
           labels: RangeLabels(
             '\$${_priceRange.start.round()}',
@@ -432,69 +409,66 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
       context: context,
       builder: (ctx) {
         // List<Product> products = productsList.map((e) => e as Product).toList();
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 40),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                title: Text('Price: Low to High'),
-                onTap: () {
-                  setState(() {
-                    sortedProducts.sort((a, b) => a.price.compareTo(b.price));
-                  });
-                  Navigator.pop(ctx);
-                },
-              ),
-              ListTile(
-                title: Text('Price: High to Low'),
-                onTap: () {
-                  setState(() {
-                    sortedProducts.sort((a, b) => b.price.compareTo(a.price));
-                  });
-                  Navigator.pop(ctx);
-                },
-              ),
-              ListTile(
-                title: Text('Rating: High to Low'),
-                onTap: () {
-                  setState(() {
-                    sortedProducts.sort((a, b) => b.rating.compareTo(a.rating));
-                  });
-                  Navigator.pop(ctx);
-                },
-              ),
-              ListTile(
-                title: Text('Most Popular'),
-                onTap: () {
-                  setState(() {
-                    sortedProducts.sort(
-                      (a, b) => b.ratingCount.compareTo(a.ratingCount),
-                    );
-                  });
-                  Navigator.pop(ctx);
-                },
-              ),
-              ListTile(
-                title: Text('Alphabetical (A to Z)'),
-                onTap: () {
-                  setState(() {
-                    sortedProducts.sort((a, b) => a.title.compareTo(b.title));
-                  });
-                  Navigator.pop(ctx);
-                },
-              ),
-              ListTile(
-                title: Text('Alphabetical (Z to A)'),
-                onTap: () {
-                  setState(() {
-                    sortedProducts.sort((a, b) => b.title.compareTo(a.title));
-                  });
-                  Navigator.pop(ctx);
-                },
-              ),
-            ],
-          ),
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              title: Text('Price: Low to High'),
+              onTap: () {
+                setState(() {
+                  sortedProducts.sort((a, b) => a.price.compareTo(b.price));
+                });
+                Navigator.pop(ctx);
+              },
+            ),
+            ListTile(
+              title: Text('Price: High to Low'),
+              onTap: () {
+                setState(() {
+                  sortedProducts.sort((a, b) => b.price.compareTo(a.price));
+                });
+                Navigator.pop(ctx);
+              },
+            ),
+            ListTile(
+              title: Text('Rating: High to Low'),
+              onTap: () {
+                setState(() {
+                  sortedProducts.sort((a, b) => b.rating.compareTo(a.rating));
+                });
+                Navigator.pop(ctx);
+              },
+            ),
+            ListTile(
+              title: Text('Most Popular'),
+              onTap: () {
+                setState(() {
+                  sortedProducts.sort(
+                    (a, b) => b.ratingCount.compareTo(a.ratingCount),
+                  );
+                });
+                Navigator.pop(ctx);
+              },
+            ),
+            ListTile(
+              title: Text('Alphabetical (A to Z)'),
+              onTap: () {
+                setState(() {
+                  sortedProducts.sort((a, b) => a.title.compareTo(b.title));
+                });
+                Navigator.pop(ctx);
+              },
+            ),
+            ListTile(
+              title: Text('Alphabetical (Z to A)'),
+              onTap: () {
+                setState(() {
+                  sortedProducts.sort((a, b) => b.title.compareTo(a.title));
+                });
+                Navigator.pop(ctx);
+              },
+            ),
+          ],
         );
       },
     );

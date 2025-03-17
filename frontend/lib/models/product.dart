@@ -43,7 +43,7 @@ class Product {
       id: json['id'],
       description: json['description'],
       price: json['price'],
-      imageUrl: 'assets/jacket2.jpg',
+      imageUrl: json['image'],
       rating: json['rating'],
       category: json['category'],
     );

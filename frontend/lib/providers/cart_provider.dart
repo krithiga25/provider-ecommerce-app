@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:ecommerce_provider/models/cart.dart';
 import 'package:ecommerce_provider/screens/shared.dart';
@@ -99,23 +100,36 @@ class CartProvider with ChangeNotifier {
   }
 
   Future<void> fetchCartProducts(String user) async {
-    final response = await http.get(Uri.parse('$url/cart/$user'));
+    // int retries = 0;
+    // const int maxRetries = 3;
+    const int delay = 500;
+    while (true) {
+      try {
+        final response = await http.get(Uri.parse('$url/cart/$user'));
 
-    if (response.statusCode == 200) {
-      final jsonResponse = jsonDecode(response.body);
-      print(jsonResponse);
-      final jsonData =
-          jsonResponse['products']; // this itself contains the quantity
-      print(jsonResponse['quantity']); //null
-      print(jsonData);
-      _cartProducts =
-          jsonData
-              .map<CartProduct>((product) => CartProduct.fromJson(product))
-              .toList();
-      print(_cartProducts);
-      notifyListeners();
-    } else {
-      throw Exception('Failed to load products');
+        if (response.statusCode == 200) {
+          final jsonResponse = jsonDecode(response.body);
+          print(jsonResponse);
+          final jsonData =
+              jsonResponse['products']; // this itself contains the quantity
+          print(jsonResponse['quantity']); //null
+          print(jsonData);
+          _cartProducts =
+              jsonData
+                  .map<CartProduct>((product) => CartProduct.fromJson(product))
+                  .toList();
+          print(_cartProducts);
+          notifyListeners();
+          break;
+        } else {
+          //retries++;
+          await Future.delayed(Duration(milliseconds: delay));
+        }
+      } on SocketException {
+        // Handle SocketException, retry
+        // retries++;
+        await Future.delayed(Duration(milliseconds: delay));
+      }
     }
   }
 

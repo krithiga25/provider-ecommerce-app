@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:ecommerce_provider/screens/shared.dart';
 import 'package:flutter/material.dart';
@@ -27,29 +28,52 @@ class ProductProvider with ChangeNotifier {
     return [..._searchProducts];
   }
 
+  // category products:
+  List<Product> _categoryProducts = [];
+
+  List<Product> get categoryProducts {
+    return [..._categoryProducts];
+  }
+
   Future<void> fetchProducts() async {
-    final response = await http.get(Uri.parse('$url/products'));
-    if (response.statusCode == 200) {
-      final jsonResponse = jsonDecode(response.body);
-      final jsonData = jsonResponse['products'];
-      _products.clear();
-      _products =
-          jsonData
-              .map<Product>((product) => Product.fromJson(product))
-              .toList();
-      //popular products:
-      final selectiveProducts =
-          jsonData
-              .where((product) => jsonData.indexOf(product) % 2 != 0)
-              .toList();
-      _populuarProducts =
-          selectiveProducts
-              .map<Product>((product) => Product.popularProduct(product))
-              .toList();
-      notifyListeners();
-    } else {
-      throw Exception('Failed to load products');
+    int retries = 0;
+    const int maxRetries = 4;
+    const int delay = 10;
+    while (retries < maxRetries) {
+      try {
+        print("products api hit once"); // change the delay time accordingly.
+        final response = await http.get(Uri.parse('$url/products'));
+        if (response.statusCode == 200) {
+          final jsonResponse = jsonDecode(response.body);
+          final jsonData = jsonResponse['products'];
+          _products.clear();
+          _products =
+              jsonData
+                  .map<Product>((product) => Product.fromJson(product))
+                  .toList();
+          //popular products:
+          final selectiveProducts =
+              jsonData
+                  .where((product) => jsonData.indexOf(product) % 2 != 0)
+                  .toList();
+          _populuarProducts =
+              selectiveProducts
+                  .map<Product>((product) => Product.popularProduct(product))
+                  .toList();
+          notifyListeners();
+          retries = maxRetries;
+          return;
+        } else {
+          //retries++;
+          await Future.delayed(Duration(seconds: delay));
+        }
+      } on SocketException {
+        // Handle SocketException, retry
+        //retries++;
+        await Future.delayed(Duration(seconds: delay));
+      }
     }
+    throw Exception('Failed to fetch data after $maxRetries retries');
   }
 
   Future<void> searchProduct(searchQuery) async {
@@ -62,6 +86,22 @@ class ProductProvider with ChangeNotifier {
       _searchProducts =
           jsonData
               .map<Product>((product) => Product.searchProduct(product))
+              .toList();
+
+      // print('in the search product function');
+      // print(_searchProducts);
+      notifyListeners();
+    }
+  }
+
+  Future<void> categoryProduct(categoryName) async {
+    final response = await http.get(Uri.parse('$url/category/$categoryName'));
+    if (response.statusCode == 200) {
+      var jsonResponse = jsonDecode(response.body);
+      final jsonData = jsonResponse['products'];
+      _categoryProducts =
+          jsonData
+              .map<Product>((product) => Product.fromJson(product))
               .toList();
       notifyListeners();
     }

@@ -3,6 +3,7 @@ import 'package:ecommerce_provider/models/cart.dart';
 import 'package:ecommerce_provider/models/wish_list.dart';
 import 'package:ecommerce_provider/providers/cart_provider.dart';
 import 'package:ecommerce_provider/providers/wish_list_provider.dart';
+import 'package:ecommerce_provider/screens/categories_products_screen.dart';
 import 'package:ecommerce_provider/screens/searched_products_screen.dart';
 import 'package:ecommerce_provider/screens/shared.dart';
 import 'package:flutter/material.dart';
@@ -49,7 +50,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                       SliverToBoxAdapter(
                         child: _searchWidget(productProvider, context),
                       ),
-                      SliverPersistentHeader(delegate: _CategoryHeader()),
+                      SliverToBoxAdapter(child: _categoryWidget(context)),
                       SliverToBoxAdapter(
                         child: _popularProduct(
                           productProvider,
@@ -142,6 +143,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                                                       product.description,
                                                   rating: product.rating,
                                                 );
+
                                                 final status =
                                                     await cartProvider
                                                         .addProduct(
@@ -164,6 +166,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                                             ),
                                           if (isInCart)
                                             Container(
+                                              padding: EdgeInsets.all(10),
                                               // padding: EdgeInsets.all(10),
                                               decoration: BoxDecoration(
                                                 border: Border.all(
@@ -272,13 +275,13 @@ class _ProductsScreenState extends State<ProductsScreen> {
     return Container(
       //color: const Color.fromARGB(255, 215, 246, 202),
       padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 18),
-      height: 300,
+      height: 360,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('Poupular products', style: TextStyle(fontSize: 18)),
           SizedBox(
-            height: 250,
+            height: 300,
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
@@ -290,53 +293,65 @@ class _ProductsScreenState extends State<ProductsScreen> {
                       return Padding(
                         padding: EdgeInsets.symmetric(horizontal: 5),
                         child: Card(
-                          color: const Color.fromARGB(255, 195, 197, 194),
+                          color: Colors.white,
                           elevation: 2,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Stack(
                             children: [
-                              Column(
-                                children: [
-                                  Image.asset(
-                                    product.imageUrl,
-                                    fit: BoxFit.fitWidth,
-                                    width: 180,
-                                    height: 150,
-                                  ),
-                                  Text(
-                                    product.title,
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.all(20),
+                                      child: CachedNetworkImage(
+                                        // 'https://hhatffzhvdmybvizyvhw.supabase.co/storage/v1/object/public/flut-images/electronics/headphones.jpg',
+                                        // 'https://hhatffzhvdmybvizyvhw.supabase.co/storage/v1/object/public/flut-pdf-bucket//jacket2.jpg',
+                                        //'assets/iphone.jpg',
+                                        imageUrl: product.imageUrl,
+                                        fit: BoxFit.fitWidth,
+                                        height: 150,
+                                        // width:
+                                        //     MediaQuery.of(context).size.width *
+                                        //     0.3,
+                                        //width: 150,
+                                      ),
                                     ),
-                                  ),
-                                  Row(
-                                    children: [
-                                      Row(
-                                        children: List.generate(
-                                          5,
-                                          (index) => Icon(
-                                            index < product.rating
-                                                ? Icons.star
-                                                : Icons.star_border,
-                                            color:
-                                                index < product.rating
-                                                    ? Colors.yellow
-                                                    : Colors.grey,
+                                    Text(
+                                      product.title,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Row(
+                                      children: [
+                                        Row(
+                                          children: List.generate(
+                                            5,
+                                            (index) => Icon(
+                                              index < product.rating
+                                                  ? Icons.star
+                                                  : Icons.star_border,
+                                              color:
+                                                  index < product.rating
+                                                      ? Colors.yellow
+                                                      : Colors.grey,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      Text(
-                                        '(${product.ratingCount.toString()})',
-                                      ),
-                                    ],
-                                  ),
-                                  Text(
-                                    '${product.price.toStringAsFixed(2)} rs',
-                                  ),
-                                ],
+                                        Text(
+                                          '(${product.ratingCount.toString()})',
+                                        ),
+                                      ],
+                                    ),
+                                    Text(
+                                      '${product.price.toStringAsFixed(2)} rs',
+                                    ),
+                                  ],
+                                ),
                               ),
                               Positioned(
                                 top: 0,
@@ -359,8 +374,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
                                         id: product.id,
                                         title: product.title,
                                         price: product.price,
-                                        //no image url.
-                                        imageUrl: "assets/jacket2.jpg",
+                                        imageUrl:
+                                            "https://hhatffzhvdmybvizyvhw.supabase.co/storage/v1/object/public/flut-pdf-bucket//jacket2.jpg",
                                         description: product.description,
                                         rating: product.rating,
                                       );
@@ -412,11 +427,15 @@ Widget _searchWidget(ProductProvider productProvider, BuildContext context) {
               ),
             ),
             IconButton(
-              onPressed: () {
-                productProvider.searchProduct(controller.text);
+              onPressed: () async {
+                // here added await, cause in the search page, page is built before the response is recieved and the page is empty.
+                await productProvider.searchProduct(controller.text);
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => SearchedProductsScreen(searchQuery: controller.text,),
+                    builder:
+                        (context) => SearchedProductsScreen(
+                          searchQuery: controller.text,
+                        ),
                   ),
                 );
               },
@@ -429,56 +448,76 @@ Widget _searchWidget(ProductProvider productProvider, BuildContext context) {
   );
 }
 
-class _CategoryHeader extends SliverPersistentHeaderDelegate {
-  @override
-  double get minExtent => 180;
-  @override
-  double get maxExtent => 180;
+List<CategoriesList> _categoriesList = [
+  CategoriesList(
+    categoryName: 'clothes',
+    categoryImageUrl:
+        'https://hhatffzhvdmybvizyvhw.supabase.co/storage/v1/object/public/flut-images/category/clothes_category.jpg',
+  ),
+  CategoriesList(
+    categoryName: 'accessories',
+    categoryImageUrl:
+        'https://hhatffzhvdmybvizyvhw.supabase.co/storage/v1/object/public/flut-images/category/accessories_category.jpg',
+  ),
+  CategoriesList(
+    categoryName: 'electronics',
+    categoryImageUrl:
+        'https://hhatffzhvdmybvizyvhw.supabase.co/storage/v1/object/public/flut-images/category/electronics_category.jpg',
+  ),
+  CategoriesList(
+    categoryName: 'footwear',
+    categoryImageUrl:
+        "https://hhatffzhvdmybvizyvhw.supabase.co/storage/v1/object/public/flut-images/category/shoe_category.jpg",
+  ),
+];
 
-  @override
-  Widget build(
-    BuildContext context,
-    double shrinkOffset,
-    bool overlapsContent,
-  ) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('Categories', style: TextStyle(fontSize: 18)),
-          Expanded(
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: List.generate(
-                  4,
-                  (index) => Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 5),
-                    child: Card(
-                      elevation: 2,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+Widget _categoryWidget(BuildContext context) {
+  return Container(
+    padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 20),
+    height: 250,
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Categories', style: TextStyle(fontSize: 18)),
+        Expanded(
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children:
+                  _categoriesList.map((category) {
+                    return InkWell(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder:
+                                (context) => CategoryProductsScreen(
+                                  categoryName: category.categoryName,
+                                ),
+                          ),
+                        );
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: CachedNetworkImage(
+                          imageUrl: category.categoryImageUrl,
+                          fit: BoxFit.fitWidth,
+                          width: 150,
+                          height: 150,
+                        ),
                       ),
-                      child: CachedNetworkImage(
-                        imageUrl:
-                            'https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg',
-                        fit: BoxFit.cover,
-                        width: 100,
-                        height: 100,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+                    );
+                  }).toList(),
             ),
           ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
+}
 
-  @override
-  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
-      true;
+class CategoriesList {
+  final String categoryName;
+  final String categoryImageUrl;
+
+  CategoriesList({required this.categoryName, required this.categoryImageUrl});
 }

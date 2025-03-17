@@ -1,3 +1,5 @@
+import 'dart:math';
+
 class CartProduct {
   final String id;
   final String title;
@@ -6,6 +8,8 @@ class CartProduct {
   final String imageUrl;
   final int rating;
   int quantity;
+  DateTime? estimatedDeliveryDate;
+
   CartProduct({
     required this.id,
     required this.title,
@@ -14,7 +18,11 @@ class CartProduct {
     required this.imageUrl,
     required this.rating,
     this.quantity = 1,
-  });
+  }) {
+    estimatedDeliveryDate = DateTime.now().add(
+      Duration(days: Random().nextInt(10) + 1),
+    );
+  }
 
   factory CartProduct.fromJson(Map<String, dynamic> json) {
     final product = json['product'];
