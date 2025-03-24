@@ -5,10 +5,11 @@ import 'package:ecommerce_provider/models/wish_list.dart';
 import 'package:ecommerce_provider/providers/cart_provider.dart';
 import 'package:ecommerce_provider/providers/product_provider.dart';
 import 'package:ecommerce_provider/providers/wish_list_provider.dart';
-import 'package:ecommerce_provider/screens/cart_screen.dart';
-import 'package:ecommerce_provider/screens/shared.dart';
-import 'package:ecommerce_provider/screens/wish_list_screen.dart';
+import 'package:ecommerce_provider/screens/cart_wishlist/cart_screen.dart';
+import 'package:ecommerce_provider/screens/shared/shared.dart';
+import 'package:ecommerce_provider/screens/cart_wishlist/wish_list_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 class SearchedProductsScreen extends StatefulWidget {
@@ -27,6 +28,7 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
   bool _showFilterPanel = false;
   int _selectedFilterIndex = 0;
   int? _selectedRating;
+  bool _isFilterApplied = false;
 
   @override
   void initState() {
@@ -87,9 +89,14 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
                         child: Text('Can not find products for your search!'),
                       )
                       : GridView.builder(
-                        padding: const EdgeInsets.only(top: 60.0, bottom: 60),
+                        padding: const EdgeInsets.only(
+                          top: 60,
+                          bottom: 60,
+                          right: 5,
+                          left: 5,
+                        ),
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          mainAxisExtent: 320,
+                          mainAxisExtent: 330,
                           crossAxisCount: 2,
                           childAspectRatio: 1,
                         ),
@@ -99,93 +106,226 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
                           final isFavorite = wishListProvider.isFavorite(
                             item.id,
                           );
+                          final isInCart = cartProvider.isInCart(item.id);
                           return Card(
                             color: Colors.white,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16.0),
+                              borderRadius: BorderRadius.circular(8),
                             ),
-                            child: Column(
+                            child: Stack(
                               children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: CachedNetworkImage(
-                                    imageUrl: item.imageUrl,
-                                    fit: BoxFit.fitWidth,
-                                    width: 140,
-                                    height: 200,
-                                  ),
-                                ),
                                 Column(
                                   children: [
-                                    Text(item.title),
-                                    Text('\$${item.price.toStringAsFixed(2)}'),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        TextButton(
-                                          child: Text("Add to cart"),
-                                          onPressed: () {
-                                            cartProvider.addProduct(
-                                              CartProduct(
-                                                id: item.id,
-                                                title: item.title,
-                                                description: item.description,
-                                                price: item.price,
-                                                imageUrl: item.imageUrl,
-                                                rating: item.rating,
-                                              ),
-                                            );
-                                            wishListProvider.removeProduct(
-                                              item.id,
-                                              "checkinglogin@gmail.com",
-                                            );
-                                          },
-                                        ),
-                                        IconButton(
-                                          icon: Icon(
-                                            isFavorite
-                                                ? Icons.favorite
-                                                : Icons.favorite_border,
-                                            color:
-                                                isFavorite ? Colors.red : null,
-                                          ),
-                                          onPressed: () async {
-                                            if (isFavorite) {
-                                              wishListProvider.removeProduct(
-                                                item.id,
-                                                "checkinglogin@gmail.com",
-                                              );
-                                            } else {
-                                              final wishlistProduct =
-                                                  WishListItems(
-                                                    id: item.id,
-                                                    title: item.title,
-                                                    price: item.price,
-                                                    imageUrl: item.imageUrl,
-                                                    description:
-                                                        item.description,
-                                                    rating: item.rating,
-                                                  );
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: CachedNetworkImage(
+                                        imageUrl: item.imageUrl,
+                                        fit: BoxFit.fitWidth,
+                                        width: 140,
+                                        height: 200,
+                                      ),
+                                    ),
 
-                                              final status =
-                                                  await wishListProvider
-                                                      .addProduct(
-                                                        wishlistProduct,
-                                                        "checkinglogin@gmail.com",
+                                    Column(
+                                      children: [
+                                        Text(
+                                          item.title,
+                                          style: GoogleFonts.openSans(
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        ),
+                                        SizedBox(height: 5),
+                                        Text(
+                                          '\u{20B9} ${item.price.toStringAsFixed(2)}',
+                                          style: GoogleFonts.openSans(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        SizedBox(height: 5),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            if (!isInCart)
+                                              TextButton(
+                                                child: Text(
+                                                  "ADD TO CART",
+                                                  style: GoogleFonts.openSans(
+                                                    fontWeight: FontWeight.bold,
+                                                    color:
+                                                        Colors
+                                                            .redAccent
+                                                            .shade200,
+                                                  ),
+                                                ),
+                                                onPressed: () async {
+                                                  final cartProduct =
+                                                      CartProduct(
+                                                        id: item.id,
+                                                        title: item.title,
+                                                        price: item.price,
+                                                        imageUrl: item.imageUrl,
+                                                        description:
+                                                            item.description,
+                                                        rating: item.rating,
                                                       );
-                                              showCustomSnackBar(
-                                                context,
-                                                status
-                                                    ? "Product added to wishlist!"
-                                                    : "Failed to add to wishlist!",
-                                              );
-                                            }
-                                          },
+
+                                                  final status =
+                                                      await cartProvider
+                                                          .addProduct(
+                                                            cartProduct,
+                                                          );
+                                                  Future.delayed(
+                                                    Duration(milliseconds: 500),
+                                                    () {
+                                                      showCustomSnackBar(
+                                                        context,
+                                                        status
+                                                            ? "Product added to cart!"
+                                                            : "Failed to add to cart!",
+                                                      );
+                                                    },
+                                                  );
+                                                },
+                                              ),
+                                            if (isInCart)
+                                              Container(
+                                                height: 35,
+                                                width: 105,
+                                                decoration: BoxDecoration(
+                                                  color:
+                                                      Colors.redAccent.shade200,
+                                                  borderRadius:
+                                                      BorderRadius.circular(5),
+                                                ),
+                                                child: Row(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: [
+                                                    IconButton(
+                                                      icon: Icon(
+                                                        Icons.remove,
+                                                        size: 15,
+                                                        color: Colors.white,
+                                                      ),
+                                                      onPressed:
+                                                          () => cartProvider
+                                                              .decreaseQuantity(
+                                                                item.id,
+                                                              ),
+                                                    ),
+                                                    Text(
+                                                      '${cartProvider.getQuantity(item.id)}',
+                                                      style:
+                                                          GoogleFonts.openSans(
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            color: Colors.white,
+                                                          ),
+                                                    ),
+                                                    IconButton(
+                                                      icon: Icon(
+                                                        Icons.add,
+                                                        size: 15,
+                                                        color: Colors.white,
+                                                      ),
+                                                      onPressed:
+                                                          () => cartProvider
+                                                              .increaseQuantity(
+                                                                item.id,
+                                                              ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                          ],
                                         ),
                                       ],
                                     ),
                                   ],
+                                ),
+                                Positioned(
+                                  top: 0,
+                                  right: 0,
+                                  child: IconButton(
+                                    icon: Icon(
+                                      isFavorite
+                                          ? Icons.favorite
+                                          : Icons.favorite_border,
+                                      color: isFavorite ? Colors.red : null,
+                                    ),
+                                    onPressed: () async {
+                                      if (isFavorite) {
+                                        final status = await wishListProvider
+                                            .removeProduct(
+                                              item.id,
+                                              "checkinglogin@gmail.com",
+                                            );
+                                        Future.delayed(
+                                          Duration(milliseconds: 500),
+                                          () {
+                                            showCustomSnackBar(
+                                              context,
+                                              status
+                                                  ? "Product removed from wishlist!"
+                                                  : "Failed to remove from wishlist!",
+                                            );
+                                          },
+                                        );
+                                      } else {
+                                        final wishlistProduct = WishListItems(
+                                          id: item.id,
+                                          title: item.title,
+                                          price: item.price,
+                                          imageUrl: item.imageUrl,
+                                          description: item.description,
+                                          rating: item.rating,
+                                        );
+
+                                        final status = await wishListProvider
+                                            .addProduct(
+                                              wishlistProduct,
+                                              "checkinglogin@gmail.com",
+                                            );
+                                        Future.delayed(
+                                          Duration(milliseconds: 500),
+                                          () {
+                                            showCustomSnackBar(
+                                              context,
+                                              status
+                                                  ? "Product added to wishlist!"
+                                                  : "Failed to add to wishlist!",
+                                            );
+                                          },
+                                        );
+                                      }
+                                    },
+                                  ),
+                                ),
+                                Positioned(
+                                  left: 7,
+                                  top: 7,
+                                  child: Card(
+                                    color: Colors.white,
+                                    child: Row(
+                                      children: [
+                                        SizedBox(width: 5),
+                                        Text(
+                                          item.rating.toString(),
+                                          style: GoogleFonts.openSans(
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        Icon(
+                                          Icons.star,
+                                          color: Colors.yellow,
+                                          size: 16,
+                                        ),
+                                        SizedBox(width: 5),
+                                      ],
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),
@@ -289,11 +429,17 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
                                       ElevatedButton(
                                         onPressed: () {
                                           _applyFilters();
-                                          setState(() {
-                                            _showFilterPanel = false;
-                                          });
                                         },
                                         child: const Text('Apply'),
+                                      ),
+                                      ElevatedButton(
+                                        onPressed:
+                                            _isFilterApplied
+                                                ? () {
+                                                  _resetFilters();
+                                                }
+                                                : null,
+                                        child: const Text('Reset filters'),
                                       ),
                                     ],
                                   ),
@@ -313,6 +459,19 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
       //   },
       // ),
     );
+  }
+
+  void _resetFilters() {
+    setState(() {
+      _selectedCategory = null;
+      _priceRange = const RangeValues(50, 3000);
+      _selectedRating = null;
+
+      sortedProducts = List.from(_originalProducts);
+      _isFilterApplied = false;
+
+      _showFilterPanel = false;
+    });
   }
 
   Widget _buildFilterOptions() {
@@ -424,6 +583,13 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
             }
             return true;
           }).toList();
+
+      _isFilterApplied =
+          _selectedCategory != null ||
+          _priceRange != const RangeValues(50, 3000) ||
+          _selectedRating != null;
+
+      _showFilterPanel = false;
     });
   }
 

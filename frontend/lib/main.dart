@@ -1,5 +1,5 @@
 import 'package:ecommerce_provider/providers/wish_list_provider.dart';
-import 'package:ecommerce_provider/screens/shared.dart';
+import 'package:ecommerce_provider/screens/shared/shared.dart';
 //import 'package:ecommerce_provider/screens/register.dart';
 import 'package:flutter/material.dart';
 //import 'package:flutter_stripe/flutter_stripe.dart';
@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Provider Demo',
-        theme: ThemeData(primarySwatch: Colors.green),
+        //theme: ThemeData.dark(),
         home: NavigationExample(),
         //home: RegistrationScreen(),
       ),

@@ -1,8 +1,8 @@
 // redirect to the registration page if the user is not logged in.
 
 import 'dart:convert';
-import 'package:ecommerce_provider/screens/products_screen.dart';
-import 'package:ecommerce_provider/screens/shared.dart';
+import 'package:ecommerce_provider/screens/products/products_screen.dart';
+import 'package:ecommerce_provider/screens/shared/shared.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';

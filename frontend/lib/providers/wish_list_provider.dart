@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:ecommerce_provider/models/wish_list.dart';
-import 'package:ecommerce_provider/screens/shared.dart';
+import 'package:ecommerce_provider/screens/shared/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -26,11 +26,11 @@ class WishListProvider with ChangeNotifier {
     return await removeWishlist(email, productId);
   }
 
-  void clearWishList(String productId, String email) {
-    _wishListItems.removeWhere((product) => product.id == productId);
-    moveToCart(email, productId);
-    notifyListeners();
-  }
+  // void clearWishList(String productId, String email) {
+  //   _wishListItems.removeWhere((product) => product.id == productId);
+  //   moveToCart(email, productId);
+  //   notifyListeners();
+  // }
 
   bool isFavorite(String productId) {
     return _wishListItems.any((item) => item.id == productId);
@@ -89,11 +89,11 @@ class WishListProvider with ChangeNotifier {
     }
   }
 
-  Future<void> moveToCart(user, prodId) async {
-    final response = await http.patch(Uri.parse('$url/cart/$user/$prodId'));
-    var jsonReponse = jsonDecode(response.body);
-    if (jsonReponse['status']) {
-      print("Moved to cart successfully");
-    }
-  }
+  // Future<void> moveToCart(user, prodId) async {
+  //   final response = await http.patch(Uri.parse('$url/cart/$user/$prodId'));
+  //   var jsonReponse = jsonDecode(response.body);
+  //   if (jsonReponse['status']) {
+  //     print("Moved to cart successfully");
+  //   }
+  // }
 }

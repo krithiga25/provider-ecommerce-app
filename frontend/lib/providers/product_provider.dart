@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:ecommerce_provider/screens/shared.dart';
+import 'package:ecommerce_provider/screens/shared/shared.dart';
 import 'package:flutter/material.dart';
 import '../models/product.dart';
 import 'package:http/http.dart' as http;
@@ -19,6 +19,13 @@ class ProductProvider with ChangeNotifier {
 
   List<Product> get popularProducts {
     return [..._populuarProducts];
+  }
+
+  //newly added products:
+  List<Product> _newlyAddedProducts = [];
+
+  List<Product> get newlyAddedProducts {
+    return [..._newlyAddedProducts];
   }
 
   // search products:
@@ -60,6 +67,17 @@ class ProductProvider with ChangeNotifier {
               selectiveProducts
                   .map<Product>((product) => Product.popularProduct(product))
                   .toList();
+
+          //newly added products:
+          _newlyAddedProducts =
+              _products
+                  .asMap()
+                  .entries
+                  .where((entry) => entry.key % 2 == 0)
+                  .map((entry) => entry.value)
+                  .toList();
+          // _newlyAddedProducts =
+
           notifyListeners();
           retries = maxRetries;
           return;

@@ -1,10 +1,10 @@
 import 'package:ecommerce_provider/providers/cart_provider.dart';
 import 'package:ecommerce_provider/providers/product_provider.dart';
 import 'package:ecommerce_provider/providers/wish_list_provider.dart';
-import 'package:ecommerce_provider/screens/cart_screen.dart';
-import 'package:ecommerce_provider/screens/orders_screen.dart';
-import 'package:ecommerce_provider/screens/products_screen.dart';
-import 'package:ecommerce_provider/screens/wish_list_screen.dart';
+import 'package:ecommerce_provider/screens/cart_wishlist/cart_screen.dart';
+import 'package:ecommerce_provider/screens/orders_payment/orders_screen.dart';
+import 'package:ecommerce_provider/screens/products/products_screen.dart';
+import 'package:ecommerce_provider/screens/cart_wishlist/wish_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

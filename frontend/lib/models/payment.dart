@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:ecommerce_provider/screens/shared.dart';
+import 'package:ecommerce_provider/screens/shared/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:http/http.dart' as http;

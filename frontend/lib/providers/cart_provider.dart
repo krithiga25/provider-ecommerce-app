@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:ecommerce_provider/models/cart.dart';
-import 'package:ecommerce_provider/screens/shared.dart';
+import 'package:ecommerce_provider/screens/shared/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -48,19 +48,17 @@ class CartProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void removeProduct(String productId) {
+  Future<bool> removeProduct(String productId) async {
     _cartProducts.removeWhere((item) => item.id == productId);
-    removeCartProduct("checkinglogin@gmail.com", productId);
     notifyListeners();
+    return await removeCartProduct("checkinglogin@gmail.com", productId);
   }
 
-  void clearCart(email, prodId) {
-    //clearing the cart
-    _cartProducts.removeWhere((item) => item.id == prodId);
-    //moving the wishlist, updated in db, but not reflected in the ui - since we are not creating the product object here.
-    moveToWishlist(email, prodId);
-    notifyListeners();
-  }
+  // void clearCart(email, prodId) {
+  //   _cartProducts.removeWhere((item) => item.id == prodId);
+  //   moveToWishlist(email, prodId);
+  //   notifyListeners();
+  // }
 
   bool isInCart(String productId) {
     return _cartProducts.any((item) => item.id == productId);
@@ -83,6 +81,34 @@ class CartProvider with ChangeNotifier {
     return product.quantity;
   }
 
+  Future<void> fetchCartProducts(String user) async {
+    // int retries = 0;
+    // const int maxRetries = 3;
+    const int delay = 500;
+    while (true) {
+      try {
+        final response = await http.get(Uri.parse('$url/cart/$user'));
+        if (response.statusCode == 200) {
+          final jsonResponse = jsonDecode(response.body);
+          final jsonData = jsonResponse['products'];
+          _cartProducts =
+              jsonData
+                  .map<CartProduct>((product) => CartProduct.fromJson(product))
+                  .toList();
+          notifyListeners();
+          break;
+        } else {
+          //retries++;
+          await Future.delayed(Duration(milliseconds: delay));
+        }
+      } on SocketException {
+        // Handle SocketException, retry
+        // retries++;
+        await Future.delayed(Duration(milliseconds: delay));
+      }
+    }
+  }
+
   Future<bool> addToCart(user, prodId, quantity) async {
     var reqBody = {
       "userId": user,
@@ -99,53 +125,15 @@ class CartProvider with ChangeNotifier {
     return jsonReponse['status'];
   }
 
-  Future<void> fetchCartProducts(String user) async {
-    // int retries = 0;
-    // const int maxRetries = 3;
-    const int delay = 500;
-    while (true) {
-      try {
-        final response = await http.get(Uri.parse('$url/cart/$user'));
-
-        if (response.statusCode == 200) {
-          final jsonResponse = jsonDecode(response.body);
-          print(jsonResponse);
-          final jsonData =
-              jsonResponse['products']; // this itself contains the quantity
-          print(jsonResponse['quantity']); //null
-          print(jsonData);
-          _cartProducts =
-              jsonData
-                  .map<CartProduct>((product) => CartProduct.fromJson(product))
-                  .toList();
-          print(_cartProducts);
-          notifyListeners();
-          break;
-        } else {
-          //retries++;
-          await Future.delayed(Duration(milliseconds: delay));
-        }
-      } on SocketException {
-        // Handle SocketException, retry
-        // retries++;
-        await Future.delayed(Duration(milliseconds: delay));
-      }
-    }
-  }
-
-  Future<void> removeCartProduct(user, prodId) async {
+  Future<bool> removeCartProduct(user, prodId) async {
     final response = await http.delete(Uri.parse('$url/cart/$user/$prodId'));
     var jsonReponse = jsonDecode(response.body);
-    if (jsonReponse['status']) {
-      print("deleted successfully");
-    }
+    return jsonReponse['status'];
   }
 
-  Future<void> moveToWishlist(user, prodId) async {
+  Future<bool> moveToWishlist(user, prodId) async {
     final response = await http.patch(Uri.parse('$url/wishlist/$user/$prodId'));
     var jsonReponse = jsonDecode(response.body);
-    if (jsonReponse['status']) {
-      print("Moved to wishlist successfully");
-    }
+    return jsonReponse['status'];
   }
 }
