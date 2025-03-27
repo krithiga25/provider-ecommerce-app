@@ -2,8 +2,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ecommerce_provider/models/wish_list.dart';
 import 'package:ecommerce_provider/providers/cart_provider.dart';
 import 'package:ecommerce_provider/providers/wish_list_provider.dart';
-import 'package:ecommerce_provider/screens/cart_wishlist/shipping_address_screen.dart';
-import 'package:ecommerce_provider/screens/shared/shared.dart';
+import 'package:ecommerce_provider/views/cart_wishlist/shipping_address_screen.dart';
+import 'package:ecommerce_provider/views/shared/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -44,44 +44,6 @@ class _CartScreenState extends State<CartScreen> {
                         builder: (context) => ShippingAddressScreen(),
                       ),
                     );
-                    // double totalQuantity = cartItems.fold(0, (a, b) => a + b.price);
-                    // final status = await initPaymentSheet(totalQuantity);
-                    // print(status);
-                    // if (status == "success") {
-                    //   Navigator.push(
-                    //     // ignore: use_build_context_synchronously
-                    //     context,
-                    //     MaterialPageRoute(
-                    //       builder:
-                    //           (context) =>
-                    //               OrderStatusSplashScreen(status: 'success'),
-                    //     ),
-                    //   );
-                    //   Future.delayed(Duration(milliseconds: 2000), () {
-                    //     Navigator.pushReplacement(
-                    //       // ignore: use_build_context_synchronously
-                    //       context,
-                    //       MaterialPageRoute(builder: (context) => OrdersPage()),
-                    //     );
-                    //   });
-                    // } else {
-                    //   Navigator.push(
-                    //     // ignore: use_build_context_synchronously
-                    //     context,
-                    //     MaterialPageRoute(
-                    //       builder:
-                    //           (context) =>
-                    //               OrderStatusSplashScreen(status: 'failed'),
-                    //     ),
-                    //   );
-                    //   Future.delayed(Duration(milliseconds: 2000), () {
-                    //     Navigator.pushReplacement(
-                    //       // ignore: use_build_context_synchronously
-                    //       context,
-                    //       MaterialPageRoute(builder: (context) => CartScreen()),
-                    //     );
-                    //   });
-                    // }
                   },
                   //proceed for checkout.
                   child: Text(
@@ -127,7 +89,7 @@ class _CartScreenState extends State<CartScreen> {
                       final item = cartItems[index];
                       //final quantity = cartProvider.getQuantity(item.id);
                       return SizedBox(
-                        height: 180,
+                        height: 200,
                         child: Card(
                           margin: EdgeInsets.symmetric(
                             horizontal: 20,
@@ -188,6 +150,97 @@ class _CartScreenState extends State<CartScreen> {
                                                 fontWeight: FontWeight.bold,
                                               ),
                                             ),
+
+                                            SizedBox(height: 10),
+                                            Row(
+                                              // mainAxisAlignment:
+                                              //     MainAxisAlignment
+                                              //         .spaceBetween,
+                                              children: [
+                                                Container(
+                                                  height: 35,
+                                                  width: 105,
+                                                  decoration: BoxDecoration(
+                                                    color:
+                                                        Colors
+                                                            .redAccent
+                                                            .shade200,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          5,
+                                                        ),
+                                                  ),
+                                                  child: Row(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      IconButton(
+                                                        icon: Icon(
+                                                          Icons.remove,
+                                                          size: 15,
+                                                          color: Colors.white,
+                                                        ),
+                                                        onPressed:
+                                                            () => cartProvider
+                                                                .decreaseQuantity(
+                                                                  item.id,
+                                                                ),
+                                                      ),
+                                                      Text(
+                                                        '${cartProvider.getQuantity(item.id)}',
+                                                        style:
+                                                            GoogleFonts.openSans(
+                                                              fontSize: 14,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                              color:
+                                                                  Colors.white,
+                                                            ),
+                                                      ),
+                                                      IconButton(
+                                                        icon: Icon(
+                                                          Icons.add,
+                                                          size: 15,
+                                                          color: Colors.white,
+                                                        ),
+                                                        onPressed:
+                                                            () => cartProvider
+                                                                .increaseQuantity(
+                                                                  item.id,
+                                                                ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                Spacer(),
+                                                Card(
+                                                  color: Colors.grey.shade300,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          4,
+                                                        ),
+                                                  ),
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(2),
+                                                    child: Text(
+                                                      "  Size:  S  ",
+                                                      style:
+                                                          GoogleFonts.openSans(
+                                                            color: Colors.black,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(width: 15),
+                                              ],
+                                            ),
+                                            SizedBox(height: 10),
                                             Row(
                                               // mainAxisAlignment: MainAxisAlignment.start,
                                               children: [
@@ -197,63 +250,13 @@ class _CartScreenState extends State<CartScreen> {
                                                 ),
                                                 SizedBox(width: 3),
                                                 Text(
-                                                  'Delivery by ${cartItems[index].estimatedDeliveryDate!.day.toString()} March ${cartItems[index].estimatedDeliveryDate!.year.toString()}',
+                                                  'Delivery by ${cartItems[index].estimatedDeliveryDate!.day.toString()} ${getMonth(cartItems[index].estimatedDeliveryDate!.month)} ${cartItems[index].estimatedDeliveryDate!.year.toString()}',
                                                   style: GoogleFonts.openSans(
                                                     fontSize: 12.5,
                                                     //fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
                                               ],
-                                            ),
-                                            SizedBox(height: 10),
-                                            Container(
-                                              height: 35,
-                                              width: 105,
-                                              decoration: BoxDecoration(
-                                                color:
-                                                    Colors.redAccent.shade200,
-                                                borderRadius:
-                                                    BorderRadius.circular(5),
-                                              ),
-                                              child: Row(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                children: [
-                                                  IconButton(
-                                                    icon: Icon(
-                                                      Icons.remove,
-                                                      size: 15,
-                                                      color: Colors.white,
-                                                    ),
-                                                    onPressed:
-                                                        () => cartProvider
-                                                            .decreaseQuantity(
-                                                              item.id,
-                                                            ),
-                                                  ),
-                                                  Text(
-                                                    '${cartProvider.getQuantity(item.id)}',
-                                                    style: GoogleFonts.openSans(
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                                  IconButton(
-                                                    icon: Icon(
-                                                      Icons.add,
-                                                      size: 15,
-                                                      color: Colors.white,
-                                                    ),
-                                                    onPressed:
-                                                        () => cartProvider
-                                                            .increaseQuantity(
-                                                              item.id,
-                                                            ),
-                                                  ),
-                                                ],
-                                              ),
                                             ),
                                           ],
                                         ),
@@ -512,5 +515,36 @@ class _CartScreenState extends State<CartScreen> {
         // );
       },
     );
+  }
+}
+
+String getMonth(int month) {
+  switch (month) {
+    case 1:
+      return 'January';
+    case 2:
+      return 'February';
+    case 3:
+      return 'March';
+    case 4:
+      return 'April';
+    case 5:
+      return 'May';
+    case 6:
+      return 'June';
+    case 7:
+      return 'July';
+    case 8:
+      return 'August';
+    case 9:
+      return 'September';
+    case 10:
+      return 'October';
+    case 11:
+      return 'November';
+    case 12:
+      return 'December';
+    default:
+      return '';
   }
 }

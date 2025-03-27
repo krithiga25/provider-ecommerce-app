@@ -1,10 +1,10 @@
 import 'package:ecommerce_provider/providers/cart_provider.dart';
 import 'package:ecommerce_provider/providers/product_provider.dart';
 import 'package:ecommerce_provider/providers/wish_list_provider.dart';
-import 'package:ecommerce_provider/screens/cart_wishlist/cart_screen.dart';
-import 'package:ecommerce_provider/screens/orders_payment/orders_screen.dart';
-import 'package:ecommerce_provider/screens/products/products_screen.dart';
-import 'package:ecommerce_provider/screens/cart_wishlist/wish_list_screen.dart';
+import 'package:ecommerce_provider/views/cart_wishlist/cart_screen.dart';
+import 'package:ecommerce_provider/views/orders_payment/orders_screen.dart';
+import 'package:ecommerce_provider/views/products/products_screen.dart';
+import 'package:ecommerce_provider/views/cart_wishlist/wish_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -13,7 +13,9 @@ final url =
     'https://fs-ecommerce-app.onrender.com';
 
 class NavigationExample extends StatefulWidget {
-  const NavigationExample({super.key});
+  const NavigationExample({super.key, this.token});
+
+  final token;
 
   @override
   State<NavigationExample> createState() => _NavigationExampleState();
@@ -39,13 +41,19 @@ class _NavigationExampleState extends State<NavigationExample> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // appBar: AppBar(
+      //   // backgroundColor: Color(0xFFFFFFFF),
+      //   title: Text(currentPageIndex == 1 ? 'Wishlist' : 'Home'),
+      //   automaticallyImplyLeading: false,
+
+      // ),
       bottomNavigationBar: NavigationBar(
         onDestinationSelected: (int index) {
           setState(() {
             currentPageIndex = index;
           });
         },
-        indicatorColor: Colors.purpleAccent.shade100,
+        indicatorColor: Colors.blueGrey.shade300,
         selectedIndex: currentPageIndex,
         destinations: <Widget>[
           NavigationDestination(label: 'Home', icon: Icon(Icons.home_outlined)),
@@ -54,7 +62,7 @@ class _NavigationExampleState extends State<NavigationExample> {
             label: 'cart',
             icon: Badge(
               label: Text('${cartProvider.cartProducts.length}'),
-              backgroundColor: Colors.blueGrey,
+              //backgroundColor: Colors.blueGrey,
               child: Icon(Icons.shopping_cart),
             ),
           ),
@@ -64,6 +72,7 @@ class _NavigationExampleState extends State<NavigationExample> {
       body:
           <Widget>[
             /// Home page
+            // ProductsScreen(token: widget.token),
             ProductsScreen(),
 
             /// wishlist page
@@ -79,10 +88,10 @@ class _NavigationExampleState extends State<NavigationExample> {
   }
 }
 
-void showCustomSnackBar(BuildContext context, String message) {
+void showCustomSnackBar(BuildContext context, String message, {Color? color}) {
   final snackBar = SnackBar(
     content: Text(message, style: TextStyle(color: Colors.white, fontSize: 16)),
-    backgroundColor: Colors.black87,
+    backgroundColor: color ?? Colors.black87,
     behavior: SnackBarBehavior.floating,
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
     margin: EdgeInsets.all(16),

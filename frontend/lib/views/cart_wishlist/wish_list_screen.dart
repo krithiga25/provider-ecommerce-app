@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ecommerce_provider/models/cart.dart';
 import 'package:ecommerce_provider/providers/cart_provider.dart';
 import 'package:ecommerce_provider/providers/wish_list_provider.dart';
-import 'package:ecommerce_provider/screens/shared/shared.dart';
+import 'package:ecommerce_provider/views/shared/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';

@@ -11,6 +11,7 @@ class Product {
   final int rating;
   final String category;
   int ratingCount;
+  bool isNew;
 
   Product(
     int ratingCount, {
@@ -21,9 +22,13 @@ class Product {
     required this.imageUrl,
     required this.rating,
     required this.category,
+    this.isNew = false,
   }) : ratingCount = Random().nextInt(1000) + 1;
-  
+
   factory Product.fromJson(Map<String, dynamic> json) {
+    String id = json['id'];
+    int index = int.parse(id.substring(3));
+    bool isNew = index % 2 != 0;
     return Product(
       0,
       title: json['productName'],
@@ -33,6 +38,7 @@ class Product {
       imageUrl: json['image'],
       rating: json['rating'],
       category: json['category'],
+      isNew: isNew,
     );
   }
 
@@ -50,14 +56,14 @@ class Product {
   }
 
   factory Product.searchProduct(Map<String, dynamic> json) {
-     final product = json['product'];
+    final product = json['product'];
     return Product(
       0,
       title: product['productName'],
       id: product['id'],
       description: product['description'],
       price: product['price'],
-       imageUrl: product['image'],
+      imageUrl: product['image'],
       rating: product['rating'],
       category: product['category'],
     );

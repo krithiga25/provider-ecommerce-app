@@ -1,5 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:ecommerce_provider/models/payment.dart';
 import 'package:ecommerce_provider/providers/cart_provider.dart';
+import 'package:ecommerce_provider/views/cart_wishlist/cart_screen.dart';
+import 'package:ecommerce_provider/views/orders_payment/orders_screen.dart';
+import 'package:ecommerce_provider/views/orders_payment/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -35,8 +39,46 @@ class _ShippingAddressScreenState extends State<ShippingAddressScreen> {
                 backgroundColor: Colors.redAccent.shade100,
                 shape: RoundedRectangleBorder(),
               ),
-              onPressed: () {
+              onPressed: () async {
                 //the payment screen
+                double totalQuantity = cartItems.fold(0, (a, b) => a + b.price);
+                final status = await initPaymentSheet(totalQuantity);
+                print(status);
+                if (status == "success") {
+                  Navigator.push(
+                    // ignore: use_build_context_synchronously
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) =>
+                              OrderStatusSplashScreen(status: 'success'),
+                    ),
+                  );
+                  Future.delayed(Duration(milliseconds: 2000), () {
+                    Navigator.pushReplacement(
+                      // ignore: use_build_context_synchronously
+                      context,
+                      MaterialPageRoute(builder: (context) => OrdersPage()),
+                    );
+                  });
+                } else {
+                  Navigator.push(
+                    // ignore: use_build_context_synchronously
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) =>
+                              OrderStatusSplashScreen(status: 'failed'),
+                    ),
+                  );
+                  Future.delayed(Duration(milliseconds: 2000), () {
+                    Navigator.pushReplacement(
+                      // ignore: use_build_context_synchronously
+                      context,
+                      MaterialPageRoute(builder: (context) => CartScreen()),
+                    );
+                  });
+                }
               },
               child: const Text("CONTINUE"),
             ),
@@ -70,7 +112,11 @@ class _ShippingAddressScreenState extends State<ShippingAddressScreen> {
                         //height: 200,
                         width: MediaQuery.of(context).size.width,
                         color: Colors.white,
-                        padding: const EdgeInsets.only(left: 16, bottom: 60, top:16),
+                        padding: const EdgeInsets.only(
+                          left: 16,
+                          bottom: 60,
+                          top: 16,
+                        ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -139,7 +185,8 @@ class _ShippingAddressScreenState extends State<ShippingAddressScreen> {
                               height: 70,
                             ),
                             Text(
-                              'Estimated delivery by ${cartItems[index].estimatedDeliveryDate!.day.toString()} March ${cartItems[index].estimatedDeliveryDate!.year.toString()}',
+                              'Estimated delivery by ${cartItems[index].estimatedDeliveryDate!.day.toString()} ${getMonth(cartItems[index].estimatedDeliveryDate!.month)} ${cartItems[index].estimatedDeliveryDate!.year.toString()}',
+                              style: GoogleFonts.openSans(fontSize: 12.5),
                             ),
                           ],
                         ),

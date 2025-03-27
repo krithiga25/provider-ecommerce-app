@@ -1,32 +1,43 @@
-import 'package:ecommerce_provider/screens/shared/under_contruction.dart';
+import 'package:ecommerce_provider/views/login_register/login.dart';
+import 'package:ecommerce_provider/views/shared/under_contruction.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+  const ProfileScreen({super.key, this.email});
+
+  final String? email;
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  late SharedPreferences prefs;
+
+  // void initSharedPref() async {
+  //   prefs = await SharedPreferences.getInstance();
+  //   prefs.remove('token');
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(backgroundColor: Colors.white),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
           //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Stack(
               alignment: Alignment.center,
               children: [
-                CircleAvatar(
-                  radius: 60,
-
-                  ///ckgroundImage: NetworkImage(userProfilePicUrl), // Load from backend
+                Image(
+                  image: AssetImage('assets/fox_profile.jpg'),
+                  // height: 30,
+                  width: 120,
                 ),
                 // Positioned(
                 //   bottom: 0,
@@ -40,15 +51,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             SizedBox(height: 10),
             Text(
-              'Krithiga Perumal',
+              widget.email!.split('@')[0],
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             Text(
-              'krithi25@gmail.com',
+              widget.email.toString(),
               style: TextStyle(fontSize: 14, color: Colors.grey),
             ),
             SizedBox(height: 5),
             Card(
+              color: Colors.white,
               elevation: 2,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
@@ -72,7 +84,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       leading: Icon(Icons.location_on),
                       title: Text("Manage Addresses"),
                       trailing: Icon(Icons.arrow_forward_ios),
-                      onTap: () {}, // Navigate to address management
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => UnderContruction(),
+                          ),
+                        );
+                      },
                     ),
                     // ListTile(
                     //   leading: Icon(Icons.payment),
@@ -99,6 +118,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             SizedBox(height: 10),
             Card(
+              color: Colors.white,
               elevation: 2,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
@@ -150,14 +170,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                IconButton(onPressed: () {}, icon: Icon((Icons.phone))),
-                IconButton(onPressed: () {}, icon: Icon((Icons.phone))),
-                IconButton(onPressed: () {}, icon: Icon((Icons.phone))),
+                IconButton(onPressed: () {}, icon: Icon(Icons.phone)),
+                IconButton(
+                  onPressed: () {},
+                  icon: Image.asset(
+                    'assets/mailWhite.png',
+                    width: 30,
+                    height: 30,
+                    color: Colors.black,
+                  ),
+                ),
+                IconButton(
+                  onPressed: () {},
+                  icon: Image.asset(
+                    'assets/instaWhite.png',
+                    width: 30,
+                    height: 30,
+                    color: Colors.black,
+                  ),
+                ),
               ],
             ),
             SizedBox(height: 10),
             GestureDetector(
-              onTap: () {}, // Logout
+              onTap: () {
+                //prefs.remove('token');
+                //widget.email = null;
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => LoginScreen()),
+                );
+              }, // Logout
               child: SizedBox(
                 height: 60,
                 child: Card(

@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:ecommerce_provider/models/wish_list.dart';
-import 'package:ecommerce_provider/screens/shared/shared.dart';
+import 'package:ecommerce_provider/views/shared/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 

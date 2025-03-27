@@ -5,9 +5,10 @@ import 'package:ecommerce_provider/models/wish_list.dart';
 import 'package:ecommerce_provider/providers/cart_provider.dart';
 import 'package:ecommerce_provider/providers/product_provider.dart';
 import 'package:ecommerce_provider/providers/wish_list_provider.dart';
-import 'package:ecommerce_provider/screens/cart_wishlist/cart_screen.dart';
-import 'package:ecommerce_provider/screens/shared/shared.dart';
-import 'package:ecommerce_provider/screens/cart_wishlist/wish_list_screen.dart';
+import 'package:ecommerce_provider/views/cart_wishlist/cart_screen.dart';
+import 'package:ecommerce_provider/views/products/products_screen.dart';
+import 'package:ecommerce_provider/views/shared/shared.dart';
+import 'package:ecommerce_provider/views/cart_wishlist/wish_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -82,13 +83,14 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
         builder: (context, cartProvider, child) {
           return Consumer<WishListProvider>(
             builder: (context, wishListProvider, child) {
-              return Stack(
-                children: [
-                  sortedProducts.isEmpty
-                      ? Center(
-                        child: Text('Can not find products for your search!'),
-                      )
-                      : GridView.builder(
+              return sortedProducts.isEmpty
+                  ? Center(child: loadingAnimation())
+                  : Stack(
+                    children: [
+                      // ? Center(
+                      //   child: Text('Can not find products for your search!'),
+                      // ):
+                      GridView.builder(
                         padding: const EdgeInsets.only(
                           top: 60,
                           bottom: 60,
@@ -332,126 +334,143 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
                           );
                         },
                       ),
-                  Positioned(
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    child: Container(
-                      color: Colors.white,
-                      padding: EdgeInsets.symmetric(horizontal: 16),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          /// Sort Button
-                          TextButton(
-                            onPressed: () => _showSortOptions(context),
-                            child: Row(
-                              children: [
-                                Icon(Icons.sort, size: 18),
-                                SizedBox(width: 5),
-                                Text("Sort"),
-                              ],
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              setState(() {
-                                _showFilterPanel = true;
-                              });
-                            },
-                            child: Row(
-                              children: [
-                                Icon(Icons.filter_list, size: 18),
-                                SizedBox(width: 5),
-                                Text("Filter"),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  if (_showFilterPanel)
-                    Positioned.fill(
-                      child: GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            _showFilterPanel = false;
-                          });
-                        },
+                      Positioned(
+                        top: 0,
+                        left: 0,
+                        right: 0,
                         child: Container(
                           color: Colors.white,
-                          alignment: Alignment.center,
+                          padding: EdgeInsets.symmetric(horizontal: 16),
                           child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              NavigationRail(
-                                selectedIndex: _selectedFilterIndex,
-                                onDestinationSelected: (index) {
+                              /// Sort Button
+                              TextButton(
+                                onPressed: () => _showSortOptions(context),
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.sort, size: 18),
+                                    SizedBox(width: 5),
+                                    Text("Sort"),
+                                  ],
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: () {
                                   setState(() {
-                                    _selectedFilterIndex = index;
+                                    _showFilterPanel = true;
                                   });
                                 },
-                                labelType: NavigationRailLabelType.all,
-                                destinations: const [
-                                  NavigationRailDestination(
-                                    padding: EdgeInsets.only(
-                                      left: 25,
-                                      right: 25,
-                                    ),
-                                    icon: Icon(Icons.category),
-                                    label: Text('Category'),
-                                  ),
-                                  NavigationRailDestination(
-                                    padding: EdgeInsets.only(
-                                      left: 25,
-                                      right: 25,
-                                    ),
-                                    icon: Icon(Icons.attach_money),
-                                    label: Text('Price'),
-                                  ),
-                                  NavigationRailDestination(
-                                    padding: EdgeInsets.only(
-                                      left: 25,
-                                      right: 25,
-                                    ),
-                                    icon: Icon(Icons.star),
-                                    label: Text('Rating'),
-                                  ),
-                                ],
-                              ),
-                              Expanded(
-                                child: Container(
-                                  padding: const EdgeInsets.all(16),
-                                  color: Colors.white,
-                                  child: Column(
-                                    children: [
-                                      _buildFilterOptions(),
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          _applyFilters();
-                                        },
-                                        child: const Text('Apply'),
-                                      ),
-                                      ElevatedButton(
-                                        onPressed:
-                                            _isFilterApplied
-                                                ? () {
-                                                  _resetFilters();
-                                                }
-                                                : null,
-                                        child: const Text('Reset filters'),
-                                      ),
-                                    ],
-                                  ),
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.filter_list, size: 18),
+                                    SizedBox(width: 5),
+                                    Text("Filter"),
+                                  ],
                                 ),
                               ),
                             ],
                           ),
                         ),
                       ),
-                    ),
-                ],
-              );
+                      if (_showFilterPanel)
+                        Positioned.fill(
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _showFilterPanel = false;
+                              });
+                            },
+                            child: Container(
+                              color: Colors.white,
+                              alignment: Alignment.center,
+                              child: Row(
+                                children: [
+                                  NavigationRail(
+                                    selectedIndex: _selectedFilterIndex,
+                                    onDestinationSelected: (index) {
+                                      setState(() {
+                                        _selectedFilterIndex = index;
+                                      });
+                                    },
+                                    labelType: NavigationRailLabelType.all,
+                                    destinations: const [
+                                      NavigationRailDestination(
+                                        padding: EdgeInsets.only(
+                                          left: 25,
+                                          right: 25,
+                                        ),
+                                        icon: Icon(Icons.category),
+                                        label: Text('Category'),
+                                      ),
+                                      NavigationRailDestination(
+                                        padding: EdgeInsets.only(
+                                          left: 25,
+                                          right: 25,
+                                        ),
+                                        icon: Icon(Icons.attach_money),
+                                        label: Text('Price'),
+                                      ),
+                                      NavigationRailDestination(
+                                        padding: EdgeInsets.only(
+                                          left: 25,
+                                          right: 25,
+                                        ),
+                                        icon: Icon(Icons.star),
+                                        label: Text('Rating'),
+                                      ),
+                                    ],
+                                  ),
+                                  Expanded(
+                                    child: Container(
+                                      padding: const EdgeInsets.all(16),
+                                      color: Colors.white,
+                                      child: Column(
+                                        children: [
+                                          _buildFilterOptions(),
+                                          Spacer(),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                              bottom: 50,
+                                            ),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceEvenly,
+                                              children: [
+                                                ElevatedButton(
+                                                  onPressed: () {
+                                                    _applyFilters();
+                                                    setState(() {
+                                                      _showFilterPanel = false;
+                                                    });
+                                                  },
+                                                  child: const Text('Apply'),
+                                                ),
+                                                ElevatedButton(
+                                                  onPressed:
+                                                      _isFilterApplied
+                                                          ? () {
+                                                            _resetFilters();
+                                                          }
+                                                          : null,
+                                                  child: const Text(
+                                                    'Reset filters',
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  );
             },
           );
         },
@@ -496,7 +515,9 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 12),
-        ...['Footwear', 'Clothes', 'Accessories'].map((category) {
+        ...['Footwear', 'Clothes', 'Accessories', 'Electronics'].map((
+          category,
+        ) {
           return CheckboxListTile(
             value: _selectedCategory == category,
             onChanged: (value) {
@@ -595,7 +616,10 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
 
   void _showSortOptions(BuildContext context) {
     showModalBottomSheet(
+      //constraints: BoxConstraints(maxHeight: 800),
+      backgroundColor: Colors.white,
       context: context,
+      shape: BeveledRectangleBorder(),
       builder: (ctx) {
         // List<Product> products = productsList.map((e) => e as Product).toList();
         return Padding(
@@ -603,8 +627,19 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  'SORT BY',
+                  style: GoogleFonts.openSans(fontSize: 16),
+                ),
+              ),
+              Divider(thickness: 1),
               ListTile(
-                title: Text('Price: Low to High'),
+                title: Text(
+                  'Price: Low to High',
+                  style: GoogleFonts.openSans(fontSize: 16),
+                ),
                 onTap: () {
                   setState(() {
                     sortedProducts.sort((a, b) => a.price.compareTo(b.price));
@@ -613,7 +648,10 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
                 },
               ),
               ListTile(
-                title: Text('Price: High to Low'),
+                title: Text(
+                  'Price: High to Low',
+                  style: GoogleFonts.openSans(fontSize: 16),
+                ),
                 onTap: () {
                   setState(() {
                     sortedProducts.sort((a, b) => b.price.compareTo(a.price));
@@ -622,7 +660,10 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
                 },
               ),
               ListTile(
-                title: Text('Rating: High to Low'),
+                title: Text(
+                  'Rating: High to Low',
+                  style: GoogleFonts.openSans(fontSize: 16),
+                ),
                 onTap: () {
                   setState(() {
                     sortedProducts.sort((a, b) => b.rating.compareTo(a.rating));
@@ -631,7 +672,10 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
                 },
               ),
               ListTile(
-                title: Text('Most Popular'),
+                title: Text(
+                  'Most Popular',
+                  style: GoogleFonts.openSans(fontSize: 16),
+                ),
                 onTap: () {
                   setState(() {
                     sortedProducts.sort(
@@ -642,7 +686,10 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
                 },
               ),
               ListTile(
-                title: Text('Alphabetical (A to Z)'),
+                title: Text(
+                  'Alphabetical (A to Z)',
+                  style: GoogleFonts.openSans(fontSize: 16),
+                ),
                 onTap: () {
                   setState(() {
                     sortedProducts.sort((a, b) => a.title.compareTo(b.title));
@@ -651,7 +698,10 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
                 },
               ),
               ListTile(
-                title: Text('Alphabetical (Z to A)'),
+                title: Text(
+                  'Alphabetical (Z to A)',
+                  style: GoogleFonts.openSans(fontSize: 16),
+                ),
                 onTap: () {
                   setState(() {
                     sortedProducts.sort((a, b) => b.title.compareTo(a.title));

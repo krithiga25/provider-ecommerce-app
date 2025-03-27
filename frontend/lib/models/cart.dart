@@ -20,7 +20,7 @@ class CartProduct {
     this.quantity = 1,
   }) {
     estimatedDeliveryDate = DateTime.now().add(
-      Duration(days: Random().nextInt(10) + 1),
+      Duration(days: Random().nextInt(5) + 4),
     );
   }
 
