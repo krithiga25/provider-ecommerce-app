@@ -22,7 +22,6 @@ class LoginScreenState extends State<LoginScreen> {
   late SharedPreferences prefs;
   late RiveAnimationController _controller;
   final String _currentAnimation = 'look_idle';
-  bool _successfulLogin = false;
   final _formKey = GlobalKey<FormState>();
   bool isPasswordVisible = false;
   Timer? typingTimer;
@@ -64,16 +63,36 @@ class LoginScreenState extends State<LoginScreen> {
       );
       var jsonReponse = jsonDecode(response.body);
       if (jsonReponse['status']) {
-        setState(() {
-          _successfulLogin = true;
-        });
         myToken = jsonReponse['token'];
         // print(jsonReponse['token']);
         prefs.setString('token', myToken);
-
-        //    await Navigator.push(
-        // context,
-        // MaterialPageRoute(builder: (context) => ProductsScreen(token: myToken)),
+        _changeAnimation('success');
+        showCustomSnackBar(
+          // ignore: use_build_context_synchronously
+          context,
+          'Login Successful!!',
+          color: Colors.green.shade600,
+        );
+        //TopNotification();
+        setState(() {
+          _isLoading = true;
+        });
+        await Future.delayed(Duration(seconds: 6));
+        Navigator.pushReplacement(
+          // ignore: use_build_context_synchronously
+          context,
+          MaterialPageRoute(
+            builder: (context) => NavigationExample(token: myToken),
+          ),
+        );
+      } else {
+        _changeAnimation('fail');
+        showCustomSnackBar(
+          // ignore: use_build_context_synchronously
+          context,
+          'Failed to login, please try again!',
+          color: Colors.red,
+        );
       }
     }
   }
@@ -254,16 +273,6 @@ class LoginScreenState extends State<LoginScreen> {
                   ],
                 ),
               ),
-              // SizedBox(height: 20),
-              // ElevatedButton(
-              //   onPressed: () {
-              //     // Register button pressed
-              //     print('Register button pressed');
-              //     print('Email: ${_emailController.text}');
-              //     print('Password: ${_passwordController.text}');
-              //   },
-              //   child: Text('Register'),
-              // ),
               SizedBox(height: 20),
               SizedBox(
                 width: 200,
@@ -277,35 +286,6 @@ class LoginScreenState extends State<LoginScreen> {
                       if (_passwordController.text.isNotEmpty &&
                           _emailController.text.isNotEmpty) {
                         await loginUser();
-                        _successfulLogin
-                            ? _changeAnimation('success')
-                            : _changeAnimation('fail');
-                        _successfulLogin
-                            ? showCustomSnackBar(
-                              // ignore: use_build_context_synchronously
-                              context,
-                              'Login Successful!!',
-                              color: Colors.green.shade600,
-                            )
-                            : showCustomSnackBar(
-                              // ignore: use_build_context_synchronously
-                              context,
-                              'Failed to login, please try again!',
-                              color: Colors.red,
-                            );
-                        //TopNotification();
-                        setState(() {
-                          _isLoading = true;
-                        });
-                        await Future.delayed(Duration(seconds: 6));
-                        Navigator.pushReplacement(
-                          // ignore: use_build_context_synchronously
-                          context,
-                          MaterialPageRoute(
-                            builder:
-                                (context) => NavigationExample(token: myToken),
-                          ),
-                        );
                       }
                     }
                   },

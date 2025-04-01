@@ -140,7 +140,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                                       right: 8,
                                     ),
                                     child: SizedBox(
-                                      height: 220,
+                                      height: 200,
                                       child: Stack(
                                         children: [
                                           GestureDetector(
@@ -184,329 +184,208 @@ class _ProductsScreenState extends State<ProductsScreen> {
                                                     ),
                                                   ),
                                                   SizedBox(
-                                                    // color: Colors.blue,
                                                     width: 180,
-                                                    child: Stack(
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      // mainAxisAlignment:
+                                                      //     MainAxisAlignment.spaceEvenly,
                                                       children: [
-                                                        Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          // mainAxisAlignment:
-                                                          //     MainAxisAlignment.spaceEvenly,
-                                                          children: [
-                                                            Padding(
-                                                              padding:
-                                                                  const EdgeInsets.only(
-                                                                    top: 8,
-                                                                    bottom: 4,
-                                                                  ),
-                                                              child: Text(
-                                                                product.title,
-                                                                style: GoogleFonts.openSans(
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets.only(
+                                                                top: 40,
+                                                                bottom: 4,
+                                                              ),
+                                                          child: Text(
+                                                            product.title,
+                                                            style:
+                                                                GoogleFonts.openSans(
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .bold,
-                                                                  fontSize: 16,
+                                                                  //fontSize: 16,
                                                                   color:
                                                                       Colors
                                                                           .grey,
                                                                 ),
+                                                          ),
+                                                        ),
+                                                        // Text(
+                                                        //   maxLines: 2,
+                                                        //   product.description,
+                                                        //   softWrap: true,
+                                                        //   //overflow: TextOverflow.ellipsis,
+                                                        //   style:
+                                                        //       GoogleFonts.openSans(),
+                                                        // ),
+                                                        SizedBox(height: 4),
+                                                        Row(
+                                                          children: [
+                                                            Row(
+                                                              children: List.generate(
+                                                                5,
+                                                                (index) => Icon(
+                                                                  index <
+                                                                          product
+                                                                              .rating
+                                                                      ? Icons
+                                                                          .star
+                                                                      : Icons
+                                                                          .star_border,
+                                                                  color:
+                                                                      index <
+                                                                              product.rating
+                                                                          ? Colors
+                                                                              .yellow
+                                                                          : Colors
+                                                                              .grey,
+                                                                ),
                                                               ),
                                                             ),
                                                             Text(
-                                                              maxLines: 2,
-                                                              product
-                                                                  .description,
-                                                              softWrap: true,
-                                                              //overflow: TextOverflow.ellipsis,
+                                                              '(${product.ratingCount.toString()})',
                                                               style:
                                                                   GoogleFonts.openSans(),
                                                             ),
-                                                            SizedBox(height: 4),
-                                                            Row(
-                                                              children: [
-                                                                Row(
-                                                                  children: List.generate(
-                                                                    5,
-                                                                    (
-                                                                      index,
-                                                                    ) => Icon(
-                                                                      index <
-                                                                              product.rating
-                                                                          ? Icons
-                                                                              .star
-                                                                          : Icons
-                                                                              .star_border,
-                                                                      color:
-                                                                          index <
-                                                                                  product.rating
-                                                                              ? Colors.yellow
-                                                                              : Colors.grey,
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                                Text(
-                                                                  '(${product.ratingCount.toString()})',
-                                                                  style:
-                                                                      GoogleFonts.openSans(),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            SizedBox(height: 4),
-                                                            Text(
-                                                              ' \u{20B9} ${product.price.toStringAsFixed(2)}',
-                                                              style: GoogleFonts.openSans(
+                                                          ],
+                                                        ),
+                                                        SizedBox(height: 4),
+                                                        Text(
+                                                          ' \u{20B9} ${product.price.toStringAsFixed(2)}',
+                                                          style:
+                                                              GoogleFonts.openSans(
                                                                 fontSize: 14,
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold,
                                                               ),
-                                                            ),
-                                                          ],
                                                         ),
-                                                        if (!isInCart)
-                                                          Positioned(
-                                                            bottom: 20,
-                                                            left: 0,
-                                                            child: Container(
-                                                              width: 115,
-                                                              height: 35,
-                                                              decoration: BoxDecoration(
-                                                                color:
-                                                                    const Color.fromARGB(
-                                                                      255,
-                                                                      14,
-                                                                      64,
-                                                                      122,
-                                                                    ),
-                                                                borderRadius:
-                                                                    BorderRadius.circular(
-                                                                      5,
-                                                                    ),
-                                                              ),
-                                                              child: TextButton(
-                                                                // style: ElevatedButton.styleFrom(
-                                                                //   backgroundColor:
-                                                                //       Colors
-                                                                //           .redAccent
-                                                                //           .shade200,
-                                                                //   shape: RoundedRectangleBorder(
-                                                                //     borderRadius:
-                                                                //         BorderRadius.circular(
-                                                                //           10,
-                                                                //         ),
-                                                                //   ),
-                                                                // ),
-                                                                onPressed: () async {
-                                                                  final cartProduct = CartProduct(
-                                                                    id:
-                                                                        product
-                                                                            .id,
-                                                                    title:
-                                                                        product
-                                                                            .title,
-                                                                    price:
-                                                                        product
-                                                                            .price,
-                                                                    imageUrl:
-                                                                        product
-                                                                            .imageUrl,
-                                                                    description:
-                                                                        product
-                                                                            .description,
-                                                                    rating:
-                                                                        product
-                                                                            .rating,
-                                                                  );
+                                                        SizedBox(height: 8),
+                                                        Container(
+                                                          width: 115,
+                                                          height: 35,
+                                                          decoration: BoxDecoration(
+                                                            color: Colors.black,
+                                                            borderRadius:
+                                                                BorderRadius.circular(
+                                                                  5,
+                                                                ),
+                                                          ),
+                                                          child:
+                                                              isInCart
+                                                                  ? Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .spaceEvenly,
+                                                                    children: [
+                                                                      IconButton(
+                                                                        icon: Icon(
+                                                                          Icons
+                                                                              .remove,
+                                                                          size:
+                                                                              15,
+                                                                          color:
+                                                                              Colors.white,
+                                                                        ),
+                                                                        onPressed:
+                                                                            () => cartProvider.decreaseQuantity(
+                                                                              product.id,
+                                                                            ),
+                                                                      ),
+                                                                      Text(
+                                                                        '${cartProvider.getQuantity(product.id)}',
+                                                                        style: GoogleFonts.openSans(
+                                                                          fontSize:
+                                                                              14,
+                                                                          fontWeight:
+                                                                              FontWeight.w600,
+                                                                          color:
+                                                                              Colors.white,
+                                                                        ),
+                                                                      ),
+                                                                      IconButton(
+                                                                        icon: Icon(
+                                                                          Icons
+                                                                              .add,
+                                                                          size:
+                                                                              15,
+                                                                          color:
+                                                                              Colors.white,
+                                                                        ),
+                                                                        onPressed:
+                                                                            () => cartProvider.increaseQuantity(
+                                                                              product.id,
+                                                                            ),
+                                                                      ),
+                                                                    ],
+                                                                  )
+                                                                  : TextButton(
+                                                                    // style: ElevatedButton.styleFrom(
+                                                                    //   backgroundColor:
+                                                                    //       Colors
+                                                                    //           .redAccent
+                                                                    //           .shade200,
+                                                                    //   shape: RoundedRectangleBorder(
+                                                                    //     borderRadius:
+                                                                    //         BorderRadius.circular(
+                                                                    //           10,
+                                                                    //         ),
+                                                                    //   ),
+                                                                    // ),
+                                                                    onPressed: () async {
+                                                                      final cartProduct = CartProduct(
+                                                                        id:
+                                                                            product.id,
+                                                                        title:
+                                                                            product.title,
+                                                                        price:
+                                                                            product.price,
+                                                                        imageUrl:
+                                                                            product.imageUrl,
+                                                                        description:
+                                                                            product.description,
+                                                                        rating:
+                                                                            product.rating,
+                                                                      );
 
-                                                                  final status =
-                                                                      await cartProvider
-                                                                          .addProduct(
+                                                                      final status =
+                                                                          await cartProvider.addProduct(
                                                                             cartProduct,
                                                                           );
-                                                                  Future.delayed(
-                                                                    Duration(
-                                                                      milliseconds:
-                                                                          500,
-                                                                    ),
-                                                                    () {
-                                                                      showCustomSnackBar(
-                                                                        context,
-                                                                        status
-                                                                            ? "Product added to cart!"
-                                                                            : "Failed to add to cart!",
+                                                                      Future.delayed(
+                                                                        Duration(
+                                                                          milliseconds:
+                                                                              500,
+                                                                        ),
+                                                                        () {
+                                                                          showCustomSnackBar(
+                                                                            context,
+                                                                            status
+                                                                                ? "Product added to cart!"
+                                                                                : "Failed to add to cart!",
+                                                                          );
+                                                                        },
                                                                       );
                                                                     },
-                                                                  );
-                                                                },
-                                                                child: Text(
-                                                                  "ADD TO CART",
-                                                                  style: GoogleFonts.openSans(
-                                                                    color:
-                                                                        Colors
-                                                                            .white,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        if (isInCart)
-                                                          Positioned(
-                                                            bottom: 20,
-                                                            left: 0,
-                                                            child: Container(
-                                                              height: 35,
-                                                              width: 115,
-                                                              decoration: BoxDecoration(
-                                                                color:
-                                                                    const Color.fromARGB(
-                                                                      255,
-                                                                      14,
-                                                                      64,
-                                                                      122,
-                                                                    ),
-                                                                borderRadius:
-                                                                    BorderRadius.circular(
-                                                                      5,
-                                                                    ),
-                                                              ),
-                                                              child: Row(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .spaceEvenly,
-                                                                children: [
-                                                                  IconButton(
-                                                                    icon: Icon(
-                                                                      Icons
-                                                                          .remove,
-                                                                      size: 15,
-                                                                      color:
-                                                                          Colors
-                                                                              .white,
-                                                                    ),
-                                                                    onPressed:
-                                                                        () => cartProvider.decreaseQuantity(
-                                                                          product
-                                                                              .id,
-                                                                        ),
-                                                                  ),
-                                                                  Text(
-                                                                    '${cartProvider.getQuantity(product.id)}',
-                                                                    style: GoogleFonts.openSans(
-                                                                      fontSize:
-                                                                          14,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w600,
-                                                                      color:
-                                                                          Colors
-                                                                              .white,
+                                                                    child: Text(
+                                                                      "ADD TO CART",
+                                                                      style: GoogleFonts.openSans(
+                                                                        color:
+                                                                            Colors.white,
+                                                                        fontSize:
+                                                                            12,
+                                                                        fontWeight:
+                                                                            FontWeight.w500,
+                                                                      ),
                                                                     ),
                                                                   ),
-                                                                  IconButton(
-                                                                    icon: Icon(
-                                                                      Icons.add,
-                                                                      size: 15,
-                                                                      color:
-                                                                          Colors
-                                                                              .white,
-                                                                    ),
-                                                                    onPressed:
-                                                                        () => cartProvider.increaseQuantity(
-                                                                          product
-                                                                              .id,
-                                                                        ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        Positioned(
-                                                          top: 0,
-                                                          right: -15,
-                                                          child: IconButton(
-                                                            icon: Icon(
-                                                              isFavorite
-                                                                  ? Icons
-                                                                      .favorite
-                                                                  : Icons
-                                                                      .favorite_border,
-                                                              color:
-                                                                  isFavorite
-                                                                      ? Colors
-                                                                          .red
-                                                                      : null,
-                                                            ),
-                                                            onPressed: () async {
-                                                              if (isFavorite) {
-                                                                final status = await wishListProvider
-                                                                    .removeProduct(
-                                                                      product
-                                                                          .id,
-                                                                      "checkinglogin@gmail.com",
-                                                                    );
-                                                                Future.delayed(
-                                                                  Duration(
-                                                                    milliseconds:
-                                                                        500,
-                                                                  ),
-                                                                  () {
-                                                                    showCustomSnackBar(
-                                                                      context,
-                                                                      status
-                                                                          ? "Product removed from wishlist!"
-                                                                          : "Failed to remove from wishlist!",
-                                                                    );
-                                                                  },
-                                                                );
-                                                              } else {
-                                                                final wishlistProduct = WishListItems(
-                                                                  id:
-                                                                      product
-                                                                          .id,
-                                                                  title:
-                                                                      product
-                                                                          .title,
-                                                                  price:
-                                                                      product
-                                                                          .price,
-                                                                  imageUrl:
-                                                                      product
-                                                                          .imageUrl,
-                                                                  description:
-                                                                      product
-                                                                          .description,
-                                                                  rating:
-                                                                      product
-                                                                          .rating,
-                                                                );
-
-                                                                final status = await wishListProvider
-                                                                    .addProduct(
-                                                                      wishlistProduct,
-                                                                      "checkinglogin@gmail.com",
-                                                                    );
-                                                                Future.delayed(
-                                                                  Duration(
-                                                                    milliseconds:
-                                                                        500,
-                                                                  ),
-                                                                  () {
-                                                                    showCustomSnackBar(
-                                                                      context,
-                                                                      status
-                                                                          ? "Product added to wishlist!"
-                                                                          : "Failed to add to wishlist!",
-                                                                    );
-                                                                  },
-                                                                );
-                                                              }
-                                                            },
-                                                          ),
                                                         ),
+                                                        SizedBox(height: 8),
                                                       ],
                                                     ),
+                                                    //if (!isInCart)
                                                   ),
                                                 ],
                                               ),
@@ -532,6 +411,73 @@ class _ProductsScreenState extends State<ProductsScreen> {
                                                   ),
                                                 ),
                                               ),
+                                            ),
+                                          ),
+                                          Positioned(
+                                            top: 0,
+                                            right: 3,
+                                            child: IconButton(
+                                              icon: Icon(
+                                                size: 23,
+                                                isFavorite
+                                                    ? Icons.favorite
+                                                    : Icons.favorite_border,
+                                                color:
+                                                    isFavorite
+                                                        ? Colors.red
+                                                        : null,
+                                              ),
+                                              onPressed: () async {
+                                                if (isFavorite) {
+                                                  final status =
+                                                      await wishListProvider
+                                                          .removeProduct(
+                                                            product.id,
+                                                            "checkinglogin@gmail.com",
+                                                          );
+                                                  Future.delayed(
+                                                    Duration(milliseconds: 500),
+                                                    () {
+                                                      showCustomSnackBar(
+                                                        context,
+                                                        status
+                                                            ? "Product removed from wishlist!"
+                                                            : "Failed to remove from wishlist!",
+                                                      );
+                                                    },
+                                                  );
+                                                } else {
+                                                  final wishlistProduct =
+                                                      WishListItems(
+                                                        id: product.id,
+                                                        title: product.title,
+                                                        price: product.price,
+                                                        imageUrl:
+                                                            product.imageUrl,
+                                                        description:
+                                                            product.description,
+                                                        rating: product.rating,
+                                                      );
+
+                                                  final status =
+                                                      await wishListProvider
+                                                          .addProduct(
+                                                            wishlistProduct,
+                                                            "checkinglogin@gmail.com",
+                                                          );
+                                                  Future.delayed(
+                                                    Duration(milliseconds: 500),
+                                                    () {
+                                                      showCustomSnackBar(
+                                                        context,
+                                                        status
+                                                            ? "Product added to wishlist!"
+                                                            : "Failed to add to wishlist!",
+                                                      );
+                                                    },
+                                                  );
+                                                }
+                                              },
                                             ),
                                           ),
                                         ],

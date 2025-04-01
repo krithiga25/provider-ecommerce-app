@@ -36,7 +36,7 @@ class _ShippingAddressScreenState extends State<ShippingAddressScreen> {
           bottomNavigationBar: BottomAppBar(
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.redAccent.shade100,
+                backgroundColor: Colors.black,
                 shape: RoundedRectangleBorder(),
               ),
               onPressed: () async {
@@ -80,7 +80,14 @@ class _ShippingAddressScreenState extends State<ShippingAddressScreen> {
                   });
                 }
               },
-              child: const Text("CONTINUE"),
+              child: Text(
+                "CONTINUE",
+                style: GoogleFonts.openSans(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
           ),
           body:

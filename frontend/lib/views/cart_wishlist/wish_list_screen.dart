@@ -6,6 +6,7 @@ import 'package:ecommerce_provider/views/shared/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:rive/rive.dart' as rive;
 
 class WishListScreen extends StatefulWidget {
   const WishListScreen({super.key});
@@ -28,7 +29,7 @@ class _WishListScreenState extends State<WishListScreen> {
         builder: (context, wishListProvider, child) {
           final wishListItems = wishListProvider.wishListItems;
           return wishListItems.isEmpty
-              ? Center(child: Text('Your wish list is empty!'))
+              ? Center(child: _emptyWishlist())
               : Consumer<CartProvider>(
                 builder: (context, cartProvider, child) {
                   return Padding(
@@ -162,7 +163,7 @@ class _WishListScreenState extends State<WishListScreen> {
                                         "MOVE TO CART",
                                         style: GoogleFonts.openSans(
                                           fontWeight: FontWeight.bold,
-                                          color: Colors.redAccent.shade200,
+                                          color: Colors.grey.shade600,
                                         ),
                                       ),
                                     ),
@@ -235,6 +236,47 @@ class _WishListScreenState extends State<WishListScreen> {
               );
         },
       ),
+    );
+  }
+
+  Widget _emptyWishlist() {
+    return Column(
+      // crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        SizedBox(
+          height: 500,
+          child: rive.RiveAnimation.asset(
+            //'assets/empty_basket.riv',
+            'assets/kitty.riv',
+            stateMachines: [
+              //'Adding to basket - State Machine 1', //the name of the animation displayed at the top.
+              'kitty',
+            ], // Add the state machine name
+            onInit: (rive.Artboard artboard) {
+              var controller = rive.StateMachineController.fromArtboard(
+                artboard,
+                // 'State Machine 1',
+                'kitty',
+              );
+              if (controller != null) {
+                artboard.addController(controller);
+                controller.isActive = true;
+              }
+            },
+          ),
+        ),
+        Expanded(
+          flex: 3,
+          child: Text(
+            'Pspsps... your wishlist is empty',
+            style: GoogleFonts.openSans(
+              fontSize: 18,
+              color: Colors.blueGrey,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
