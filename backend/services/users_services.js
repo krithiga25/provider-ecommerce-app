@@ -4,6 +4,7 @@ const {
   ProductModel,
   WishlistModel,
   CartModel,
+  OrderModel,
 } = require("../model/user_model");
 
 require("dotenv").config();
@@ -204,7 +205,11 @@ class UsersService {
             { userId },
             {
               $push: {
-                products: { product: productId, quantity: product.quantity },
+                products: {
+                  product: productId,
+                  quantity: product.quantity,
+                  //size: product.size,
+                },
               },
             }
           );
@@ -406,10 +411,84 @@ class UsersService {
         ],
       });
       const rankedProducts = rankProducts(products, tokens);
-      return { searchResults: rankedProducts };
+      return {
+        status: true,
+        message: "Search results received",
+        searchResults: rankedProducts,
+      };
     } catch (error) {
       throw error;
     }
   }
+
+  static async createOrder(orderDetails) {
+    try {
+      const user = await UserModel.findOne({ email: orderDetails.email });
+      const userId = user._id;
+      if (user) {
+        const products = await Promise.all(
+          orderDetails.products.map(async (product) => {
+            const productDoc = await ProductModel.findOne({
+              _id: product.product,
+            });
+            if (productDoc) {
+              return {
+                product: productDoc._id,
+                quantity: product.quantity,
+                price: product.price,
+              };
+            } else {
+              throw new Error(`Product not found: ${product.product}`);
+            }
+          })
+        );
+        const order = new OrderModel({ userId, products, ...orderDetails });
+        await order.save();
+        return {
+          status: true,
+          message: "Order placed",
+          orderDetails: order,
+        };
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async getOrders(userId) {
+    try {
+      const user = await UserModel.findOne({ email: userId });
+      const userID = user._id;
+      if (user) {
+        const orders = await OrderModel.find({ userId: userID });
+        //console.log(orders);
+        return {
+          status: true,
+          message: "Orders received successfully",
+          orders: orders,
+        };
+      } else {
+        return {
+          status: false,
+          message: "No orders found for this user.",
+        };
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // static async getCategoryProducts(categoryName) {
+  //   try {
+  //     const products = await ProductModel.find({ category: categoryName });
+  //     return {
+  //       status: true,
+  //       message: "Products received successfully",
+  //       products: products,
+  //     };
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
 }
 module.exports = UsersService;

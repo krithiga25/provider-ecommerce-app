@@ -36,4 +36,16 @@ router.post("/createpayment", controller.payment);
 //search:
 router.get("/search/:searchItem", controller.search);
 
+//get category products:
+//router.get('/category/:categoryName', controller.getCategoryProducts);
+
+//new payment
+//router.post("/newpayment", controller.newPayment);
+
+//orders:
+router.get("/orders/:userId", controller.getOrders);
+
+//create order:
+router.post("/createorder", controller.createOrder);
+
 module.exports = router;

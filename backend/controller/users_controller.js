@@ -3,6 +3,8 @@
 
 const UsersService = require("../services/users_services");
 
+const stripe = require("stripe")(process.env.STRIPE_S_KEY);
+
 exports.register = async (req, res, next) => {
   try {
     // we are getting the email and the password from the request body.
@@ -264,3 +266,92 @@ exports.search = async (req, res) => {
       .json({ status: false, message: "Search failed", error: error.message });
   }
 };
+
+exports.createOrder = async (req, res) => {
+  try {
+    const orderResponse = await UsersService.createOrder(req.body);
+    res.status(200).json(orderResponse);
+  } catch (error) {
+    res
+      .status(400)
+      .json({
+        status: false,
+        message: "Failed to create order",
+        error: error.message,
+      });
+  }
+};
+
+exports.getOrders = async (req, res) => {
+  try {
+    const orderResponse = await UsersService.getOrders(req.params.userId);
+    res.status(200).json(orderResponse);
+  } catch (error) {
+    res
+      .status(400)
+      .json({
+        status: false,
+        message: "Failed to get orders",
+        error: error.message,
+      });
+  }
+};
+
+exports.newPayment = async (req, res) => {
+  console.log("hi");
+  try {
+    const { email, name, amount, cardNumber, expMonth, expYear, cvc } =
+      req.body;
+
+    // 1️⃣ Create a Token from Card Details
+    const token = await stripe.tokens.create({
+      card: {
+        number: cardNumber,
+        exp_month: expMonth,
+        exp_year: expYear,
+        cvc: cvc,
+      },
+    });
+
+    console.log("token", token);
+
+    // 2️⃣ Create a Payment Method using the Token
+    const paymentMethod = await stripe.paymentMethods.create({
+      type: "card",
+      card: { token: token.id },
+      billing_details: { name, email },
+    });
+
+    // 2️⃣ Create a Payment Intent and attach Payment Method
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: amount * 100, // Convert to smallest currency unit
+      currency: "inr",
+      payment_method: paymentMethod.id,
+      confirm: true, // Immediate confirmation
+      description: "E-commerce Payment",
+    });
+
+    // 3️⃣ Return the final payment status
+    res.json({
+      success: true,
+      status: paymentIntent.status,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+// exports.getCategoryProducts = async (req, res) => {
+//   try {
+//     const response = await UsersService.getCategoryProducts(
+//       req.params.categoryName
+//     );
+//     res.status(200).json(response);
+//   } catch (error) {
+//     res.status(400).json({
+//       status: false,
+//       message: "Can't get category",
+//       error: error.message,
+//     });
+//   }
+// };

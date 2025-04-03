@@ -66,6 +66,7 @@ const cartSchema = new mongoose.Schema(
       {
         product: { type: mongoose.Schema.Types.ObjectId, ref: "products" },
         quantity: Number,
+        //size: String,
       },
     ],
   },
@@ -94,7 +95,7 @@ const orderSchema = new mongoose.Schema({
   orderStatus: {
     type: String,
     required: true,
-    enum: ["pending", "shipped", "delivered", "cancelled"],
+    enum: ["pending", "transit", "delivered", "cancelled"],
   },
   shippingAddress: {
     name: { type: String, required: true },
