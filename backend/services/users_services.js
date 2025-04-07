@@ -429,20 +429,35 @@ class UsersService {
         const products = await Promise.all(
           orderDetails.products.map(async (product) => {
             const productDoc = await ProductModel.findOne({
-              _id: product.product,
+              id: product.product,
             });
+            //console.log(productDoc.productName);
+            const productId = new mongoose.Types.ObjectId(productDoc._id);
             if (productDoc) {
               return {
-                product: productDoc._id,
+                product: {
+                  productName: productDoc.productName,
+                  image: productDoc.image,
+                },
                 quantity: product.quantity,
-                price: product.price,
+                price: product.quantity * productDoc.price,
               };
             } else {
               throw new Error(`Product not found: ${product.product}`);
             }
           })
         );
-        const order = new OrderModel({ userId, products, ...orderDetails });
+        const order = new OrderModel({
+          userId,
+          products,
+          subtotal: orderDetails.subtotal,
+          tax: orderDetails.tax,
+          total: orderDetails.total,
+          paymentMethod: orderDetails.paymentMethod,
+          paymentStatus: orderDetails.paymentStatus,
+          orderStatus: orderDetails.orderStatus,
+          shippingAddress: orderDetails.shippingAddress,
+        });
         await order.save();
         return {
           status: true,

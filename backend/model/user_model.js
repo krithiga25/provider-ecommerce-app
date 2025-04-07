@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const db = require("../config/database");
 const bcrypt = require("bcrypt");
+const moment = require("moment");
 
 // schema is imported from the mongoose.
 const { Schema } = mongoose;
@@ -74,11 +75,17 @@ const cartSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
 const orderSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
   products: [
     {
-      product: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
+      product: {
+        type: {
+          productName: { type: String },
+          image: { type: String },
+        },
+      },
       quantity: { type: Number, required: true },
       price: { type: Number, required: true },
     },
@@ -105,6 +112,8 @@ const orderSchema = new mongoose.Schema({
     zip: { type: String, required: true },
     country: { type: String, required: true },
   },
+  //include delivery date.
+  deliveryDate: { type: Date },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 });
