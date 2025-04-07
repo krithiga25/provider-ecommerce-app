@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const db = require("../config/database");
 const bcrypt = require("bcrypt");
-const moment = require("moment");
 
 // schema is imported from the mongoose.
 const { Schema } = mongoose;
