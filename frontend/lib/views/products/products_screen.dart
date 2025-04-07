@@ -45,19 +45,26 @@ class _ProductsScreenState extends State<ProductsScreen> {
               builder: (context, productProvider, child) {
                 final products = productProvider.newlyAddedProducts;
                 return Scaffold(
-                  //backgroundColor: Color(0xFFFFFFFF),
+                  backgroundColor: Color(0xFFF7F7F7),
                   appBar: AppBar(
+                    backgroundColor: Color(0xFFF7F7F7),
                     automaticallyImplyLeading: false,
-                    title: Center(
-                      child: Text(
+                   //title: 
+                    //Center(
+                     // child: 
+                     
+                   // ),
+                    actions: [
+                       Text(
                         "Home",
                         style: GoogleFonts.openSans(
-                          //color: Colors.white,
+                          color: Colors.blueGrey,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
                           height: 1.5,
                         ),
                       ),
-                    ),
-                    actions: [
+                      SizedBox(width: 115),
                       GestureDetector(
                         onTap: () {
                           Navigator.push(

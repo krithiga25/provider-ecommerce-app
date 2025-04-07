@@ -19,10 +19,22 @@ class _WishListScreenState extends State<WishListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFFF7F7F7),
       appBar: AppBar(
+        backgroundColor: Color(0xFFF7F7F7),
         title: Padding(
           padding: const EdgeInsets.only(top: 16.0, bottom: 16),
-          child: Center(child: Text('My wish list')),
+          child: Center(
+            child: Text(
+              "My Wishlist",
+              style: GoogleFonts.openSans(
+                color: Colors.blueGrey,
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+                height: 1.5,
+              ),
+            ),
+          ),
         ),
       ),
       body: Consumer<WishListProvider>(

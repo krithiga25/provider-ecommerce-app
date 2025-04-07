@@ -39,9 +39,9 @@ class _SingleProductScreenState extends State<SingleProductScreen> {
                 //final isInCart = cartProvider.isInCart(product.id);
                 final isFavorite = wishListProvider.isFavorite(product.id);
                 return Scaffold(
-                  backgroundColor: Colors.white,
+                  backgroundColor: Color(0xFFF7F7F7),
                   appBar: AppBar(
-                    backgroundColor: Colors.white,
+                    backgroundColor: Color(0xFFF7F7F7),
                     title: Text(
                       'Product Details',
                       style: GoogleFonts.openSans(
@@ -51,7 +51,8 @@ class _SingleProductScreenState extends State<SingleProductScreen> {
                     ),
                   ),
                   bottomNavigationBar: BottomAppBar(
-                    color: Colors.white,
+                    //color: Colors.white,
+                    color: Color(0xFFF7F7F7),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [

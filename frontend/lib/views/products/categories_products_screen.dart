@@ -48,7 +48,9 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFFF7F7F7),
       appBar: AppBar(
+        backgroundColor: Color(0xFFF7F7F7),
         actions: [
           IconButton(
             icon: Icon(Icons.favorite),
@@ -165,9 +167,7 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       color:
-                                                          Colors
-                                                              .redAccent
-                                                              .shade200,
+                                                          Colors.grey.shade600,
                                                     ),
                                                   ),
                                                   onPressed: () async {

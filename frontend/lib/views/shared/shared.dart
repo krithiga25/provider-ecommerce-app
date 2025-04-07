@@ -1,4 +1,5 @@
 import 'package:ecommerce_provider/providers/cart_provider.dart';
+import 'package:ecommerce_provider/providers/orders_provider.dart';
 import 'package:ecommerce_provider/providers/product_provider.dart';
 import 'package:ecommerce_provider/providers/wish_list_provider.dart';
 import 'package:ecommerce_provider/views/cart_wishlist/cart_screen.dart';
@@ -34,6 +35,10 @@ class _NavigationExampleState extends State<NavigationExample> {
       context,
       listen: false,
     ).fetchCartProducts("checkinglogin@gmail.com");
+    Provider.of<OrdersProvider>(
+      context,
+      listen: false,
+    ).fetchOrders("krithiperu2002@gmail.com");
   }
 
   int currentPageIndex = 0;
@@ -48,6 +53,7 @@ class _NavigationExampleState extends State<NavigationExample> {
 
       // ),
       bottomNavigationBar: NavigationBar(
+        backgroundColor: Color(0xFFF7F7F7),
         onDestinationSelected: (int index) {
           setState(() {
             currentPageIndex = index;

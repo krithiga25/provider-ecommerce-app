@@ -23,12 +23,12 @@ class _CartScreenState extends State<CartScreen> {
       builder: (context, cartProvider, child) {
         final cartItems = cartProvider.cartProducts;
         return Scaffold(
-          backgroundColor: Colors.white,
+          backgroundColor: Color(0xFFF7F7F7),
           bottomNavigationBar:
               cartItems.isEmpty
                   ? null
                   : BottomAppBar(
-                    color: Colors.white,
+                    color: Color(0xFFF7F7F7),
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.black,
@@ -51,14 +51,18 @@ class _CartScreenState extends State<CartScreen> {
                   ),
           //backgroundColor: Colors.white70,
           appBar: AppBar(
-            backgroundColor: Colors.white,
+            backgroundColor: Color(0xFFF7F7F7),
             title: Padding(
               padding: const EdgeInsets.all(16),
-              child: Text(
-                "SHOPPING BAG",
-                style: TextStyle(
-                  color: Colors.grey.shade700,
-                  fontWeight: FontWeight.w500,
+              child: Center(
+                child: Text(
+                  "Shopping Bag",
+                  style: GoogleFonts.openSans(
+                    color: Colors.blueGrey,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                    height: 1.5,
+                  ),
                 ),
               ),
             ),
