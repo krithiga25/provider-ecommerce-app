@@ -1,9 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ecommerce_provider/models/payment.dart';
 import 'package:ecommerce_provider/providers/cart_provider.dart';
+import 'package:ecommerce_provider/providers/orders_provider.dart';
 import 'package:ecommerce_provider/views/cart_wishlist/cart_screen.dart';
-import 'package:ecommerce_provider/views/orders_payment/orders_screen.dart';
 import 'package:ecommerce_provider/views/orders_payment/splash_screen.dart';
+import 'package:ecommerce_provider/views/shared/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -18,17 +19,22 @@ class ShippingAddressScreen extends StatefulWidget {
 class _ShippingAddressScreenState extends State<ShippingAddressScreen> {
   @override
   Widget build(BuildContext context) {
+    OrdersProvider ordersProvider = Provider.of<OrdersProvider>(
+      context,
+      listen: false,
+    );
     //final width = MediaQuery.of(context).size.width * 0.19;
     return Consumer<CartProvider>(
       builder: (context, cartProvider, child) {
         final cartItems = cartProvider.cartProducts;
         return Scaffold(
-          // backgroundColor: Colors.grey.shade200,
+          backgroundColor: Color(0xFFF7F7F7),
           appBar: AppBar(
+            backgroundColor: Color(0xFFF7F7F7),
             title: Text(
               "ADDRESS",
               style: TextStyle(
-                color: Colors.grey.shade700,
+                color: Colors.blueGrey,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -40,48 +46,75 @@ class _ShippingAddressScreenState extends State<ShippingAddressScreen> {
                 shape: RoundedRectangleBorder(),
               ),
               onPressed: () async {
+                final status = await ordersProvider.createOrder(
+                  user: "krithiperu2002@gmail.com",
+                  //how to pass the products.
+                  products: cartItems,
+                  paymentMethod: "credit card",
+                  paymentStatus: "paid",
+                  subTotal: cartItems.fold(0, (a, b) => a + b.price),
+                  tax: 50,
+                  total: cartItems.fold(0, (a, b) => a + b.price) + 50,
+                );
                 //the payment screen
-                double totalQuantity = cartItems.fold(0, (a, b) => a + b.price);
-                final status = await initPaymentSheet(totalQuantity);
-                print(status);
-                if (status == "success") {
-                  Navigator.push(
-                    // ignore: use_build_context_synchronously
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (context) =>
-                              OrderStatusSplashScreen(status: 'success'),
-                    ),
-                  );
-                  Future.delayed(Duration(milliseconds: 2000), () {
-                    Navigator.pushReplacement(
-                      // ignore: use_build_context_synchronously
-                      context,
-                      MaterialPageRoute(builder: (context) => OrdersPage()),
-                    );
-                  });
-                } else {
-                  Navigator.push(
-                    // ignore: use_build_context_synchronously
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (context) =>
-                              OrderStatusSplashScreen(status: 'failed'),
-                    ),
-                  );
-                  Future.delayed(Duration(milliseconds: 2000), () {
-                    Navigator.pushReplacement(
-                      // ignore: use_build_context_synchronously
-                      context,
-                      MaterialPageRoute(builder: (context) => CartScreen()),
-                    );
-                  });
-                }
+                // double totalQuantity = cartItems.fold(0, (a, b) => a + b.price);
+                // final status = await initPaymentSheet(totalQuantity);
+                // print(status);
+                // if (status == "success") {
+                //   //await.
+                //   // remove cart items:
+                //   // cartProvider.clearCart("checkinglogin@gmail.com");
+                //   //create order:
+                //   final status = await ordersProvider.createOrder(
+                //     user: "krithiperu2002@gmail.com",
+                //     //how to pass the products.
+                //     products: cartItems,
+                //     paymentMethod: "credit card",
+                //     paymentStatus: "paid",
+                //     subTotal: cartItems.fold(0, (a, b) => a + b.price),
+                //     tax: 50,
+                //     total: cartItems.fold(0, (a, b) => a + b.price) + 50,
+                //   );
+                //   Navigator.push(
+                //     // ignore: use_build_context_synchronously
+                //     context,
+                //     MaterialPageRoute(
+                //       builder:
+                //           (context) =>
+                //               OrderStatusSplashScreen(status: 'success'),
+                //     ),
+                //   );
+                //   Future.delayed(Duration(milliseconds: 2000), () {
+                //     Navigator.pushReplacement(
+                //       // ignore: use_build_context_synchronously
+                //       context,
+                //       MaterialPageRoute(
+                //         builder:
+                //             (context) => NavigationExample(initialIndex: 3),
+                //       ),
+                //     );
+                //   });
+                // } else {
+                //   Navigator.push(
+                //     // ignore: use_build_context_synchronously
+                //     context,
+                //     MaterialPageRoute(
+                //       builder:
+                //           (context) =>
+                //               OrderStatusSplashScreen(status: 'failed'),
+                //     ),
+                //   );
+                //   Future.delayed(Duration(milliseconds: 2000), () {
+                //     Navigator.pushReplacement(
+                //       // ignore: use_build_context_synchronously
+                //       context,
+                //       MaterialPageRoute(builder: (context) => NavigationExample(initialIndex: 2)),
+                //     );
+                //   });
+                // }
               },
               child: Text(
-                "CONTINUE",
+                "CONTINUE TO PAYMENT",
                 style: GoogleFonts.openSans(
                   color: Colors.white,
                   fontSize: 16,

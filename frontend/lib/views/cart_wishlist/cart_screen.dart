@@ -71,7 +71,7 @@ class _CartScreenState extends State<CartScreen> {
               cartItems.isEmpty
                   ? Container(
                     height: MediaQuery.of(context).size.height,
-                    color: Colors.white,
+                    color: Color(0xFFF7F7F7),
                     child: _emptyCart(),
                   )
                   : CustomScrollView(
@@ -480,7 +480,8 @@ class _CartScreenState extends State<CartScreen> {
     return Column(
       // crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        SizedBox(
+        Container(
+          color: Color(0xFFF7F7F7),
           height: 500,
           child: rive.RiveAnimation.asset(
             'assets/empty_basket.riv',

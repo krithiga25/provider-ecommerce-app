@@ -19,8 +19,9 @@
 // }
 
 class OrderDetails {
+  final String orderId;
   final String userId;
-  final List<Product> products;
+  final List<ProductDetails> products;
   final String paymentMethod;
   final String paymentStatus;
   final String orderStatus;
@@ -28,6 +29,8 @@ class OrderDetails {
   final int subtotal;
   final int tax;
   final int total;
+  final String orderedDate;
+  //final String deliveryDate;
 
   OrderDetails({
     required this.userId,
@@ -39,14 +42,19 @@ class OrderDetails {
     required this.subtotal,
     required this.tax,
     required this.total,
+    required this.orderedDate,
+    required this.orderId,
+    //required this.deliveryDate,
   });
 
   factory OrderDetails.fromJson(Map<String, dynamic> json) {
     return OrderDetails(
       userId: json['userId'],
+      //need to create it in the backend.
+      orderId: "ORDID987654",
       products:
           (json['products'] as List)
-              .map((product) => Product.fromJson(product))
+              .map((product) => ProductDetails.fromJson(product))
               .toList(),
       paymentMethod: json['paymentMethod'],
       paymentStatus: json['paymentStatus'],
@@ -55,23 +63,46 @@ class OrderDetails {
       subtotal: json['subtotal'],
       tax: json['tax'],
       total: json['total'],
+      orderedDate:
+          DateTime.parse(
+            json['createdAt'],
+          ).toLocal().toIso8601String().split('T').first,
+      // deliveryDate:  DateTime.parse(
+      //       json['createdAt'],
+      //     ).toLocal().toIso8601String().split('T').first,
+    );
+  }
+}
+
+class ProductDetails {
+  final Product product;
+  final int quantity;
+  final int price;
+
+  ProductDetails({
+    required this.product,
+    required this.quantity,
+    required this.price,
+  });
+
+  factory ProductDetails.fromJson(Map<String, dynamic> json) {
+    return ProductDetails(
+      product: Product.fromJson(json['product']),
+      //will recive other details of the products.
+      quantity: json['quantity'],
+      price: json['price'],
     );
   }
 }
 
 class Product {
-  final String product;
-  final int quantity;
-  final int price;
+  final String productName;
+  final String image;
 
-  Product({required this.product, required this.quantity, required this.price});
+  Product({required this.productName, required this.image});
 
   factory Product.fromJson(Map<String, dynamic> json) {
-    return Product(
-      product: json['product'],
-      quantity: json['quantity'],
-      price: json['price'],
-    );
+    return Product(productName: json['productName'], image: json['image']);
   }
 }
 

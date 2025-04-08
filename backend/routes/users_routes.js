@@ -24,6 +24,8 @@ router.get("/cart/:userId", controller.getCart);
 
 router.delete("/cart/:userId/:productId", controller.deleteCart);
 
+router.delete("/clearcart/:userId", controller.clearCart);
+
 //move to cart from the wishlist
 //router.patch('/cart/:userId/:productId', controller.moveToCart);  //not neccessary
 

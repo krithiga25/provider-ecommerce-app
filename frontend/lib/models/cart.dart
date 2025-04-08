@@ -1,4 +1,4 @@
-import 'dart:math';
+//import 'dart:math';
 
 class CartProduct {
   final String id;
@@ -19,9 +19,7 @@ class CartProduct {
     required this.rating,
     this.quantity = 1,
   }) {
-    estimatedDeliveryDate = DateTime.now().add(
-      Duration(days: Random().nextInt(5) + 4),
-    );
+    estimatedDeliveryDate = DateTime.now().add(Duration(days: 4));
   }
 
   factory CartProduct.fromJson(Map<String, dynamic> json) {

@@ -18,6 +18,17 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
+  address: {
+    type: {
+      shippingAddress: {
+        address: { type: String },
+        city: { type: String },
+        state: { type: String },
+        zip: { type: String },
+        country: { type: String },
+      },
+    },
+  },
 });
 
 //prodcut schema:
@@ -77,6 +88,7 @@ const cartSchema = new mongoose.Schema(
 
 const orderSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
+  orderId: { type: String, required: true, unique: true },
   products: [
     {
       product: {
@@ -86,7 +98,7 @@ const orderSchema = new mongoose.Schema({
         },
       },
       quantity: { type: Number, required: true },
-      price: { type: Number, required: true },
+      price: { type: Number },
     },
   ],
   subtotal: { type: Number, required: true },
@@ -101,18 +113,22 @@ const orderSchema = new mongoose.Schema({
   orderStatus: {
     type: String,
     required: true,
-    enum: ["pending", "transit", "delivered", "cancelled"],
+    enum: ["processing", "transit", "delivered", "cancelled"],
   },
   shippingAddress: {
-    name: { type: String, required: true },
-    address: { type: String, required: true },
-    city: { type: String, required: true },
-    state: { type: String, required: true },
-    zip: { type: String, required: true },
-    country: { type: String, required: true },
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "users.address.shippingAddress",
   },
   //include delivery date.
-  deliveryDate: { type: Date },
+  deliveryDate: {
+    type: Date,
+    default: () => {
+      const date = new Date();
+      date.setHours(0, 0, 0, 0);
+      date.setDate(date.getDate() + 4);
+      return date;
+    },
+  },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 });

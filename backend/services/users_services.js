@@ -37,7 +37,7 @@ class UsersService {
     try {
       // creating a new document in the users collection.
       // we are using the model that we created.
-      const createUser = new UserModel({ email, password });
+      const createUser = new UserModel({ email, password});
       await createUser.save();
       return { status: true, success: "User registered successfully" };
     } catch (err) {
@@ -286,6 +286,21 @@ class UsersService {
     }
   }
 
+  static async clearCart(email) {
+    try {
+      const user = await UserModel.findOne({ email: email });
+      const userId = user._id;
+      console.log(userId);
+      await CartModel.updateOne({ userId }, { $set: { products: [] } });
+      return {
+        status: true,
+        message: "Cleared the cart successfully",
+      };
+    } catch (err) {
+      throw err;
+    }
+  }
+
   static async moveToCart(email, id) {
     try {
       const user = await UserModel.findOne({ email: email });
@@ -449,6 +464,7 @@ class UsersService {
         );
         const order = new OrderModel({
           userId,
+          orderId: orderDetails.orderId,
           products,
           subtotal: orderDetails.subtotal,
           tax: orderDetails.tax,

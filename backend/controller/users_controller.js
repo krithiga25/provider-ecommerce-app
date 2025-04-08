@@ -185,6 +185,20 @@ exports.deleteCart = async (req, res, next) => {
   }
 };
 
+exports.clearCart = async (req, res, next) => {
+  try {
+    const userId = req.params.userId;
+    const response = await UsersService.clearCart(userId);
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(400).json({
+      status: false,
+      message: "Failed to clear the cart",
+      error: error.message,
+    });
+  }
+};
+
 // exports.moveToCart = async (req, res, next) => {
 //   try {
 //     const userId = req.params.userId;
@@ -272,13 +286,11 @@ exports.createOrder = async (req, res) => {
     const orderResponse = await UsersService.createOrder(req.body);
     res.status(200).json(orderResponse);
   } catch (error) {
-    res
-      .status(400)
-      .json({
-        status: false,
-        message: "Failed to create order",
-        error: error.message,
-      });
+    res.status(400).json({
+      status: false,
+      message: "Failed to create order",
+      error: error.message,
+    });
   }
 };
 
@@ -287,13 +299,11 @@ exports.getOrders = async (req, res) => {
     const orderResponse = await UsersService.getOrders(req.params.userId);
     res.status(200).json(orderResponse);
   } catch (error) {
-    res
-      .status(400)
-      .json({
-        status: false,
-        message: "Failed to get orders",
-        error: error.message,
-      });
+    res.status(400).json({
+      status: false,
+      message: "Failed to get orders",
+      error: error.message,
+    });
   }
 };
 

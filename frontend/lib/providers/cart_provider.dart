@@ -131,6 +131,11 @@ class CartProvider with ChangeNotifier {
     return jsonReponse['status'];
   }
 
+  Future<void> clearCart(user) async {
+    await http.delete(Uri.parse('$url/clearcart/$user'));
+    notifyListeners();
+  }
+
   Future<bool> moveToWishlist(user, prodId) async {
     final response = await http.patch(Uri.parse('$url/wishlist/$user/$prodId'));
     var jsonReponse = jsonDecode(response.body);

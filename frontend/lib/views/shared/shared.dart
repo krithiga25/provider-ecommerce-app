@@ -1,5 +1,4 @@
 import 'package:ecommerce_provider/providers/cart_provider.dart';
-import 'package:ecommerce_provider/providers/orders_provider.dart';
 import 'package:ecommerce_provider/providers/product_provider.dart';
 import 'package:ecommerce_provider/providers/wish_list_provider.dart';
 import 'package:ecommerce_provider/views/cart_wishlist/cart_screen.dart';
@@ -14,9 +13,10 @@ final url =
     'https://fs-ecommerce-app.onrender.com';
 
 class NavigationExample extends StatefulWidget {
-  const NavigationExample({super.key, this.token});
+  const NavigationExample({super.key, this.token, this.initialIndex});
 
   final token;
+  final int? initialIndex;
 
   @override
   State<NavigationExample> createState() => _NavigationExampleState();
@@ -25,6 +25,9 @@ class NavigationExample extends StatefulWidget {
 class _NavigationExampleState extends State<NavigationExample> {
   @override
   void initState() {
+    if (widget.initialIndex != null) {
+      currentPageIndex = widget.initialIndex!;
+    }
     super.initState();
     Provider.of<ProductProvider>(context, listen: false).fetchProducts();
     Provider.of<WishListProvider>(
@@ -35,10 +38,6 @@ class _NavigationExampleState extends State<NavigationExample> {
       context,
       listen: false,
     ).fetchCartProducts("checkinglogin@gmail.com");
-    Provider.of<OrdersProvider>(
-      context,
-      listen: false,
-    ).fetchOrders("krithiperu2002@gmail.com");
   }
 
   int currentPageIndex = 0;
