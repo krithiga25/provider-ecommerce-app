@@ -50,4 +50,7 @@ router.get("/orders/:userId", controller.getOrders);
 //create order:
 router.post("/createorder", controller.createOrder);
 
+//update user address:
+router.post("/updateaddress", controller.updateAddress);
+
 module.exports = router;

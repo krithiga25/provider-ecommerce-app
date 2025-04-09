@@ -306,7 +306,18 @@ exports.getOrders = async (req, res) => {
     });
   }
 };
-
+exports.updateAddress = async (req, res) => {
+  try {
+    const response = await UsersService.updateAddress(req.body);
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(400).json({
+      status: false,
+      message: "Failed to update address",
+      error: error.message,
+    });
+  }
+};
 exports.newPayment = async (req, res) => {
   console.log("hi");
   try {

@@ -1,39 +1,54 @@
+#update address:
+# POST http://localhost:3000/updateaddress
+# Content-Type: application/json
 
+# {
+#      "email" : "krithiperu2002@gmail.com",
+#      "shippingAddress": {
+#      "name": "Krithiga Perumal",
+#      "address": "123 Main St",
+#      "city": "Anytown",
+#      "state": "TN",
+#      "zip": "12345",
+#      "country": "India"
+#    }
+ 
+# }
 
 # GET http://localhost:3000/orders/krithiperu2002@gmail.com
 # Content-Type: application/json
 
-# POST http://localhost:3000/createOrder
-# Content-Type: application/json
+POST http://localhost:3000/createOrder
+Content-Type: application/json
 
-# {
-#     "email" : "krithiperu2002@gmail.com",
-#     "orderId": "ORDID0000097",
-#      "products": [
-#     {
-#       "product": "PRD13",
-#       "quantity": 1,
-#       "price": 199
-#     }
+{
+    "email" : "krithiperu2002@gmail.com",
+    "orderId": "ORDID0000765",
+     "products": [
+    {
+      "product": "PRD15",
+      "quantity": 1,
+      "price": 199
+    }
    
-#   ],
-#   "subtotal": 198,
-#   "tax": 40,
-#   "total": 238,
-#   "paymentMethod": "credit card",
-#   "paymentStatus": "paid",
-#   "orderStatus": "delivered",
-#   "shippingAddress": {
-#     "name": "John Doe",
-#     "address": "123 Main St",
-#     "city": "Anytown",
-#     "state": "CA",
-#     "zip": "12345",
-#     "country": "USA"
-#   }
-# }
+  ],
+  "subtotal": 198,
+  "tax": 40,
+  "total": 238,
+  "paymentMethod": "credit card",
+  "paymentStatus": "paid",
+  "orderStatus": "delivered",
+  "shippingAddress": {
+  "name": "Krithiga Perumal",
+  "address": "123 Main St",
+  "city": "Anytown",
+  "state": "TN",
+  "zip": "12345",
+  "country": "India"
+}
+}
 
-# DELETE http://localhost:3000/clearcart/checkinglogin@gmail.com
+#DELETE http://localhost:3000/clearcart/checkinglogin@gmail.com
 # Content-Type: application/json
 
 # POST http://localhost:3000/cart

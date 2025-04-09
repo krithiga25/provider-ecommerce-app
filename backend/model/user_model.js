@@ -21,6 +21,7 @@ const userSchema = new Schema({
   address: {
     type: {
       shippingAddress: {
+        name: { type: String },
         address: { type: String },
         city: { type: String },
         state: { type: String },
@@ -116,8 +117,14 @@ const orderSchema = new mongoose.Schema({
     enum: ["processing", "transit", "delivered", "cancelled"],
   },
   shippingAddress: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "users.address.shippingAddress",
+    type: {
+      name: String,
+      address: String,
+      city: String,
+      state: String,
+      zip: String,
+      country: String,
+    },
   },
   //include delivery date.
   deliveryDate: {

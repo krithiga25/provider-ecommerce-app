@@ -37,7 +37,7 @@ class UsersService {
     try {
       // creating a new document in the users collection.
       // we are using the model that we created.
-      const createUser = new UserModel({ email, password});
+      const createUser = new UserModel({ email, password });
       await createUser.save();
       return { status: true, success: "User registered successfully" };
     } catch (err) {
@@ -439,6 +439,7 @@ class UsersService {
   static async createOrder(orderDetails) {
     try {
       const user = await UserModel.findOne({ email: orderDetails.email });
+      const shippingAddress = user.address.shippingAddress;
       const userId = user._id;
       if (user) {
         const products = await Promise.all(
@@ -446,8 +447,6 @@ class UsersService {
             const productDoc = await ProductModel.findOne({
               id: product.product,
             });
-            //console.log(productDoc.productName);
-            const productId = new mongoose.Types.ObjectId(productDoc._id);
             if (productDoc) {
               return {
                 product: {
@@ -472,7 +471,7 @@ class UsersService {
           paymentMethod: orderDetails.paymentMethod,
           paymentStatus: orderDetails.paymentStatus,
           orderStatus: orderDetails.orderStatus,
-          shippingAddress: orderDetails.shippingAddress,
+          shippingAddress: shippingAddress,
         });
         await order.save();
         return {
@@ -508,7 +507,29 @@ class UsersService {
       throw error;
     }
   }
-
+  static async updateAddress(body) {
+    try {
+      const user = await UserModel.findOne({ email: body.email });
+      const userID = user._id;
+      if (user) {
+        await UserModel.updateOne(
+          { _id: userID },
+          { $set: { "address.shippingAddress": body.shippingAddress } }
+        );
+        return {
+          status: true,
+          message: "Address updated successfully",
+        };
+      } else {
+        return {
+          status: false,
+          message: "User not found, register to update the address.",
+        };
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
   // static async getCategoryProducts(categoryName) {
   //   try {
   //     const products = await ProductModel.find({ category: categoryName });
