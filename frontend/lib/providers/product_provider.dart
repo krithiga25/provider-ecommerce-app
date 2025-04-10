@@ -105,9 +105,6 @@ class ProductProvider with ChangeNotifier {
           jsonData
               .map<Product>((product) => Product.searchProduct(product))
               .toList();
-
-      // print('in the search product function');
-      // print(_searchProducts);
       notifyListeners();
     }
   }

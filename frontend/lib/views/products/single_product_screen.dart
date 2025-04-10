@@ -4,7 +4,6 @@ import 'package:ecommerce_provider/models/wish_list.dart';
 import 'package:ecommerce_provider/providers/cart_provider.dart';
 import 'package:ecommerce_provider/providers/product_provider.dart';
 import 'package:ecommerce_provider/providers/wish_list_provider.dart';
-import 'package:ecommerce_provider/views/cart_wishlist/cart_screen.dart';
 import 'package:ecommerce_provider/views/shared/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -155,6 +154,7 @@ class _SingleProductScreenState extends State<SingleProductScreen> {
                                         Duration(milliseconds: 500),
                                         () {
                                           showCustomSnackBar(
+                                            // ignore: use_build_context_synchronously
                                             context,
                                             status
                                                 ? "Product added to cart!"
@@ -170,10 +170,13 @@ class _SingleProductScreenState extends State<SingleProductScreen> {
                                       });
                                     }
                                     : () {
-                                      Navigator.push(
+                                      Navigator.pushReplacement(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => CartScreen(),
+                                          builder:
+                                              (context) => NavigationExample(
+                                                initialIndex: 2,
+                                              ),
                                         ),
                                       );
                                       // Navigator.pop(context, 2);

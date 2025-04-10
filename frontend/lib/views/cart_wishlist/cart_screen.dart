@@ -10,13 +10,24 @@ import 'package:provider/provider.dart';
 import 'package:rive/rive.dart' as rive;
 
 class CartScreen extends StatefulWidget {
-  const CartScreen({super.key});
+  final token;
+
+  const CartScreen({super.key, this.token});
 
   @override
   State<CartScreen> createState() => _CartScreenState();
 }
 
 class _CartScreenState extends State<CartScreen> {
+  late String email;
+  @override
+  void initState() {
+    super.initState();
+    // Map<String, dynamic> decodedToken = JwtDecoder.decode(widget.token);
+    // email = decodedToken['email'];
+    email = 'krithiperu';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<CartProvider>(
@@ -38,7 +49,9 @@ class _CartScreenState extends State<CartScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ShippingAddressScreen(),
+                            builder:
+                                (context) =>
+                                    ShippingAddressScreen(email: email),
                           ),
                         );
                       },

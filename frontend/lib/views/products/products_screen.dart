@@ -49,13 +49,13 @@ class _ProductsScreenState extends State<ProductsScreen> {
                   appBar: AppBar(
                     backgroundColor: Color(0xFFF7F7F7),
                     automaticallyImplyLeading: false,
-                   //title: 
+                    //title:
                     //Center(
-                     // child: 
-                     
-                   // ),
+                    // child:
+
+                    // ),
                     actions: [
-                       Text(
+                      Text(
                         "Home",
                         style: GoogleFonts.openSans(
                           color: Colors.blueGrey,
@@ -683,6 +683,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
 
   Widget _searchWidget(ProductProvider productProvider, BuildContext context) {
     final TextEditingController controller = TextEditingController();
+    final FocusNode focusNode = FocusNode();
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Form(
@@ -698,6 +699,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                 child: Padding(
                   padding: const EdgeInsets.only(left: 16.0),
                   child: TextFormField(
+                    focusNode: focusNode,
                     controller: controller,
                     decoration: InputDecoration(
                       border: InputBorder.none,
@@ -713,7 +715,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                 ),
               ),
               IconButton(
-                onPressed: () {
+                onPressed: () async {
                   if (controller.text.isEmpty) {
                     Future.delayed(Duration(milliseconds: 500), () {
                       showCustomSnackBar(context, 'Enter something for search');
@@ -722,7 +724,9 @@ class _ProductsScreenState extends State<ProductsScreen> {
                     return;
                   }
                   // here added await, cause in the search page, page is built before the response is recieved and the page is empty.
-                  productProvider.searchProduct(controller.text);
+                  await productProvider.searchProduct(controller.text);
+                  focusNode.unfocus();
+                  // ignore: use_build_context_synchronously
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder:

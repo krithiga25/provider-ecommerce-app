@@ -205,11 +205,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 height: 60,
                 child: Card(
                   elevation: 2,
-                  color: Colors.redAccent,
+                  color: Colors.black,
                   child: Center(
                     child: Text(
-                      "Log Out",
-                      style: TextStyle(color: Colors.white),
+                      "LOG OUT",
+                      style: GoogleFonts.openSans(
+                        color: Colors.white,
+                        fontSize: 17,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ),

@@ -69,14 +69,7 @@ class _NavigationExampleState extends State<NavigationExample> {
         destinations: <Widget>[
           NavigationDestination(label: 'Home', icon: Icon(Icons.home_outlined)),
           NavigationDestination(label: 'wishlist', icon: Icon(Icons.favorite)),
-          NavigationDestination(
-            label: 'cart',
-            icon: Badge(
-              label: Text('${cartProvider.cartProducts.length}'),
-              //backgroundColor: Colors.blueGrey,
-              child: Icon(Icons.shopping_cart),
-            ),
-          ),
+          NavigationDestination(label: 'cart', icon: Icon(Icons.shopping_cart)),
           NavigationDestination(label: 'Orders', icon: Icon(Icons.receipt)),
         ],
       ),
@@ -90,7 +83,7 @@ class _NavigationExampleState extends State<NavigationExample> {
             WishListScreen(),
 
             /// cart screen
-            CartScreen(),
+            CartScreen(token: widget.token),
 
             /// orders page:
             OrdersPage(),

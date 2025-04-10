@@ -5,10 +5,8 @@ import 'package:ecommerce_provider/models/wish_list.dart';
 import 'package:ecommerce_provider/providers/cart_provider.dart';
 import 'package:ecommerce_provider/providers/product_provider.dart';
 import 'package:ecommerce_provider/providers/wish_list_provider.dart';
-import 'package:ecommerce_provider/views/cart_wishlist/cart_screen.dart';
 import 'package:ecommerce_provider/views/products/products_screen.dart';
 import 'package:ecommerce_provider/views/shared/shared.dart';
-import 'package:ecommerce_provider/views/cart_wishlist/wish_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -45,23 +43,29 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFFF7F7F7),
       appBar: AppBar(
+        backgroundColor: Color(0xFFF7F7F7),
         actions: [
           IconButton(
             icon: Icon(Icons.favorite),
             onPressed: () {
-              Navigator.push(
+              Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => WishListScreen()),
+                MaterialPageRoute(
+                  builder: (context) => NavigationExample(initialIndex: 1),
+                ),
               );
             },
           ),
           IconButton(
             icon: Icon(Icons.shopping_cart),
             onPressed: () {
-              Navigator.push(
+              Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => CartScreen()),
+                MaterialPageRoute(
+                  builder: (context) => NavigationExample(initialIndex: 2),
+                ),
               );
             },
           ),
@@ -73,7 +77,14 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
           icon: Icon(Icons.arrow_back_ios_new_outlined),
         ),
         automaticallyImplyLeading: false,
-        title: Text('Search for "${widget.searchQuery}"'),
+        title: Text(
+          'Search for "${widget.searchQuery}"',
+          style: GoogleFonts.openSans(
+            color: Colors.blueGrey,
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
       ),
       body:
       // Consumer<ProductProvider>(
@@ -154,10 +165,7 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
                                                   "ADD TO CART",
                                                   style: GoogleFonts.openSans(
                                                     fontWeight: FontWeight.bold,
-                                                    color:
-                                                        Colors
-                                                            .redAccent
-                                                            .shade200,
+                                                    color: Colors.blueGrey,
                                                   ),
                                                 ),
                                                 onPressed: () async {
@@ -349,9 +357,20 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
                                 onPressed: () => _showSortOptions(context),
                                 child: Row(
                                   children: [
-                                    Icon(Icons.sort, size: 18),
+                                    Icon(
+                                      Icons.sort,
+                                      size: 20,
+                                      color: Colors.blueGrey,
+                                    ),
                                     SizedBox(width: 5),
-                                    Text("Sort"),
+                                    Text(
+                                      "Sort",
+                                      style: GoogleFonts.openSans(
+                                        color: Colors.blueGrey,
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -363,9 +382,20 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
                                 },
                                 child: Row(
                                   children: [
-                                    Icon(Icons.filter_list, size: 18),
+                                    Icon(
+                                      Icons.filter_list,
+                                      size: 20,
+                                      color: Colors.blueGrey,
+                                    ),
                                     SizedBox(width: 5),
-                                    Text("Filter"),
+                                    Text(
+                                      "Filter",
+                                      style: GoogleFonts.openSans(
+                                        color: Colors.blueGrey,
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -382,7 +412,7 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
                               });
                             },
                             child: Container(
-                              color: Colors.white,
+                              color: Color(0xFFF7F7F7),
                               alignment: Alignment.center,
                               child: Row(
                                 children: [

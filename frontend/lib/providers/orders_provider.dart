@@ -25,8 +25,8 @@ class OrdersProvider with ChangeNotifier {
               jsonData
                   .map<OrderDetails>((order) => OrderDetails.fromJson(order))
                   .toList();
-          notifyListeners();
           updateDeliveryStatus();
+          notifyListeners();
           //print(_orders.last.products.first.product);
           break;
         } else {
@@ -94,23 +94,33 @@ class OrdersProvider with ChangeNotifier {
 
   //update the delivery status.
   Future<void> updateDeliveryStatus() async {
-    for (final order in orders) {
+    for (final order in _orders) {
       final deliveryDate = DateTime.parse(order.deliveryDate);
       final orderedDate = DateTime.parse(order.orderedDate);
       final currentDate = DateTime.now();
-
       if (deliveryDate.isBefore(currentDate)) {
-        await http.put(
-          Uri.parse('$url/updatestatus/${order.orderId}'),
-          body: jsonEncode({"status": "delivered"}),
-        );
+        try {
+          await http.put(
+            Uri.parse('$url/updatestatus/${order.orderId}'),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({"status": "delivered"}),
+          );
+        } catch (e) {
+          rethrow;
+        }
       } else if (deliveryDate.isAfter(currentDate) &&
           orderedDate.isBefore(currentDate)) {
-        await http.put(
-          Uri.parse('$url/updatestatus/${order.orderId}'),
-          body: jsonEncode({"status": "transit"}),
-        );
+        try {
+          await http.put(
+            Uri.parse('$url/updatestatus/${order.orderId}'),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({"status": "transit"}),
+          );
+        } catch (e) {
+          rethrow;
+        }
       }
     }
+    notifyListeners();
   }
 }

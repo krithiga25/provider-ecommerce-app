@@ -10,7 +10,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 class ShippingAddressScreen extends StatefulWidget {
-  const ShippingAddressScreen({super.key});
+  final String email;
+  const ShippingAddressScreen({super.key, required this.email});
 
   @override
   State<ShippingAddressScreen> createState() => _ShippingAddressScreenState();
@@ -40,7 +41,7 @@ class _ShippingAddressScreenState extends State<ShippingAddressScreen> {
             ),
           ),
           bottomNavigationBar: BottomAppBar(
-             color: Color(0xFFF7F7F7),
+            color: Color(0xFFF7F7F7),
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.black,
@@ -157,7 +158,7 @@ class _ShippingAddressScreenState extends State<ShippingAddressScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Krithiga Perumal",
+                              widget.email,
                               style: GoogleFonts.openSans(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
