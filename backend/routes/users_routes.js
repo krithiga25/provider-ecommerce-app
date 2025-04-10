@@ -53,4 +53,7 @@ router.post("/createorder", controller.createOrder);
 //update user address:
 router.post("/updateaddress", controller.updateAddress);
 
+//update the status of the order:
+router.put("/updatestatus/:ordId", controller.updateStatus);
+
 module.exports = router;

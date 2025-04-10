@@ -30,7 +30,7 @@ class OrderDetails {
   final int tax;
   final int total;
   final String orderedDate;
-  //final String deliveryDate;
+  final String deliveryDate;
 
   OrderDetails({
     required this.userId,
@@ -44,14 +44,13 @@ class OrderDetails {
     required this.total,
     required this.orderedDate,
     required this.orderId,
-    //required this.deliveryDate,
+    required this.deliveryDate,
   });
 
   factory OrderDetails.fromJson(Map<String, dynamic> json) {
     return OrderDetails(
       userId: json['userId'],
-      //need to create it in the backend.
-      orderId: "ORDID987654",
+      orderId: json['orderId'],
       products:
           (json['products'] as List)
               .map((product) => ProductDetails.fromJson(product))
@@ -67,9 +66,10 @@ class OrderDetails {
           DateTime.parse(
             json['createdAt'],
           ).toLocal().toIso8601String().split('T').first,
-      // deliveryDate:  DateTime.parse(
-      //       json['createdAt'],
-      //     ).toLocal().toIso8601String().split('T').first,
+      deliveryDate:
+          DateTime.parse(
+            json['deliveryDate'],
+          ).toLocal().toIso8601String().split('T').first,
     );
   }
 }

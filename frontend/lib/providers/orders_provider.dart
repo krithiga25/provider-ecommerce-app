@@ -26,6 +26,7 @@ class OrdersProvider with ChangeNotifier {
                   .map<OrderDetails>((order) => OrderDetails.fromJson(order))
                   .toList();
           notifyListeners();
+          updateDeliveryStatus();
           //print(_orders.last.products.first.product);
           break;
         } else {
@@ -71,8 +72,7 @@ class OrdersProvider with ChangeNotifier {
       "total": total,
       "paymentMethod": paymentMethod,
       "paymentStatus": paymentStatus,
-      //need to change it as processing
-      "orderStatus": "pending",
+      "orderStatus": "processing",
       "shippingAddress": {
         "name": "John Doe",
         "address": "123 Main St",
@@ -88,9 +88,29 @@ class OrdersProvider with ChangeNotifier {
       body: jsonEncode(reqBody),
     );
     var jsonReponse = jsonDecode(response.body);
-    print(jsonReponse['error']);
+    notifyListeners();
     return jsonReponse['status'];
   }
 
   //update the delivery status.
+  Future<void> updateDeliveryStatus() async {
+    for (final order in orders) {
+      final deliveryDate = DateTime.parse(order.deliveryDate);
+      final orderedDate = DateTime.parse(order.orderedDate);
+      final currentDate = DateTime.now();
+
+      if (deliveryDate.isBefore(currentDate)) {
+        await http.put(
+          Uri.parse('$url/updatestatus/${order.orderId}'),
+          body: jsonEncode({"status": "delivered"}),
+        );
+      } else if (deliveryDate.isAfter(currentDate) &&
+          orderedDate.isBefore(currentDate)) {
+        await http.put(
+          Uri.parse('$url/updatestatus/${order.orderId}'),
+          body: jsonEncode({"status": "transit"}),
+        );
+      }
+    }
+  }
 }

@@ -2,6 +2,7 @@ import 'package:ecommerce_provider/providers/orders_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 
 class OrdersPage extends StatefulWidget {
   const OrdersPage({super.key});
@@ -13,10 +14,6 @@ class OrdersPage extends StatefulWidget {
 class _OrdersPageState extends State<OrdersPage> {
   @override
   void initState() {
-    Provider.of<OrdersProvider>(
-      context,
-      listen: false,
-    ).fetchOrders("krithiperu2002@gmail.com");
     super.initState();
   }
 
@@ -75,8 +72,11 @@ class _OrdersPageState extends State<OrdersPage> {
                             ],
                           ),
                           Text(
-                            orderProvider.orders[orderIndex].orderedDate
-                                .toString(),
+                            DateFormat('dd/MM/yyyy').format(
+                              DateTime.parse(
+                                orderProvider.orders[orderIndex].orderedDate,
+                              ),
+                            ),
                             style: GoogleFonts.openSans(
                               fontSize: 16,
                               color: Colors.blueGrey,
@@ -142,9 +142,15 @@ class _OrdersPageState extends State<OrdersPage> {
                                     orderProvider
                                                 .orders[orderIndex]
                                                 .orderStatus ==
+                                            "processing"
+                                        ? ""
+                                        : orderProvider
+                                                .orders[orderIndex]
+                                                .orderStatus ==
                                             "transit"
-                                        ? "Estimated Arrival: ${orderProvider.orders[orderIndex].orderedDate}"
-                                        : "Delivered On: ${orderProvider.orders[orderIndex].orderedDate}",
+                                        ? "Estimated Arrival: ${DateFormat('dd-MM-yyyy').format(DateTime.parse(orderProvider.orders[orderIndex].deliveryDate))}"
+                                        //?'Estimated delivery by ${orderProvider.orders[orderIndex].deliveryDate.day.toString()} ${getMonth(cartItems[index].estimatedDeliveryDate!.month)} ${cartItems[index].estimatedDeliveryDate!.year.toString()}'
+                                        : "Delivered On: ${DateFormat('dd-MM-yyyy').format(DateTime.parse(orderProvider.orders[orderIndex].deliveryDate))}",
                                     style: GoogleFonts.openSans(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w600,
@@ -225,13 +231,19 @@ class _OrdersPageState extends State<OrdersPage> {
                                     children: [
                                       Text(
                                         "Quantity: ${orderProvider.orders[orderIndex].products[itemIndex].quantity}",
+                                        style: GoogleFonts.openSans(
+                                          fontSize: 14,
+                                          color: Colors.grey,
+                                          fontWeight: FontWeight.w600,
+                                        ),
                                       ),
+                                      SizedBox(height: 5),
                                       Text(
-                                        orderProvider
-                                            .orders[orderIndex]
-                                            .products[itemIndex]
-                                            .price
-                                            .toString(),
+                                        ' \u{20B9} ${orderProvider.orders[orderIndex].products[itemIndex].price.toString()}',
+                                        style: GoogleFonts.openSans(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
+                                        ),
                                       ),
                                     ],
                                   ),

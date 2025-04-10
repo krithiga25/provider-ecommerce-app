@@ -412,7 +412,7 @@ class _CartScreenState extends State<CartScreen> {
                                       ),
                                     ),
                                     Text(
-                                      '\u{20B9} ${(cartItems.fold(0, (a, b) => a + b.price) * 0.018).ceilToDouble()}',
+                                      '\u{20B9} ${(cartItems.fold(0, (a, b) => a + b.price) * 0.18).ceilToDouble()}',
                                       style: GoogleFonts.openSans(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w600,
@@ -484,9 +484,11 @@ class _CartScreenState extends State<CartScreen> {
           color: Color(0xFFF7F7F7),
           height: 500,
           child: rive.RiveAnimation.asset(
-            'assets/empty_basket.riv',
+            // 'assets/empty_basket.riv',
+            'assets/empty_bee.riv',
             stateMachines: [
-              'Adding to basket - State Machine 1', //the name of the animation displayed at the top.
+              // 'Adding to basket - State Machine 1', //the name of the animation displayed at the top.
+              'Artboard - State Machine 1',
             ], // Add the state machine name
             onInit: (rive.Artboard artboard) {
               var controller = rive.StateMachineController.fromArtboard(

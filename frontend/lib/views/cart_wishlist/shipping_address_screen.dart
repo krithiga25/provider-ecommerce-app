@@ -40,78 +40,74 @@ class _ShippingAddressScreenState extends State<ShippingAddressScreen> {
             ),
           ),
           bottomNavigationBar: BottomAppBar(
+             color: Color(0xFFF7F7F7),
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.black,
                 shape: RoundedRectangleBorder(),
               ),
               onPressed: () async {
-                final status = await ordersProvider.createOrder(
-                  user: "krithiperu2002@gmail.com",
-                  //how to pass the products.
-                  products: cartItems,
-                  paymentMethod: "credit card",
-                  paymentStatus: "paid",
-                  subTotal: cartItems.fold(0, (a, b) => a + b.price),
-                  tax: 50,
-                  total: cartItems.fold(0, (a, b) => a + b.price) + 50,
-                );
                 //the payment screen
-                // double totalQuantity = cartItems.fold(0, (a, b) => a + b.price);
-                // final status = await initPaymentSheet(totalQuantity);
-                // print(status);
-                // if (status == "success") {
-                //   //await.
-                //   // remove cart items:
-                //   // cartProvider.clearCart("checkinglogin@gmail.com");
-                //   //create order:
-                //   final status = await ordersProvider.createOrder(
-                //     user: "krithiperu2002@gmail.com",
-                //     //how to pass the products.
-                //     products: cartItems,
-                //     paymentMethod: "credit card",
-                //     paymentStatus: "paid",
-                //     subTotal: cartItems.fold(0, (a, b) => a + b.price),
-                //     tax: 50,
-                //     total: cartItems.fold(0, (a, b) => a + b.price) + 50,
-                //   );
-                //   Navigator.push(
-                //     // ignore: use_build_context_synchronously
-                //     context,
-                //     MaterialPageRoute(
-                //       builder:
-                //           (context) =>
-                //               OrderStatusSplashScreen(status: 'success'),
-                //     ),
-                //   );
-                //   Future.delayed(Duration(milliseconds: 2000), () {
-                //     Navigator.pushReplacement(
-                //       // ignore: use_build_context_synchronously
-                //       context,
-                //       MaterialPageRoute(
-                //         builder:
-                //             (context) => NavigationExample(initialIndex: 3),
-                //       ),
-                //     );
-                //   });
-                // } else {
-                //   Navigator.push(
-                //     // ignore: use_build_context_synchronously
-                //     context,
-                //     MaterialPageRoute(
-                //       builder:
-                //           (context) =>
-                //               OrderStatusSplashScreen(status: 'failed'),
-                //     ),
-                //   );
-                //   Future.delayed(Duration(milliseconds: 2000), () {
-                //     Navigator.pushReplacement(
-                //       // ignore: use_build_context_synchronously
-                //       context,
-                //       MaterialPageRoute(builder: (context) => NavigationExample(initialIndex: 2)),
-                //     );
-                //   });
-                // }
+                double totalQuantity = cartItems.fold(0, (a, b) => a + b.price);
+                final status = await initPaymentSheet(totalQuantity);
+                if (status == "success") {
+                  Navigator.push(
+                    // ignore: use_build_context_synchronously
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) =>
+                              OrderStatusSplashScreen(status: 'success'),
+                    ),
+                  );
+                  //await.
+                  // remove cart items:
+                  cartProvider.clearCart("checkinglogin@gmail.com");
+                  //create order:
+                  final status = await ordersProvider.createOrder(
+                    user: "krithiperu2002@gmail.com",
+                    products: cartItems,
+                    paymentMethod: "credit card",
+                    paymentStatus: "paid",
+                    subTotal: cartItems.fold(0, (a, b) => a + b.price),
+                    tax:
+                        (cartItems.fold(0, (a, b) => a + b.price) * 0.18)
+                            .round(),
+                    total: cartItems.fold(0, (a, b) => a + b.price) + 50,
+                  );
+                  if (status) {
+                    Future.delayed(Duration(milliseconds: 2000), () {
+                      Navigator.pushReplacement(
+                        // ignore: use_build_context_synchronously
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (context) => NavigationExample(initialIndex: 3),
+                        ),
+                      );
+                    });
+                  }
+                } else {
+                  Navigator.push(
+                    // ignore: use_build_context_synchronously
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) =>
+                              OrderStatusSplashScreen(status: 'failed'),
+                    ),
+                  );
+                  Future.delayed(Duration(milliseconds: 2000), () {
+                    Navigator.pushReplacement(
+                      // ignore: use_build_context_synchronously
+                      context,
+                      MaterialPageRoute(
+                        builder:
+                            (context) => NavigationExample(initialIndex: 2),
+                      ),
+                    );
+                  });
+                }
               },
               child: Text(
                 "CONTINUE TO PAYMENT",
@@ -224,9 +220,13 @@ class _ShippingAddressScreenState extends State<ShippingAddressScreen> {
                               width: 70,
                               height: 70,
                             ),
+                            SizedBox(width: 20),
                             Text(
                               'Estimated delivery by ${cartItems[index].estimatedDeliveryDate!.day.toString()} ${getMonth(cartItems[index].estimatedDeliveryDate!.month)} ${cartItems[index].estimatedDeliveryDate!.year.toString()}',
-                              style: GoogleFonts.openSans(fontSize: 12.5),
+                              style: GoogleFonts.openSans(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ],
                         ),

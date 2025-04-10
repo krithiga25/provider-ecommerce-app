@@ -530,6 +530,27 @@ class UsersService {
       throw error;
     }
   }
+
+  static async updateStatus(ordId, status) {
+    try {
+      const order = await OrderModel.findOne({ orderId: ordId });
+
+      if (!order) {
+        res.status(404).send({ message: "Order not found" });
+        return;
+      }
+      order.orderStatus = status.status;
+      order.save();
+
+      return {
+        status: true,
+        message: "Delivery status updated successfully",
+        orderStatus: order.orderStatus,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
   // static async getCategoryProducts(categoryName) {
   //   try {
   //     const products = await ProductModel.find({ category: categoryName });

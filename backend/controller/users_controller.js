@@ -318,6 +318,19 @@ exports.updateAddress = async (req, res) => {
     });
   }
 };
+
+exports.updateStatus = async (req, res) => {
+  try {
+    const response = await UsersService.updateStatus(req.params.ordId, req.body);
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(400).json({
+      status: false,
+      message: "Failed to update the delivery status",
+      error: error.message,
+    });
+  }
+};
 exports.newPayment = async (req, res) => {
   console.log("hi");
   try {
