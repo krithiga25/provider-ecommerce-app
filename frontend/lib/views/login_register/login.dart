@@ -27,6 +27,7 @@ class LoginScreenState extends State<LoginScreen> {
   Timer? typingTimer;
   final FocusNode _passwordFocusNode = FocusNode();
   bool _isLoading = false;
+  bool _isButtonPressed = false;
   // ignore: prefer_typing_uninitialized_variables
   var myToken;
 
@@ -64,7 +65,6 @@ class LoginScreenState extends State<LoginScreen> {
       var jsonReponse = jsonDecode(response.body);
       if (jsonReponse['status']) {
         myToken = jsonReponse['token'];
-        // print(jsonReponse['token']);
         prefs.setString('token', myToken);
         _changeAnimation('success');
         showCustomSnackBar(
@@ -78,12 +78,13 @@ class LoginScreenState extends State<LoginScreen> {
           _isLoading = true;
         });
         await Future.delayed(Duration(seconds: 6));
-        Navigator.pushReplacement(
+        Navigator.pushAndRemoveUntil(
           // ignore: use_build_context_synchronously
           context,
           MaterialPageRoute(
             builder: (context) => NavigationExample(token: myToken),
           ),
+          (route) => false,
         );
       } else {
         _changeAnimation('fail');
@@ -281,18 +282,24 @@ class LoginScreenState extends State<LoginScreen> {
                   style: ButtonStyle(
                     backgroundColor: WidgetStateProperty.all(Colors.blueGrey),
                   ),
-                  onPressed: () async {
-                    if (_formKey.currentState!.validate()) {
-                      if (_passwordController.text.isNotEmpty &&
-                          _emailController.text.isNotEmpty) {
-                        await loginUser();
-                      }
-                    }
-                  },
+                  onPressed:
+                      _isButtonPressed
+                          ? null
+                          : () async {
+                            setState(() {
+                              _isButtonPressed = true;
+                            });
+                            if (_formKey.currentState!.validate()) {
+                              if (_passwordController.text.isNotEmpty &&
+                                  _emailController.text.isNotEmpty) {
+                                await loginUser();
+                              }
+                            }
+                          },
                   child: Text(
                     'Sign In',
                     style: GoogleFonts.openSans(
-                      color: Colors.white,
+                      color: _isButtonPressed ? Colors.white60 : Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
                   ),

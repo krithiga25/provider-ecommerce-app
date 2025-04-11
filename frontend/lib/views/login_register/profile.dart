@@ -1,4 +1,5 @@
 import 'package:ecommerce_provider/views/login_register/login.dart';
+import 'package:ecommerce_provider/views/shared/shared.dart';
 import 'package:ecommerce_provider/views/shared/under_contruction.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -16,10 +17,12 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   late SharedPreferences prefs;
 
-  // void initSharedPref() async {
-  //   prefs = await SharedPreferences.getInstance();
-  //   prefs.remove('token');
-  // }
+  void initSharedPref() async {
+    prefs = await SharedPreferences.getInstance();
+    prefs.remove('tokenn').then((removed) {
+      print(removed);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -152,6 +155,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       trailing: Icon(Icons.arrow_forward_ios),
                       onTap: () {
                         //navigate to the orders page on the delivery items
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (context) => NavigationExample(initialIndex: 3),
+                          ),
+                          (route) => false,
+                        );
                       },
                     ),
                   ],
@@ -194,12 +205,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             SizedBox(height: 10),
             GestureDetector(
               onTap: () {
-                //prefs.remove('token');
-                //widget.email = null;
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => LoginScreen()),
-                );
+                _logOutConfirmationDialog();
               }, // Logout
               child: SizedBox(
                 height: 60,
@@ -222,6 +228,71 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  Future<dynamic> _logOutConfirmationDialog() {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Color(0xFFF7F7F7),
+
+          title: Padding(
+            padding: const EdgeInsets.only(top: 30.0, bottom: 20),
+            child: Text(
+              "Are you sure you want to log out?",
+              style: GoogleFonts.openSans(
+                fontSize: 17,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: Container(
+                color: Colors.black,
+                height: 40,
+                width: 100,
+                child: TextButton(
+                  child: Text(
+                    "LOG OUT",
+                    style: GoogleFonts.openSans(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white,
+                    ),
+                  ),
+                  onPressed: () {
+                    prefs.remove('token');
+                    Navigator.of(context).pop();
+                    Future.delayed(Duration(seconds: 3));
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (context) => LoginScreen()),
+                      (route) => false,
+                    );
+                  },
+                ),
+              ),
+            ),
+            TextButton(
+              child: Text(
+                "CANCEL",
+                style: GoogleFonts.openSans(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black,
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

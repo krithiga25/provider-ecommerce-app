@@ -10,7 +10,7 @@ import 'package:ecommerce_provider/views/shared/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ecommerce_provider/views/login_register/profile.dart';
-//import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:provider/provider.dart';
 import 'package:rive/rive.dart' as rive;
 import '../../providers/product_provider.dart';
@@ -30,9 +30,9 @@ class _ProductsScreenState extends State<ProductsScreen> {
   @override
   void initState() {
     super.initState();
-    // Map<String, dynamic> decodedToken = JwtDecoder.decode(widget.token);
-    // email = decodedToken['email'];
-    email = 'krithiperu';
+    Map<String, dynamic> decodedToken = JwtDecoder.decode(widget.token);
+    email = decodedToken['email'];
+    // email = 'krithiperu';
   }
 
   @override
@@ -49,11 +49,6 @@ class _ProductsScreenState extends State<ProductsScreen> {
                   appBar: AppBar(
                     backgroundColor: Color(0xFFF7F7F7),
                     automaticallyImplyLeading: false,
-                    //title:
-                    //Center(
-                    // child:
-
-                    // ),
                     actions: [
                       Text(
                         "Home",
@@ -70,8 +65,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder:
-                                  (context) => ProfileScreen(email: 'email'),
+                              builder: (context) => ProfileScreen(email: email),
                             ),
                           );
                         },

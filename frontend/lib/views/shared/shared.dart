@@ -76,8 +76,8 @@ class _NavigationExampleState extends State<NavigationExample> {
       body:
           <Widget>[
             /// Home page
-            // ProductsScreen(token: widget.token),
-            ProductsScreen(),
+            ProductsScreen(token: widget.token),
+            //ProductsScreen(),
 
             /// wishlist page
             WishListScreen(),

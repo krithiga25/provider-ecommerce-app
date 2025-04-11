@@ -29,6 +29,16 @@ const userSchema = new Schema({
         country: { type: String },
       },
     },
+    default: {
+      shippingAddress: {
+        name: "Sam Joe",
+        address: "Default Address",
+        city: "Default City",
+        state: "Default State",
+        zip: "Default Zip",
+        country: "Default Country",
+      },
+    },
   },
 });
 

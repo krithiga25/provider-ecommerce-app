@@ -43,10 +43,11 @@ class RegistrationScreenState extends State<RegistrationScreen> {
           color: Colors.green.shade600,
         );
         await Future.delayed(Duration(seconds: 10));
-        Navigator.pushReplacement(
+        Navigator.pushAndRemoveUntil(
           // ignore: use_build_context_synchronously
           context,
           MaterialPageRoute(builder: (context) => LoginScreen()),
+          (route) => false,
         );
         //set some notification - logged in!
       } else {

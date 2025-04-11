@@ -1,3 +1,11 @@
+#update status:
+PUT http://localhost:3000/updatestatus/ORDID174130
+Content-Type: application/json
+
+{
+    "status": "transit"
+}
+
 #update address:
 # POST http://localhost:3000/updateaddress
 # Content-Type: application/json
@@ -18,35 +26,35 @@
 # GET http://localhost:3000/orders/krithiperu2002@gmail.com
 # Content-Type: application/json
 
-POST http://localhost:3000/createOrder
-Content-Type: application/json
+# POST http://localhost:3000/createOrder
+# Content-Type: application/json
 
-{
-    "email" : "krithiperu2002@gmail.com",
-    "orderId": "ORDID0000765",
-     "products": [
-    {
-      "product": "PRD15",
-      "quantity": 1,
-      "price": 199
-    }
+# {
+#     "email" : "krithiperu2002@gmail.com",
+#     "orderId": "ORDID0000788",
+#      "products": [
+#     {
+#       "product": "PRD17",
+#       "quantity": 1,
+#       "price": 199
+#     }
    
-  ],
-  "subtotal": 198,
-  "tax": 40,
-  "total": 238,
-  "paymentMethod": "credit card",
-  "paymentStatus": "paid",
-  "orderStatus": "delivered",
-  "shippingAddress": {
-  "name": "Krithiga Perumal",
-  "address": "123 Main St",
-  "city": "Anytown",
-  "state": "TN",
-  "zip": "12345",
-  "country": "India"
-}
-}
+#   ],
+#   "subtotal": 198,
+#   "tax": 40,
+#   "total": 238,
+#   "paymentMethod": "credit card",
+#   "paymentStatus": "paid",
+#   "orderStatus": "processing",
+#   "shippingAddress": {
+#   "name": "Krithiga Perumal",
+#   "address": "123 Main St",
+#   "city": "Anytown",
+#   "state": "TN",
+#   "zip": "12345",
+#   "country": "India"
+# }
+# }
 
 #DELETE http://localhost:3000/clearcart/checkinglogin@gmail.com
 # Content-Type: application/json

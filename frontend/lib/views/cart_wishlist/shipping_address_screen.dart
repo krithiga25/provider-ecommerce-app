@@ -78,13 +78,14 @@ class _ShippingAddressScreenState extends State<ShippingAddressScreen> {
                   );
                   if (status) {
                     Future.delayed(Duration(milliseconds: 2000), () {
-                      Navigator.pushReplacement(
+                      Navigator.pushAndRemoveUntil(
                         // ignore: use_build_context_synchronously
                         context,
                         MaterialPageRoute(
                           builder:
                               (context) => NavigationExample(initialIndex: 3),
                         ),
+                        (route) => false,
                       );
                     });
                   }
@@ -99,13 +100,14 @@ class _ShippingAddressScreenState extends State<ShippingAddressScreen> {
                     ),
                   );
                   Future.delayed(Duration(milliseconds: 2000), () {
-                    Navigator.pushReplacement(
+                    Navigator.pushAndRemoveUntil(
                       // ignore: use_build_context_synchronously
                       context,
                       MaterialPageRoute(
                         builder:
                             (context) => NavigationExample(initialIndex: 2),
                       ),
+                      (route) => false,
                     );
                   });
                 }
@@ -151,33 +153,63 @@ class _ShippingAddressScreenState extends State<ShippingAddressScreen> {
                         color: Colors.white,
                         padding: const EdgeInsets.only(
                           left: 16,
-                          bottom: 60,
+                          bottom: 35,
                           top: 16,
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            Row(
+                              children: [
+                                Text(
+                                  widget.email,
+                                  style: GoogleFonts.openSans(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 17,
+                                  ),
+                                ),
+                                SizedBox(width: 15),
+                                Text(
+                                  "(Default)",
+                                  style: GoogleFonts.openSans(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                SizedBox(width: 15),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: Colors.green,
+                                      width: 2,
+                                    ),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Text(
+                                    " Home ",
+                                    style: GoogleFonts.openSans(
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.green,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 7),
                             Text(
-                              widget.email,
+                              "2nd cross street,\nNew Main Road,\nDown Town,\n500007.",
                               style: GoogleFonts.openSans(
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w500,
                                 fontSize: 16,
                               ),
                             ),
-                            SizedBox(height: 5),
-                            Text(
-                              "1370, 2nd Main Road\nVelachery, Chennai.",
-                              style: GoogleFonts.openSans(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 14,
-                              ),
-                            ),
-                            SizedBox(height: 5),
+                            SizedBox(height: 6),
                             Text(
                               "Mobile: 9876543210",
                               style: GoogleFonts.openSans(
                                 fontWeight: FontWeight.bold,
-                                fontSize: 14,
+                                fontSize: 16,
                               ),
                             ),
                           ],
