@@ -64,6 +64,7 @@ class _CartScreenState extends State<CartScreen> {
                   ),
           //backgroundColor: Colors.white70,
           appBar: AppBar(
+            automaticallyImplyLeading: false,
             backgroundColor: Color(0xFFF7F7F7),
             title: Padding(
               padding: const EdgeInsets.all(16),

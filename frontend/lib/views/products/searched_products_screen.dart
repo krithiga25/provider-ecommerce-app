@@ -204,7 +204,7 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
                                                 width: 105,
                                                 decoration: BoxDecoration(
                                                   color:
-                                                      Colors.redAccent.shade200,
+                                                      Colors.black,
                                                   borderRadius:
                                                       BorderRadius.circular(5),
                                                 ),
@@ -417,6 +417,8 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
                               child: Row(
                                 children: [
                                   NavigationRail(
+                                    indicatorColor: Colors.blueGrey.shade300,
+                                    backgroundColor: Color(0xFFF7F7F7),
                                     selectedIndex: _selectedFilterIndex,
                                     onDestinationSelected: (index) {
                                       setState(() {
@@ -468,23 +470,47 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
                                                   MainAxisAlignment.spaceEvenly,
                                               children: [
                                                 ElevatedButton(
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                        backgroundColor: Color(
+                                                          0xFFF7F7F7,
+                                                        ),
+                                                      ),
                                                   onPressed: () {
                                                     _applyFilters();
                                                     setState(() {
                                                       _showFilterPanel = false;
                                                     });
                                                   },
-                                                  child: const Text('Apply'),
+                                                  child: Text(
+                                                    'Apply',
+                                                    style: GoogleFonts.openSans(
+                                                      color: Colors.blueGrey,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
                                                 ),
                                                 ElevatedButton(
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                        backgroundColor: Color(
+                                                          0xFFF7F7F7,
+                                                        ),
+                                                      ),
                                                   onPressed:
                                                       _isFilterApplied
                                                           ? () {
                                                             _resetFilters();
                                                           }
                                                           : null,
-                                                  child: const Text(
+                                                  child: Text(
                                                     'Reset filters',
+                                                    style: GoogleFonts.openSans(
+                                                      color: Colors.blueGrey,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
                                                   ),
                                                 ),
                                               ],

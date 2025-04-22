@@ -22,7 +22,7 @@ class SingleProductScreen extends StatefulWidget {
 
 class _SingleProductScreenState extends State<SingleProductScreen> {
   bool isInCart = false;
-  Color _cartButtonColor = const Color.fromARGB(255, 14, 64, 122);
+  Color _cartButtonColor = Colors.black;
   @override
   Widget build(BuildContext context) {
     return Consumer<CartProvider>(
@@ -170,7 +170,7 @@ class _SingleProductScreenState extends State<SingleProductScreen> {
                                       });
                                     }
                                     : () {
-                                      Navigator.pushReplacement(
+                                      Navigator.pushAndRemoveUntil(
                                         context,
                                         MaterialPageRoute(
                                           builder:
@@ -178,6 +178,7 @@ class _SingleProductScreenState extends State<SingleProductScreen> {
                                                 initialIndex: 2,
                                               ),
                                         ),
+                                        (route) => false,
                                       );
                                       // Navigator.pop(context, 2);
                                     },
@@ -292,7 +293,7 @@ class _SingleProductScreenState extends State<SingleProductScreen> {
                             padding: EdgeInsets.all(8),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(4),
-                              color: const Color.fromARGB(255, 241, 164, 164),
+                              color: Colors.black,
                             ),
                             child: Text(
                               '  DESCRIPTION  ',
@@ -609,7 +610,7 @@ class _SingleProductScreenState extends State<SingleProductScreen> {
   ];
 
   String _selectedSize = '';
-  final _sizeTextColor = const Color.fromARGB(255, 241, 164, 164);
+  final _sizeTextColor = Colors.black;
   final _textBgColor = Colors.white;
   final List<String> _sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
   final _reviewTextController = TextEditingController();

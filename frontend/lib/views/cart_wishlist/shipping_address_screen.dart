@@ -236,6 +236,7 @@ class _ShippingAddressScreenState extends State<ShippingAddressScreen> {
                   (ctx, index) {
                     return Container(
                       decoration: BoxDecoration(
+                        color: Colors.white,
                         border: Border(
                           bottom: BorderSide(
                             width: 0.5,

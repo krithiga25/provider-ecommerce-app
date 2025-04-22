@@ -49,6 +49,8 @@ class LoginScreenState extends State<LoginScreen> {
     prefs = await SharedPreferences.getInstance();
   }
 
+  bool _loginFailed = false;
+
   Future<void> loginUser() async {
     if (_emailController.text.isNotEmpty &&
         _passwordController.text.isNotEmpty) {
@@ -75,6 +77,7 @@ class LoginScreenState extends State<LoginScreen> {
         );
         //TopNotification();
         setState(() {
+          _loginFailed = true;
           _isLoading = true;
         });
         await Future.delayed(Duration(seconds: 6));
@@ -94,6 +97,13 @@ class LoginScreenState extends State<LoginScreen> {
           'Failed to login, please try again!',
           color: Colors.red,
         );
+        _emailController.clear();
+        _passwordController.clear();
+        _loginFailed = true;
+        setState(() {
+          _isButtonPressed = false;
+        });
+        _formKey.currentState!.validate();
       }
     }
   }
@@ -177,13 +187,16 @@ class LoginScreenState extends State<LoginScreen> {
                             width: 2,
                           ), // On focus
                         ),
+                        errorText:
+                            _loginFailed ? "Invalid email ID provided!" : null,
                         errorStyle: GoogleFonts.openSans(
                           color: Colors.red,
                           fontSize: 15,
                         ),
                       ),
                       validator: (value) {
-                        if (value!.isEmpty) {
+                        if (value!.isEmpty & !_loginFailed) {
+                          // errors['email'] = 'Please enter an email';
                           return 'Please enter an email';
                         }
                         return null;
@@ -225,13 +238,17 @@ class LoginScreenState extends State<LoginScreen> {
                             width: 2,
                           ), // On focus
                         ),
+                        errorText:
+                            _loginFailed
+                                ? "Invalid password, check your password again."
+                                : null,
                         errorStyle: GoogleFonts.openSans(
                           color: Colors.red,
                           fontSize: 15,
                         ),
                       ),
                       validator: (value) {
-                        if (value!.isEmpty) {
+                        if (value!.isEmpty & !_loginFailed) {
                           return 'Please enter a password';
                         }
                         return null;
@@ -286,12 +303,12 @@ class LoginScreenState extends State<LoginScreen> {
                       _isButtonPressed
                           ? null
                           : () async {
-                            setState(() {
-                              _isButtonPressed = true;
-                            });
                             if (_formKey.currentState!.validate()) {
                               if (_passwordController.text.isNotEmpty &&
                                   _emailController.text.isNotEmpty) {
+                                setState(() {
+                                  _isButtonPressed = true;
+                                });
                                 await loginUser();
                               }
                             }

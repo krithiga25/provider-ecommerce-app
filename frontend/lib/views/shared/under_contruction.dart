@@ -90,7 +90,8 @@ class _UnderContructionState extends State<UnderContruction> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      backgroundColor: Color(0xFFF7F7F7),
+      appBar: AppBar(backgroundColor: Color(0xFFF7F7F7)),
       body: Column(
         children: [
           Expanded(

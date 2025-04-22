@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ecommerce_provider/providers/orders_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -207,8 +208,8 @@ class _OrdersPageState extends State<OrdersPage> {
                                   leading: SizedBox(
                                     height: 70,
                                     width: 70,
-                                    child: Image.network(
-                                      orderProvider
+                                    child:CachedNetworkImage(
+                                    imageUrl:   orderProvider
                                           .orders[orderIndex]
                                           .products[itemIndex]
                                           .product

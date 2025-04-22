@@ -1,6 +1,7 @@
 import 'package:ecommerce_provider/providers/orders_provider.dart';
 import 'package:ecommerce_provider/providers/wish_list_provider.dart';
 import 'package:ecommerce_provider/views/login_register/login.dart';
+import 'package:ecommerce_provider/views/shared/shared.dart';
 // import 'package:ecommerce_provider/views/shared/shared.dart';
 // import 'package:google_fonts/google_fonts.dart';
 

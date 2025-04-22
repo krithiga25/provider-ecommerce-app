@@ -30,9 +30,9 @@ class _ProductsScreenState extends State<ProductsScreen> {
   @override
   void initState() {
     super.initState();
-    Map<String, dynamic> decodedToken = JwtDecoder.decode(widget.token);
-    email = decodedToken['email'];
-    // email = 'krithiperu';
+    // Map<String, dynamic> decodedToken = JwtDecoder.decode(widget.token);
+    // email = decodedToken['email'];
+    email = 'krithiperu';
   }
 
   @override

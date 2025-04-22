@@ -5,10 +5,8 @@ import 'package:ecommerce_provider/models/wish_list.dart';
 import 'package:ecommerce_provider/providers/cart_provider.dart';
 import 'package:ecommerce_provider/providers/product_provider.dart';
 import 'package:ecommerce_provider/providers/wish_list_provider.dart';
-import 'package:ecommerce_provider/views/cart_wishlist/cart_screen.dart';
 import 'package:ecommerce_provider/views/products/single_product_screen.dart';
 import 'package:ecommerce_provider/views/shared/shared.dart';
-import 'package:ecommerce_provider/views/cart_wishlist/wish_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -55,18 +53,22 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
           IconButton(
             icon: Icon(Icons.favorite),
             onPressed: () {
-              Navigator.push(
+              Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => WishListScreen()),
+                MaterialPageRoute(
+                  builder: (context) => NavigationExample(initialIndex: 1),
+                ),
               );
             },
           ),
           IconButton(
             icon: Icon(Icons.shopping_cart),
             onPressed: () {
-              Navigator.push(
+              Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => CartScreen()),
+                MaterialPageRoute(
+                  builder: (context) => NavigationExample(initialIndex: 2),
+                ),
               );
             },
           ),
@@ -207,10 +209,7 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
                                                   height: 35,
                                                   width: 105,
                                                   decoration: BoxDecoration(
-                                                    color:
-                                                        Colors
-                                                            .redAccent
-                                                            .shade200,
+                                                    color: Colors.black,
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                           5,
@@ -396,9 +395,20 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
                             onPressed: () => _showSortOptions(context),
                             child: Row(
                               children: [
-                                Icon(Icons.sort, size: 18),
+                                Icon(
+                                  Icons.sort,
+                                  size: 20,
+                                  color: Colors.blueGrey,
+                                ),
                                 SizedBox(width: 5),
-                                Text("Sort"),
+                                Text(
+                                  "Sort",
+                                  style: GoogleFonts.openSans(
+                                    color: Colors.blueGrey,
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -410,9 +420,20 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
                             },
                             child: Row(
                               children: [
-                                Icon(Icons.filter_list, size: 18),
+                                Icon(
+                                  Icons.filter_list,
+                                  size: 20,
+                                  color: Colors.blueGrey,
+                                ),
                                 SizedBox(width: 5),
-                                Text("Filter"),
+                                Text(
+                                  "Filter",
+                                  style: GoogleFonts.openSans(
+                                    color: Colors.blueGrey,
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -429,11 +450,13 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
                           });
                         },
                         child: Container(
-                          color: Colors.white,
+                          color: Color(0xFFF7F7F7),
                           alignment: Alignment.center,
                           child: Row(
                             children: [
                               NavigationRail(
+                                backgroundColor: Color(0xFFF7F7F7),
+                                indicatorColor: Colors.blueGrey.shade300,
                                 selectedIndex: _selectedFilterIndex,
                                 onDestinationSelected: (index) {
                                   setState(() {
@@ -455,12 +478,7 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
                                       left: 25,
                                       right: 25,
                                     ),
-                                    icon: Badge(
-                                      // label:
-                                      //     _isFilterApplied ? Text('1') : null,
-                                      child: Icon(Icons.attach_money),
-                                    ),
-
+                                    icon: Icon(Icons.attach_money),
                                     label: Text('Price'),
                                   ),
                                   NavigationRailDestination(
@@ -468,11 +486,7 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
                                       left: 25,
                                       right: 25,
                                     ),
-                                    icon: Badge(
-                                      // label:
-                                      //     _isFilterApplied ? Text('1') : null,
-                                      child: Icon(Icons.star),
-                                    ),
+                                    icon: Icon(Icons.star),
                                     label: Text('Rating'),
                                   ),
                                   NavigationRailDestination(
@@ -480,11 +494,7 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
                                       left: 25,
                                       right: 25,
                                     ),
-                                    icon: Badge(
-                                      // label:
-                                      //     _isFilterApplied ? Text('1') : null,
-                                      child: Icon(Icons.fiber_new),
-                                    ),
+                                    icon: Icon(Icons.fiber_new),
                                     label: Text('New Arrivals'),
                                   ),
                                 ],
@@ -506,23 +516,43 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
                                               MainAxisAlignment.spaceEvenly,
                                           children: [
                                             ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: Color(
+                                                  0xFFF7F7F7,
+                                                ),
+                                              ),
                                               onPressed: () {
                                                 _applyFilters();
                                                 setState(() {
                                                   _showFilterPanel = false;
                                                 });
                                               },
-                                              child: const Text('Apply'),
+                                              child: Text(
+                                                'Apply',
+                                                style: GoogleFonts.openSans(
+                                                  color: Colors.blueGrey,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
                                             ),
                                             ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: Color(
+                                                  0xFFF7F7F7,
+                                                ),
+                                              ),
                                               onPressed:
                                                   _isFilterApplied
                                                       ? () {
                                                         _resetFilters();
                                                       }
                                                       : null,
-                                              child: const Text(
+                                              child: Text(
                                                 'Reset filters',
+                                                style: GoogleFonts.openSans(
+                                                  color: Colors.blueGrey,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
                                               ),
                                             ),
                                           ],
@@ -587,6 +617,7 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         RangeSlider(
+          activeColor: Colors.blueGrey,
           values: _priceRange,
           min: 50,
           max: 5000,

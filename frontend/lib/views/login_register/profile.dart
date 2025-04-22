@@ -79,7 +79,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           "Account Settings",
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
-                        Icon(Icons.settings, color: Colors.blue),
+                        Icon(Icons.settings, color: Colors.black),
                       ],
                     ),
                     Divider(),
@@ -137,7 +137,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           "Order Details",
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
-                        Icon(Icons.history, color: Colors.blue),
+                        Icon(Icons.history, color: Colors.black),
                       ],
                     ),
                     Divider(),
@@ -147,6 +147,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       trailing: Icon(Icons.arrow_forward_ios),
                       onTap: () {
                         //navigate to the orders page with only the delivered data.
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (context) => NavigationExample(initialIndex: 3),
+                          ),
+                          (route) => false,
+                        );
                       },
                     ),
                     ListTile(
