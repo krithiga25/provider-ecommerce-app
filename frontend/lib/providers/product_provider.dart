@@ -35,6 +35,8 @@ class ProductProvider with ChangeNotifier {
     return [..._searchProducts];
   }
 
+  bool searchResults = true;
+
   // category products:
   List<Product> _categoryProducts = [];
 
@@ -105,6 +107,7 @@ class ProductProvider with ChangeNotifier {
           jsonData
               .map<Product>((product) => Product.searchProduct(product))
               .toList();
+      searchResults = false;
       notifyListeners();
     }
   }

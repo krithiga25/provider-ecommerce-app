@@ -14,6 +14,8 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:provider/provider.dart';
 import 'package:rive/rive.dart' as rive;
 import '../../providers/product_provider.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:google_ml_kit/google_ml_kit.dart';
 
 class ProductsScreen extends StatefulWidget {
   // ignore: prefer_typing_uninitialized_variables
@@ -732,11 +734,98 @@ class _ProductsScreenState extends State<ProductsScreen> {
                 },
                 icon: Icon(Icons.search),
               ),
+              IconButton(
+                onPressed: () {
+                  showImageSourceDialog(context);
+                },
+                icon: Icon(Icons.camera_alt_outlined),
+              ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  void showImageSourceDialog(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: BeveledRectangleBorder(),
+      backgroundColor: Colors.white,
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 40.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: Icon(Icons.camera_alt),
+                title: Text('Take a Photo'),
+                onTap: () {
+                  pickImage(ImageSource.camera);
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.photo_library),
+                title: Text('Upload from Gallery'),
+                onTap: () {
+                  pickImage(ImageSource.gallery);
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Map<String, String> labelMapping = {
+    'Outerwear': 'Clothes',
+    'Jacket': 'Jacket',
+    'Jeans': 'Pants',
+    'T-shirt': 'Shirt',
+    'Dress': 'Clothes',
+    // add more mappings based on what results you get
+  };
+
+  String getCustomLabel(String modelLabel) {
+    return labelMapping[modelLabel] ?? modelLabel;
+  }
+
+  Future<void> pickImage(ImageSource source) async {
+    final picker = ImagePicker();
+    final pickedImage = await picker.pickImage(source: source);
+
+    if (pickedImage != null) {
+      final inputImage = InputImage.fromFilePath(pickedImage.path);
+      analyzeImage(inputImage);
+    }
+  }
+
+  Future<void> analyzeImage(InputImage image) async {
+    final imageLabeler = ImageLabeler(
+      options: ImageLabelerOptions(confidenceThreshold: 0.6),
+    );
+    final labels = await imageLabeler.processImage(image);
+
+    if (labels.isNotEmpty) {
+      final labelTexts = labels.map((label) => label.label).toList();
+      final keyword = labelTexts.first;
+      print('**************************************');
+      print(labelTexts);
+      print('**************************************');
+      print("ML Keyword: $keyword");
+      print('**************************************');
+      String modelOutput = "Outerwear";
+      String customOutput = getCustomLabel(modelOutput);
+      print('Custom Output: $customOutput');
+    } else {
+      print("No labels detected.");
+    }
+
+    imageLabeler.close();
   }
 
   final List<CategoriesList> _categoriesList = [

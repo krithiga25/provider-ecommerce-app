@@ -42,6 +42,10 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final productProvider = Provider.of<ProductProvider>(
+      context,
+      listen: false,
+    );
     return Scaffold(
       backgroundColor: Color(0xFFF7F7F7),
       appBar: AppBar(
@@ -94,8 +98,35 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
         builder: (context, cartProvider, child) {
           return Consumer<WishListProvider>(
             builder: (context, wishListProvider, child) {
-              return sortedProducts.isEmpty
+              return sortedProducts.isEmpty && productProvider.searchResults
                   ? Center(child: loadingAnimation())
+                  : sortedProducts.isEmpty &&
+                      !productProvider.searchResults &&
+                      !_isFilterApplied
+                  ? Center(child: Text('No search results for this!'))
+                  : _isFilterApplied
+                  ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                    Center(child: Text('No search results for this!')),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFFF7F7F7),
+                        ),
+                        onPressed: () {
+                          _resetFilters();
+                        },
+                        child: Text(
+                          'Reset filters',
+                          style: GoogleFonts.openSans(
+                            color: Colors.blueGrey,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
                   : Stack(
                     children: [
                       // ? Center(
@@ -203,8 +234,7 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
                                                 height: 35,
                                                 width: 105,
                                                 decoration: BoxDecoration(
-                                                  color:
-                                                      Colors.black,
+                                                  color: Colors.black,
                                                   borderRadius:
                                                       BorderRadius.circular(5),
                                                 ),

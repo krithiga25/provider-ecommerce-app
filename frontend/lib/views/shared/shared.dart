@@ -11,7 +11,8 @@ import 'package:provider/provider.dart';
 
 final url =
     //'http://192.168.29.93:3000'
-    'https://fs-ecommerce-app.onrender.com';
+    //'https://fs-ecommerce-app.onrender.com';
+    'http://65.2.4.71:3000';
 
 class NavigationExample extends StatefulWidget {
   const NavigationExample({super.key, this.token, this.initialIndex});

@@ -49,7 +49,7 @@ class LoginScreenState extends State<LoginScreen> {
     prefs = await SharedPreferences.getInstance();
   }
 
-  bool _loginFailed = false;
+  //bool _loginFailed = false;
 
   Future<void> loginUser() async {
     if (_emailController.text.isNotEmpty &&
@@ -77,7 +77,7 @@ class LoginScreenState extends State<LoginScreen> {
         );
         //TopNotification();
         setState(() {
-          _loginFailed = true;
+          //_loginFailed = true;
           _isLoading = true;
         });
         await Future.delayed(Duration(seconds: 6));
@@ -94,16 +94,16 @@ class LoginScreenState extends State<LoginScreen> {
         showCustomSnackBar(
           // ignore: use_build_context_synchronously
           context,
-          'Failed to login, please try again!',
+          'Invalid credinationals, please try again!',
           color: Colors.red,
         );
         _emailController.clear();
         _passwordController.clear();
-        _loginFailed = true;
+        //_loginFailed = true;
         setState(() {
           _isButtonPressed = false;
         });
-        _formKey.currentState!.validate();
+        //_formKey.currentState!.validate();
       }
     }
   }
@@ -187,20 +187,25 @@ class LoginScreenState extends State<LoginScreen> {
                             width: 2,
                           ), // On focus
                         ),
-                        errorText:
-                            _loginFailed ? "Invalid email ID provided!" : null,
+                        // errorText:
+                        //     _loginFailed ? "Invalid email ID provided!" : null,
                         errorStyle: GoogleFonts.openSans(
                           color: Colors.red,
                           fontSize: 15,
                         ),
                       ),
                       validator: (value) {
-                        if (value!.isEmpty & !_loginFailed) {
+                        if (value!.isEmpty) {
                           // errors['email'] = 'Please enter an email';
                           return 'Please enter an email';
                         }
                         return null;
                       },
+                      // onChanged: (value) {
+                      //   setState(() {
+                      //     _formKey.currentState!.validate();
+                      //   });
+                      // },
                     ),
                     const SizedBox(height: 20),
                     TextFormField(
@@ -238,36 +243,24 @@ class LoginScreenState extends State<LoginScreen> {
                             width: 2,
                           ), // On focus
                         ),
-                        errorText:
-                            _loginFailed
-                                ? "Invalid password, check your password again."
-                                : null,
+                        // errorText:
+                        //     _loginFailed
+                        //         ? "Invalid password, check your password again."
+                        //         : null,
                         errorStyle: GoogleFonts.openSans(
                           color: Colors.red,
                           fontSize: 15,
                         ),
                       ),
                       validator: (value) {
-                        if (value!.isEmpty & !_loginFailed) {
+                        if (value!.isEmpty) {
                           return 'Please enter a password';
                         }
                         return null;
                       },
                       // onChanged: (value) {
-                      //   typingTimer
-                      //       ?.cancel(); // Cancel previous timer if still running
-
-                      //   if (!_controller.isActive) {
-                      //     _changeAnimation(
-                      //       'hands_up',
-                      //     ); // Trigger only once when typing starts
-                      //   }
-
-                      //   // Start a timer to detect when the user stops typing
-                      //   typingTimer = Timer(Duration(seconds: 1), () {
-                      //     _changeAnimation(
-                      //       'hands_down',
-                      //     ); // Trigger when typing stops
+                      //   setState(() {
+                      //     _formKey.currentState!.validate();
                       //   });
                       // },
                     ),
