@@ -25,6 +25,8 @@ dependencies:
   rive: ^0.13.20
   readmore: ^3.0.0
   intl: ^0.20.2
+  google_ml_kit: ^0.20.0
+  image_picker: ^1.1.2
 
 dev_dependencies:
   flutter_test:

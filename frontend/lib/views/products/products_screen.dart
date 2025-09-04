@@ -557,8 +557,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
                                       Padding(
                                         padding: const EdgeInsets.all(15),
                                         child: CachedNetworkImage(
-                                          // 'https://hhatffzhvdmybvizyvhw.supabase.co/storage/v1/object/public/flut-images/electronics/headphones.jpg',
-                                          // 'https://hhatffzhvdmybvizyvhw.supabase.co/storage/v1/object/public/flut-pdf-bucket//jacket2.jpg',
+                                          // 'https://siskogklhmdfnirucefa.supabase.co/storage/v1/object/public/flut-images/electronics/headphones.jpg',
+                                          // 'https://siskogklhmdfnirucefa.supabase.co/storage/v1/object/public/flut-pdf-bucket//jacket2.jpg',
                                           //'assets/iphone.jpg',
                                           imageUrl: product.imageUrl,
                                           fit: BoxFit.fitWidth,
@@ -832,22 +832,22 @@ class _ProductsScreenState extends State<ProductsScreen> {
     CategoriesList(
       categoryName: 'clothes',
       categoryImageUrl:
-          'https://hhatffzhvdmybvizyvhw.supabase.co/storage/v1/object/public/flut-images/category/clothes_category.jpg',
+          'https://siskogklhmdfnirucefa.supabase.co/storage/v1/object/public/flut-images/category/clothes_category.jpg',
     ),
     CategoriesList(
       categoryName: 'accessories',
       categoryImageUrl:
-          'https://hhatffzhvdmybvizyvhw.supabase.co/storage/v1/object/public/flut-images/category/accessories_category.jpg',
+          'https://siskogklhmdfnirucefa.supabase.co/storage/v1/object/public/flut-images/category/accessories_category.jpg',
     ),
     CategoriesList(
       categoryName: 'electronics',
       categoryImageUrl:
-          'https://hhatffzhvdmybvizyvhw.supabase.co/storage/v1/object/public/flut-images/category/electronics_category.jpg',
+          'https://siskogklhmdfnirucefa.supabase.co/storage/v1/object/public/flut-images/category/electronics_category.jpg',
     ),
     CategoriesList(
       categoryName: 'footwear',
       categoryImageUrl:
-          "https://hhatffzhvdmybvizyvhw.supabase.co/storage/v1/object/public/flut-images/category/shoe_category.jpg",
+          "https://siskogklhmdfnirucefa.supabase.co/storage/v1/object/public/flut-images/category/shoe_category.jpg",
     ),
   ];
 

@@ -10,6 +10,7 @@ import 'package:ecommerce_provider/views/shared/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:rive/rive.dart' as rive;
 
 class SearchedProductsScreen extends StatefulWidget {
   const SearchedProductsScreen({super.key, required this.searchQuery});
@@ -39,6 +40,40 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
     _originalProducts = productProvider.searchProducts;
     sortedProducts = _originalProducts;
   }
+
+  Widget _noResultsAnimation() {
+  return Column(
+    children: [
+      SizedBox(
+        height: 400,
+        child: rive.RiveAnimation.asset(
+          'assets/earth_loading.riv',
+          stateMachines: [
+            'Loading Final - State Machine 1', //the name of the animation displayed at the top.
+          ], // Add the state machine name
+          onInit: (rive.Artboard artboard) {
+            var controller = rive.StateMachineController.fromArtboard(
+              artboard,
+              'State Machine 1',
+            );
+            if (controller != null) {
+              artboard.addController(controller);
+              controller.isActive = true;
+            }
+          },
+        ),
+      ),
+      Text(
+        'Hold on, loading products for you...',
+        style: GoogleFonts.openSans(
+          fontSize: 18,
+          color: Colors.blueGrey,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+    ],
+  );
+}
 
   @override
   Widget build(BuildContext context) {

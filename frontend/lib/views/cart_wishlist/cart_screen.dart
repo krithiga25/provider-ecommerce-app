@@ -282,11 +282,13 @@ class _CartScreenState extends State<CartScreen> {
                                                       color: Colors.green,
                                                     ),
                                                     SizedBox(width: 3),
-                                                    Text(
-                                                      'Delivery by ${cartItems[index].estimatedDeliveryDate!.day.toString()} ${getMonth(cartItems[index].estimatedDeliveryDate!.month)} ${cartItems[index].estimatedDeliveryDate!.year.toString()}',
-                                                      style: GoogleFonts.openSans(
-                                                        fontSize: 12.5,
-                                                        //fontWeight: FontWeight.bold,
+                                                    Expanded(
+                                                      child: Text(
+                                                        'Delivery by ${cartItems[index].estimatedDeliveryDate!.day.toString()} ${getMonth(cartItems[index].estimatedDeliveryDate!.month)} ${cartItems[index].estimatedDeliveryDate!.year.toString()}',
+                                                        style: GoogleFonts.openSans(
+                                                          fontSize: 12.5,
+                                                          //fontWeight: FontWeight.bold,
+                                                        ),
                                                       ),
                                                     ),
                                                   ],
