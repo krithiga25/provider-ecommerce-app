@@ -91,7 +91,7 @@ Please be truthful and give direct answers. Please tell 'I don't know' if user q
 <|assistant|>
 """
 model = HuggingFaceHub(repo_id="google/flan-t5-small",
-huggingfacehub_api_token = "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",
+huggingfacehub_api_token = "",
                        model_kwargs={"temperature":0.5,
                                      "max_new_tokens":512,
                                      "max_length":64
