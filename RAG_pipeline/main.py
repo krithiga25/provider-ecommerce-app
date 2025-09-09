@@ -1,91 +1,73 @@
 from pymongo import MongoClient
-from langchain.docstore.document import Document
+from langchain.schema import Document
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_community.llms import HuggingFaceHubRetriever 
-from langchain.chains.qa import RetrievalQA
-from langchain.models import FlanModel
-from transformers import AutoModel, AutoTokenizer
-import faiss
-import numpy as np
+#from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_community.vectorstores import FAISS
+#from langchain_community.llms import HuggingFacePipeline
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, pipeline
+from langchain.chains import RetrievalQA
+from langchain_huggingface import HuggingFaceEmbeddings, HuggingFacePipeline
+from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.feature_extraction.text import TfidfVectorizer
 
-# Connect to MongoDB
 client = MongoClient("mongodb+srv://krithiperu2002:Shiroboy123@clusterapp.bbvbt.mongodb.net/")
 db = client["ecomdb"]
 collection = db["products"]
 
-# Fetch and format documents
 docs = []
 for item in collection.find():
     content = f"Product Name: {item['productName']}\nDescription: {item['description']}\nPrice: ₹{item['price']}"
     docs.append(Document(page_content=content))
 
-# Chunk the documents
 splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
 chunks = splitter.split_documents(docs)
-# print("\nChunks:")
-# for chunk in chunks:
-#     print(chunk.page_content)
-model_name = "sentence-transformers/all-MiniLM-L6-v2"
-model = AutoModel.from_pretrained(model_name)
-tokenizer = AutoTokenizer.from_pretrained(model_name)
 
-# Define a function to embed a chunk
-def embed_chunk(chunk):
-    inputs = tokenizer(chunk, return_tensors="pt")
-    outputs = model(**inputs)
-    embeddings = outputs.pooler_output.detach().numpy()[0]
-    return embeddings
 
-# Initialize the Faiss index
-index = faiss.IndexFlatL2(384)  # 128 is the dimensionality of the embeddings
+embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+vectorstore = FAISS.from_documents(chunks, embedding_model)
+vectorstore.save_local("faiss_index")
 
-# Embed the chunks and add to the Faiss index
-for chunk in chunks:
-    embedding = embed_chunk(chunk.page_content)
-    index.add(embedding.reshape(1, -1))  # reshape to (1, 128) for Faiss
+retriever = FAISS.load_local("faiss_index", embedding_model, allow_dangerous_deserialization=True).as_retriever(search_kwargs={"k": 1})
 
-# Print the number of vectors in the index
-print("Number of vectors in the index:", index.ntotal)
-# faiss.write_index(index, "faiss_index.ivf")
 
-# Define a query (e.g. a text string)
-query = "Engagement ring for women?"
+model_id = "google/flan-t5-base"
+tokenizer = AutoTokenizer.from_pretrained(model_id)
+model = AutoModelForSeq2SeqLM.from_pretrained(model_id)
 
-# Embed the query using the same model and tokenizer as before
-query_embedding = embed_chunk(query)
+pipe = pipeline("text2text-generation", model=model, tokenizer=tokenizer, max_length=300)
+llm = HuggingFacePipeline(pipeline=pipe)
 
-# Search for the top-k most similar documents in the index
-k = 1
-distances, indices = index.search(query_embedding.reshape(1, -1), k)
 
-# Print the top-k results
-print("Top-{} results:".format(k))
-for i, (distance, index) in enumerate(zip(distances[0], indices[0])):
-    print("Rank {}: Chunk {} (Distance: {:.4f})".format(i+1, index, distance))
-    print("Chunk text:", chunks[index].page_content)
-    print()
+qa_chain = RetrievalQA.from_chain_type(llm=llm, retriever=retriever, return_source_documents=True)
+def get_answer(query):
+    response = qa_chain.invoke(query)
+    prompt = "Here is the best footwear for women: {} ({}) - {}".format(
+        response['source_documents'][0].page_content.split('\n')[0].split(': ')[1],
+        response['source_documents'][0].page_content.split('\n')[2].split(': ')[1],
+        response['source_documents'][0].page_content.split('\n')[1].split(': ')[1]
+    )
+    generated_response = llm.generate(prompts=[prompt], max_length=200)
+    #text_response = generated_response.generations[0].text
+    return generated_response
 
-# Initialize the FLAN model
-flan_model = FlanModel.from_pretrained("google/flan-t5-base")
+#generated_response = llm.generate(prompts=[response["result"]], max_length=200)
 
-retriever = HuggingFaceRetriever(
-    index=index,  # assuming you have an index created earlier
-    embedding_model=model_name,  # assuming you have a FLAN model created earlier
-    top_k=5,  # retrieve the top 5 most relevant documents
-)
+# prompt based:
+# prompt = "Based on the product details, what would you recommend for someone looking for a good pair of headphones under ₹2000?"
 
-# Initialize the RetrievalQA chain
-retrieval_qa = RetrievalQA(
-    model=flan_model,
-    index=index,  # assuming you have an index created earlier
-    retriever=retriever,  # assuming you have a retriever created earlier
-)
+# vectorizer = TfidfVectorizer()
+# query_vector = vectorizer.fit_transform([query])
+# response_vector = vectorizer.transform([response["result"]])
 
-# Define a prompt for the RetrievalQA chain
-prompt = "I'm looking for a new pair of shoes. Can you tell me more about the Nike Air Max 270?"
+# similarity = cosine_similarity(query_vector, response_vector)
+# print("Query:", query_vector)
+# print("Response:", response_vector)
+# print("Similarity:", similarity)
+# if similarity < 0.5:
+#     generated_response = "I'm not sure what you're asking about."
+# else:
+#     generated_response = llm.generate(prompts=[response["result"]], max_length=200)
 
-# Run the RetrievalQA chain
-response = retrieval_qa(prompt)
-
-# Print the response
-print("Generated response:", response)
+query = "Best footwear for women?"
+answer = get_answer(query)
+print("Generated Response:", answer)
