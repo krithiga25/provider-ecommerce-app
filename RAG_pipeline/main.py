@@ -7,8 +7,8 @@ from langchain_community.vectorstores import FAISS
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, pipeline
 from langchain.chains import RetrievalQA
 from langchain_huggingface import HuggingFaceEmbeddings, HuggingFacePipeline
-from sklearn.metrics.pairwise import cosine_similarity
-from sklearn.feature_extraction.text import TfidfVectorizer
+#from sklearn.metrics.pairwise import cosine_similarity
+#from sklearn.feature_extraction.text import TfidfVectorizer
 
 client = MongoClient("mongodb+srv://krithiperu2002:Shiroboy123@clusterapp.bbvbt.mongodb.net/")
 db = client["ecomdb"]

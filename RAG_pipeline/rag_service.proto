@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+service RagService {
+  rpc GetAnswer (QueryRequest) returns (AnswerResponse);
+}
+
+message QueryRequest {
+  string query = 1;
+}
+
+message AnswerResponse {
+  string answer = 1;
+}

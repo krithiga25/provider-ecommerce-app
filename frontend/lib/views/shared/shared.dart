@@ -2,6 +2,7 @@ import 'package:ecommerce_provider/providers/cart_provider.dart';
 import 'package:ecommerce_provider/providers/orders_provider.dart';
 import 'package:ecommerce_provider/providers/product_provider.dart';
 import 'package:ecommerce_provider/providers/wish_list_provider.dart';
+import 'package:ecommerce_provider/views/ai-assistant/chat_view.dart';
 import 'package:ecommerce_provider/views/cart_wishlist/cart_screen.dart';
 import 'package:ecommerce_provider/views/orders_payment/orders_screen.dart';
 import 'package:ecommerce_provider/views/products/products_screen.dart';
@@ -72,6 +73,7 @@ class _NavigationExampleState extends State<NavigationExample> {
           NavigationDestination(label: 'wishlist', icon: Icon(Icons.favorite)),
           NavigationDestination(label: 'cart', icon: Icon(Icons.shopping_cart)),
           NavigationDestination(label: 'Orders', icon: Icon(Icons.receipt)),
+          NavigationDestination(label: 'Assistant', icon: Icon(Icons.man_3_sharp)),
         ],
       ),
       body:
@@ -88,6 +90,9 @@ class _NavigationExampleState extends State<NavigationExample> {
 
             /// orders page:
             OrdersPage(),
+
+            //assistant page:
+            ChatScreen(),
           ][currentPageIndex],
     );
   }
