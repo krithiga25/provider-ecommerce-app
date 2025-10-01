@@ -9,6 +9,8 @@ import 'package:ecommerce_provider/views/products/products_screen.dart';
 import 'package:ecommerce_provider/views/cart_wishlist/wish_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+//import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final url =
     //'http://192.168.29.93:3000'
@@ -18,6 +20,7 @@ final url =
 class NavigationExample extends StatefulWidget {
   const NavigationExample({super.key, this.token, this.initialIndex});
 
+  // ignore: prefer_typing_uninitialized_variables
   final token;
   final int? initialIndex;
 
@@ -26,25 +29,35 @@ class NavigationExample extends StatefulWidget {
 }
 
 class _NavigationExampleState extends State<NavigationExample> {
+  String email = '';
+  late SharedPreferences prefs;
+
   @override
   void initState() {
+    initSharedPref();
     if (widget.initialIndex != null) {
       currentPageIndex = widget.initialIndex!;
     }
     super.initState();
-    Provider.of<ProductProvider>(context, listen: false).fetchProducts();
-    Provider.of<WishListProvider>(
-      context,
-      listen: false,
-    ).fetchWishlistProducts("checkinglogin@gmail.com");
-    Provider.of<CartProvider>(
-      context,
-      listen: false,
-    ).fetchCartProducts("checkinglogin@gmail.com");
-    Provider.of<OrdersProvider>(
-      context,
-      listen: false,
-    ).fetchOrders("krithiperu2002@gmail.com");
+  }
+
+  Future<void> initSharedPref() async {
+    prefs = await SharedPreferences.getInstance();
+    email = prefs.getString('currentuser')!;
+    if (mounted) {
+      await Future.wait([
+        Provider.of<ProductProvider>(context, listen: false).fetchProducts(),
+        Provider.of<WishListProvider>(
+          context,
+          listen: false,
+        ).fetchWishlistProducts(email),
+        Provider.of<CartProvider>(
+          context,
+          listen: false,
+        ).fetchCartProducts(email),
+        Provider.of<OrdersProvider>(context, listen: false).fetchOrders(email),
+      ]);
+    }
     //Provider.of<OrdersProvider>(context, listen: false).updateDeliveryStatus();
   }
 
@@ -57,7 +70,6 @@ class _NavigationExampleState extends State<NavigationExample> {
       //   // backgroundColor: Color(0xFFFFFFFF),
       //   title: Text(currentPageIndex == 1 ? 'Wishlist' : 'Home'),
       //   automaticallyImplyLeading: false,
-
       // ),
       bottomNavigationBar: NavigationBar(
         backgroundColor: Color(0xFFF7F7F7),
@@ -73,20 +85,23 @@ class _NavigationExampleState extends State<NavigationExample> {
           NavigationDestination(label: 'wishlist', icon: Icon(Icons.favorite)),
           NavigationDestination(label: 'cart', icon: Icon(Icons.shopping_cart)),
           NavigationDestination(label: 'Orders', icon: Icon(Icons.receipt)),
-          NavigationDestination(label: 'Assistant', icon: Icon(Icons.man_3_sharp)),
+          NavigationDestination(
+            label: 'Assistant',
+            icon: Icon(Icons.man_3_sharp),
+          ),
         ],
       ),
       body:
           <Widget>[
             /// Home page
-            ProductsScreen(token: widget.token),
+            ProductsScreen(email: email),
             //ProductsScreen(),
 
             /// wishlist page
-            WishListScreen(),
+            WishListScreen(email: email),
 
             /// cart screen
-            CartScreen(token: widget.token),
+            CartScreen(email: email),
 
             /// orders page:
             OrdersPage(),

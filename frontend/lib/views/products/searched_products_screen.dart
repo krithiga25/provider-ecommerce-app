@@ -13,8 +13,9 @@ import 'package:provider/provider.dart';
 import 'package:rive/rive.dart' as rive;
 
 class SearchedProductsScreen extends StatefulWidget {
-  const SearchedProductsScreen({super.key, required this.searchQuery});
+  const SearchedProductsScreen({super.key, required this.searchQuery, required this.email});
   final String searchQuery;
+  final String email;
 
   @override
   State<SearchedProductsScreen> createState() => _SearchedProductsScreenState();
@@ -250,18 +251,19 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
                                                       await cartProvider
                                                           .addProduct(
                                                             cartProduct,
+                                                            widget.email
                                                           );
-                                                  Future.delayed(
-                                                    Duration(milliseconds: 500),
-                                                    () {
-                                                      showCustomSnackBar(
-                                                        context,
-                                                        status
-                                                            ? "Product added to cart!"
-                                                            : "Failed to add to cart!",
-                                                      );
-                                                    },
-                                                  );
+                                                  // Future.delayed(
+                                                  //   Duration(milliseconds: 500),
+                                                  //   () {
+                                                  //     showCustomSnackBar(
+                                                  //       context,
+                                                  //       status
+                                                  //           ? "Product added to cart!"
+                                                  //           : "Failed to add to cart!",
+                                                  //     );
+                                                  //   },
+                                                  // );
                                                 },
                                               ),
                                             if (isInCart)
@@ -287,6 +289,7 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
                                                           () => cartProvider
                                                               .decreaseQuantity(
                                                                 item.id,
+                                                                widget.email,
                                                               ),
                                                     ),
                                                     Text(
@@ -309,6 +312,7 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
                                                           () => cartProvider
                                                               .increaseQuantity(
                                                                 item.id,
+                                                                widget.email,
                                                               ),
                                                     ),
                                                   ],
@@ -335,19 +339,20 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
                                         final status = await wishListProvider
                                             .removeProduct(
                                               item.id,
-                                              "checkinglogin@gmail.com",
+                                              //"checkinglogin@gmail.com",
+                                              widget.email,
                                             );
-                                        Future.delayed(
-                                          Duration(milliseconds: 500),
-                                          () {
-                                            showCustomSnackBar(
-                                              context,
-                                              status
-                                                  ? "Product removed from wishlist!"
-                                                  : "Failed to remove from wishlist!",
-                                            );
-                                          },
-                                        );
+                                        // Future.delayed(
+                                        //   Duration(milliseconds: 500),
+                                        //   () {
+                                        //     showCustomSnackBar(
+                                        //       context,
+                                        //       status
+                                        //           ? "Product removed from wishlist!"
+                                        //           : "Failed to remove from wishlist!",
+                                        //     );
+                                        //   },
+                                        // );
                                       } else {
                                         final wishlistProduct = WishListItems(
                                           id: item.id,
@@ -361,19 +366,20 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
                                         final status = await wishListProvider
                                             .addProduct(
                                               wishlistProduct,
-                                              "checkinglogin@gmail.com",
+                                             // "checkinglogin@gmail.com",
+                                             widget.email,
                                             );
-                                        Future.delayed(
-                                          Duration(milliseconds: 500),
-                                          () {
-                                            showCustomSnackBar(
-                                              context,
-                                              status
-                                                  ? "Product added to wishlist!"
-                                                  : "Failed to add to wishlist!",
-                                            );
-                                          },
-                                        );
+                                        // Future.delayed(
+                                        //   Duration(milliseconds: 500),
+                                        //   () {
+                                        //     showCustomSnackBar(
+                                        //       context,
+                                        //       status
+                                        //           ? "Product added to wishlist!"
+                                        //           : "Failed to add to wishlist!",
+                                        //     );
+                                        //   },
+                                        // );
                                       }
                                     },
                                   ),

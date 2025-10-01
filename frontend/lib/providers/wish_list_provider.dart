@@ -74,7 +74,7 @@ class WishListProvider with ChangeNotifier {
                     (product) => WishListItems.fromJson(product),
                   )
                   .toList();
-          print(_wishListItems);
+          //print(_wishListItems);
           notifyListeners();
           break;
         } else {

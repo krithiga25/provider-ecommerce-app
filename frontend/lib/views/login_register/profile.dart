@@ -19,9 +19,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   void initSharedPref() async {
     prefs = await SharedPreferences.getInstance();
-    prefs.remove('tokenn').then((removed) {
-      print(removed);
-    });
+    prefs.remove('currentuser');
   }
 
   @override
@@ -273,7 +271,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   onPressed: () {
-                    prefs.remove('token');
+                    initSharedPref();
                     Navigator.of(context).pop();
                     Future.delayed(Duration(seconds: 3));
                     Navigator.pushAndRemoveUntil(

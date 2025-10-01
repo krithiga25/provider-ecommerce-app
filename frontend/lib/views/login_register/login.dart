@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rive/rive.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -67,7 +68,9 @@ class LoginScreenState extends State<LoginScreen> {
       var jsonReponse = jsonDecode(response.body);
       if (jsonReponse['status']) {
         myToken = jsonReponse['token'];
-        prefs.setString('token', myToken);
+        Map<String, dynamic> decodedToken = JwtDecoder.decode(myToken);
+        final email = decodedToken['email'];
+        await prefs.setString('currentuser', email);
         _changeAnimation('success');
         showCustomSnackBar(
           // ignore: use_build_context_synchronously
@@ -85,7 +88,7 @@ class LoginScreenState extends State<LoginScreen> {
           // ignore: use_build_context_synchronously
           context,
           MaterialPageRoute(
-            builder: (context) => NavigationExample(token: myToken),
+            builder: (context) => NavigationExample(),
           ),
           (route) => false,
         );

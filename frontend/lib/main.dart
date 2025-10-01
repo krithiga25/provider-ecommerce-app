@@ -32,8 +32,8 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Provider Demo',
         //theme: ThemeData.dark(),
-        home: NavigationExample(),
-        //home: LoginScreen(),
+        //home: NavigationExample(),
+        home: LoginScreen(),
       ),
     );
   }

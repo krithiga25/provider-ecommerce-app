@@ -63,10 +63,10 @@ class _ShippingAddressScreenState extends State<ShippingAddressScreen> {
                   );
                   //await.
                   // remove cart items:
-                  cartProvider.clearCart("checkinglogin@gmail.com");
+                  cartProvider.clearCart(widget.email);
                   //create order:
                   final status = await ordersProvider.createOrder(
-                    user: "krithiperu2002@gmail.com",
+                    user: widget.email,
                     products: cartItems,
                     paymentMethod: "credit card",
                     paymentStatus: "paid",
@@ -178,22 +178,22 @@ class _ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                   ),
                                 ),
                                 SizedBox(width: 15),
-                                Container(
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: Colors.green,
-                                      width: 2,
-                                    ),
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: Text(
-                                    " Home ",
-                                    style: GoogleFonts.openSans(
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.green,
-                                    ),
-                                  ),
-                                ),
+                                // Container(
+                                //   decoration: BoxDecoration(
+                                //     border: Border.all(
+                                //       color: Colors.green,
+                                //       width: 2,
+                                //     ),
+                                //     borderRadius: BorderRadius.circular(10),
+                                //   ),
+                                //   child: Text(
+                                //     " Home ",
+                                //     style: GoogleFonts.openSans(
+                                //       fontWeight: FontWeight.w600,
+                                //       color: Colors.green,
+                                //     ),
+                                //   ),
+                                // ),
                               ],
                             ),
                             SizedBox(height: 7),
@@ -255,11 +255,13 @@ class _ShippingAddressScreenState extends State<ShippingAddressScreen> {
                               height: 70,
                             ),
                             SizedBox(width: 20),
-                            Text(
-                              'Estimated delivery by ${cartItems[index].estimatedDeliveryDate!.day.toString()} ${getMonth(cartItems[index].estimatedDeliveryDate!.month)} ${cartItems[index].estimatedDeliveryDate!.year.toString()}',
-                              style: GoogleFonts.openSans(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
+                            Expanded(
+                              child: Text(
+                                'Estimated delivery by ${cartItems[index].estimatedDeliveryDate!.day.toString()} ${getMonth(cartItems[index].estimatedDeliveryDate!.month)} ${cartItems[index].estimatedDeliveryDate!.year.toString()}',
+                                style: GoogleFonts.openSans(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             ),
                           ],

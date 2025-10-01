@@ -1,32 +1,27 @@
+// ignore_for_file: unused_local_variable
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ecommerce_provider/models/wish_list.dart';
 import 'package:ecommerce_provider/providers/cart_provider.dart';
 import 'package:ecommerce_provider/providers/wish_list_provider.dart';
 import 'package:ecommerce_provider/views/cart_wishlist/shipping_address_screen.dart';
-//import 'package:ecommerce_provider/views/shared/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:rive/rive.dart' as rive;
 
 class CartScreen extends StatefulWidget {
-  final token;
+  // ignore: prefer_typing_uninitialized_variables
+  final email;
 
-  const CartScreen({super.key, this.token});
+  const CartScreen({super.key, this.email});
 
   @override
   State<CartScreen> createState() => _CartScreenState();
 }
 
 class _CartScreenState extends State<CartScreen> {
-  late String email;
-  @override
-  void initState() {
-    super.initState();
-    // Map<String, dynamic> decodedToken = JwtDecoder.decode(widget.token);
-    // email = decodedToken['email'];
-    email = 'krithiperu';
-  }
+  //late String email;
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +46,7 @@ class _CartScreenState extends State<CartScreen> {
                           MaterialPageRoute(
                             builder:
                                 (context) =>
-                                    ShippingAddressScreen(email: email),
+                                    ShippingAddressScreen(email: widget.email),
                           ),
                         );
                       },
@@ -209,6 +204,8 @@ class _CartScreenState extends State<CartScreen> {
                                                                 () => cartProvider
                                                                     .decreaseQuantity(
                                                                       item.id,
+                                                                      widget
+                                                                          .email,
                                                                     ),
                                                           ),
                                                           Text(
@@ -235,6 +232,8 @@ class _CartScreenState extends State<CartScreen> {
                                                                 () => cartProvider
                                                                     .increaseQuantity(
                                                                       item.id,
+                                                                      widget
+                                                                          .email,
                                                                     ),
                                                           ),
                                                         ],
@@ -326,11 +325,13 @@ class _CartScreenState extends State<CartScreen> {
                                                     await wishListProvider
                                                         .addProduct(
                                                           wishlistitem,
-                                                          "checkinglogin@gmail.com",
+                                                          //"checkinglogin@gmail.com",
+                                                          widget.email,
                                                         );
-                                                print(status);
+                                                //print(status);
                                                 cartProvider.removeProduct(
                                                   item.id,
+                                                  widget.email,
                                                 );
                                                 // Future.delayed(
                                                 //   Duration(seconds: 5),
@@ -347,7 +348,10 @@ class _CartScreenState extends State<CartScreen> {
                                               if (option == 'delete') {
                                                 final status =
                                                     await cartProvider
-                                                        .removeProduct(item.id);
+                                                        .removeProduct(
+                                                          item.id,
+                                                          widget.email,
+                                                        );
                                                 print(status);
                                                 // Future.delayed(
                                                 //   Duration(milliseconds: 500),

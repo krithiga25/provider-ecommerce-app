@@ -14,7 +14,7 @@ class CartProvider with ChangeNotifier {
     return [..._cartProducts];
   }
 
-  Future<bool> addProduct(CartProduct product) async {
+  Future<bool> addProduct(CartProduct product, String userId) async {
     final index = _cartProducts.indexWhere((item) => item.id == product.id);
     if (index >= 0) {
       _cartProducts[index].quantity++;
@@ -24,34 +24,35 @@ class CartProvider with ChangeNotifier {
 
     notifyListeners();
     return await addToCart(
-      "checkinglogin@gmail.com",
+      //"checkinglogin@gmail.com",
+      userId,
       product.id,
       product.quantity,
     );
   }
 
-  void increaseQuantity(String productId) {
+  void increaseQuantity(String productId, String email) {
     final product = _cartProducts.firstWhere((item) => item.id == productId);
     product.quantity++;
-    addToCart("checkinglogin@gmail.com", product.id, product.quantity);
+    addToCart(email, product.id, product.quantity);
     notifyListeners();
   }
 
-  void decreaseQuantity(String productId) {
+  void decreaseQuantity(String productId, String email) {
     final product = _cartProducts.firstWhere((item) => item.id == productId);
     if (product.quantity > 1) {
       product.quantity--;
     } else {
-      removeProduct(productId);
+      removeProduct(productId, email);
     }
-    removeCartProduct("checkinglogin@gmail.com", product.id);
+    removeCartProduct(email, product.id);
     notifyListeners();
   }
 
-  Future<bool> removeProduct(String productId) async {
+  Future<bool> removeProduct(String productId, String email) async {
     _cartProducts.removeWhere((item) => item.id == productId);
     notifyListeners();
-    return await removeCartProduct("checkinglogin@gmail.com", productId);
+    return await removeCartProduct(email, productId);
   }
 
   // void clearCart(email, prodId) {
