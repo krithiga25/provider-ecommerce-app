@@ -352,7 +352,6 @@ class _CartScreenState extends State<CartScreen> {
                                                           item.id,
                                                           widget.email,
                                                         );
-                                                print(status);
                                                 // Future.delayed(
                                                 //   Duration(milliseconds: 500),
                                                 //   () {
@@ -411,7 +410,7 @@ class _CartScreenState extends State<CartScreen> {
                                       ),
                                     ),
                                     Text(
-                                      '\u{20B9} ${cartItems.fold(0, (a, b) => a + b.price)}',
+                                      '\u{20B9} ${cartItems.fold(0, (a, b) => a + b.price * cartProvider.getQuantity(b.id))}',
                                       style: GoogleFonts.openSans(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w600,
@@ -476,7 +475,7 @@ class _CartScreenState extends State<CartScreen> {
                                       ),
                                     ),
                                     Text(
-                                      '\u{20B9} ${(cartItems.fold(0, (a, b) => a + b.price) * 0.018).ceilToDouble() + cartItems.fold(0, (a, b) => a + b.price)}',
+                                      '\u{20B9} ${(cartItems.fold(0, (a, b) => a + b.price) * 0.018).ceilToDouble() + cartItems.fold(0, (a, b) => a + b.price * cartProvider.getQuantity(b.id))}',
                                       style: GoogleFonts.openSans(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 16,

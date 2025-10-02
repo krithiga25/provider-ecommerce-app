@@ -673,8 +673,8 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
           max: 30000,
           divisions: 59,
           labels: RangeLabels(
-            '\$${_priceRange.start.round()}',
-            '\$${_priceRange.end.round()}',
+            '\u{20B9}${_priceRange.start.round()}',
+            '\u{20B9}${_priceRange.end.round()}',
           ),
           onChanged: (values) {
             setState(() {

@@ -28,7 +28,6 @@ class RegistrationScreenState extends State<RegistrationScreen> {
         "email": _emailController.text,
         "password": _passwordController.text,
       };
-
       var response = await http.post(
         Uri.parse('$url/registration'),
         headers: {"Content-Type": "application/json"},
@@ -41,8 +40,17 @@ class RegistrationScreenState extends State<RegistrationScreen> {
           context,
           'Signed in successfully!',
           color: Colors.green.shade600,
+          duration: 2,
         );
-        await Future.delayed(Duration(seconds: 10));
+        await Future.delayed(Duration(seconds: 2));
+        showCustomSnackBar(
+          // ignore: use_build_context_synchronously
+          context,
+          'Taking you to Login Page',
+          color: Colors.black,
+          duration: 2,
+        );
+        await Future.delayed(Duration(seconds: 3));
         Navigator.pushAndRemoveUntil(
           // ignore: use_build_context_synchronously
           context,

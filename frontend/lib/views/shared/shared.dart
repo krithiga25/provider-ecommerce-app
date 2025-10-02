@@ -85,10 +85,10 @@ class _NavigationExampleState extends State<NavigationExample> {
           NavigationDestination(label: 'wishlist', icon: Icon(Icons.favorite)),
           NavigationDestination(label: 'cart', icon: Icon(Icons.shopping_cart)),
           NavigationDestination(label: 'Orders', icon: Icon(Icons.receipt)),
-          NavigationDestination(
-            label: 'Assistant',
-            icon: Icon(Icons.man_3_sharp),
-          ),
+          // NavigationDestination(
+          //   label: 'Assistant',
+          //   icon: Icon(Icons.man_3_sharp),
+          // ),
         ],
       ),
       body:
@@ -107,13 +107,13 @@ class _NavigationExampleState extends State<NavigationExample> {
             OrdersPage(),
 
             //assistant page:
-            ChatScreen(),
+            //ChatScreen(),
           ][currentPageIndex],
     );
   }
 }
 
-void showCustomSnackBar(BuildContext context, String message, {Color? color}) {
+void showCustomSnackBar(BuildContext context, String message, {Color? color, int? duration}) {
   final snackBar = SnackBar(
     content: Text(message, style: TextStyle(color: Colors.white, fontSize: 16)),
     backgroundColor: color ?? Colors.black87,
@@ -121,7 +121,7 @@ void showCustomSnackBar(BuildContext context, String message, {Color? color}) {
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
     margin: EdgeInsets.all(16),
     elevation: 6,
-    duration: Duration(seconds: 3),
+    duration: Duration(seconds: duration ?? 3),
   );
 
   ScaffoldMessenger.of(context).showSnackBar(snackBar);
