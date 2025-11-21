@@ -1,10 +1,18 @@
-#update status:
-PUT http://localhost:3000/updatestatus/ORDID174130
+# AI query:
+POST http://localhost:3000/ask
 Content-Type: application/json
 
 {
-    "status": "transit"
+    "query" : "where are my orders"
 }
+
+#update status:
+# PUT http://localhost:3000/updatestatus/ORDID174130
+# Content-Type: application/json
+
+# {
+#     "status": "transit"
+# }
 
 #update address:
 # POST http://localhost:3000/updateaddress

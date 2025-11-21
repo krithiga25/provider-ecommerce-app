@@ -389,3 +389,19 @@ exports.newPayment = async (req, res) => {
 //     });
 //   }
 // };
+
+exports.askAI = async (req, res, next) => {
+  try {
+    const { query } = req.body;
+
+    if (!query) {
+      return res.status(400).json({ status: false, message: "Query is required" });
+    }
+
+    const response = await UsersService.sendToFlask(query);
+    res.status(200).json({ status: true, data: response });
+  } catch (error) {
+    console.error("AI Controller Error:", error.message);
+    res.status(500).json({ status: false, message: "AI Service failed", error: error.message });
+  }
+};

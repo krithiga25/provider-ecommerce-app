@@ -12,6 +12,7 @@ require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 const stripe = require("stripe")(process.env.STRIPE_S_KEY);
+const axios = require("axios");
 
 function tokenizeSearchQuery(searchQuery) {
   const tokens = searchQuery.split(" ");
@@ -563,5 +564,16 @@ class UsersService {
   //     throw error;
   //   }
   // }
+  static async sendToFlask(query) {
+    try {
+      console.log("Sending to flask");
+      const flaskUrl = "http://127.0.0.1:8000/ask";
+      const response = await axios.post(flaskUrl, { query });
+      return response.data;
+    } catch (error) {
+      console.error("Flask API call failed:", error.message);
+      throw new Error("Failed to connect to Flask AI API");
+    }
+  };
 }
 module.exports = UsersService;
