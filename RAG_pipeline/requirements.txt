@@ -7,3 +7,4 @@ langchain-community
 sentence-transformers
 google-generativeai
 redis
+flask
