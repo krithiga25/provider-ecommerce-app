@@ -56,4 +56,6 @@ router.post("/updateaddress", controller.updateAddress);
 //update the status of the order:
 router.put("/updatestatus/:ordId", controller.updateStatus);
 
+router.post("/ask", controller.askAI);
+
 module.exports = router;

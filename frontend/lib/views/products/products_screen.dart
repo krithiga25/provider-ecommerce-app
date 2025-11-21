@@ -1,3 +1,5 @@
+//Note:
+// remove the google ml kit and associated code.
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ecommerce_provider/models/cart.dart';
 import 'package:ecommerce_provider/models/wish_list.dart';
@@ -10,7 +12,6 @@ import 'package:ecommerce_provider/views/shared/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ecommerce_provider/views/login_register/profile.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:provider/provider.dart';
 import 'package:rive/rive.dart' as rive;
 import '../../providers/product_provider.dart';
@@ -19,22 +20,17 @@ import 'package:google_ml_kit/google_ml_kit.dart';
 
 class ProductsScreen extends StatefulWidget {
   // ignore: prefer_typing_uninitialized_variables
-  final token;
-  const ProductsScreen({super.key, this.token});
+  final email;
+  const ProductsScreen({super.key, this.email});
 
   @override
   State<ProductsScreen> createState() => _ProductsScreenState();
 }
 
 class _ProductsScreenState extends State<ProductsScreen> {
-  late String email;
-
   @override
   void initState() {
     super.initState();
-    // Map<String, dynamic> decodedToken = JwtDecoder.decode(widget.token);
-    // email = decodedToken['email'];
-    email = 'krithiperu';
   }
 
   @override
@@ -67,7 +63,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => ProfileScreen(email: email),
+                              builder: (context) => ProfileScreen(),
                             ),
                           );
                         },
@@ -88,13 +84,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                   body:
                       productProvider.products.isEmpty
                           ? Center(child: loadingAnimation())
-                          :
-                          // Center(
-                          //   child: CircularProgressIndicator(
-                          //     color: Colors.blueGrey,
-                          //   ),
-                          // ):
-                          CustomScrollView(
+                          : CustomScrollView(
                             slivers: [
                               SliverToBoxAdapter(
                                 child: _searchWidget(productProvider, context),
@@ -174,7 +164,6 @@ class _ProductsScreenState extends State<ProductsScreen> {
                                                   Padding(
                                                     padding:
                                                         const EdgeInsets.only(
-                                                          // left: 20,
                                                           right: 5,
                                                           top: 10,
                                                           bottom: 10,
@@ -192,8 +181,6 @@ class _ProductsScreenState extends State<ProductsScreen> {
                                                       crossAxisAlignment:
                                                           CrossAxisAlignment
                                                               .start,
-                                                      // mainAxisAlignment:
-                                                      //     MainAxisAlignment.spaceEvenly,
                                                       children: [
                                                         Padding(
                                                           padding:
@@ -208,21 +195,12 @@ class _ProductsScreenState extends State<ProductsScreen> {
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .bold,
-                                                                  //fontSize: 16,
                                                                   color:
                                                                       Colors
                                                                           .grey,
                                                                 ),
                                                           ),
                                                         ),
-                                                        // Text(
-                                                        //   maxLines: 2,
-                                                        //   product.description,
-                                                        //   softWrap: true,
-                                                        //   //overflow: TextOverflow.ellipsis,
-                                                        //   style:
-                                                        //       GoogleFonts.openSans(),
-                                                        // ),
                                                         SizedBox(height: 4),
                                                         Row(
                                                           children: [
@@ -295,6 +273,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                                                                         onPressed:
                                                                             () => cartProvider.decreaseQuantity(
                                                                               product.id,
+                                                                              widget.email,
                                                                             ),
                                                                       ),
                                                                       Text(
@@ -320,23 +299,12 @@ class _ProductsScreenState extends State<ProductsScreen> {
                                                                         onPressed:
                                                                             () => cartProvider.increaseQuantity(
                                                                               product.id,
+                                                                              widget.email,
                                                                             ),
                                                                       ),
                                                                     ],
                                                                   )
                                                                   : TextButton(
-                                                                    // style: ElevatedButton.styleFrom(
-                                                                    //   backgroundColor:
-                                                                    //       Colors
-                                                                    //           .redAccent
-                                                                    //           .shade200,
-                                                                    //   shape: RoundedRectangleBorder(
-                                                                    //     borderRadius:
-                                                                    //         BorderRadius.circular(
-                                                                    //           10,
-                                                                    //         ),
-                                                                    //   ),
-                                                                    // ),
                                                                     onPressed: () async {
                                                                       final cartProduct = CartProduct(
                                                                         id:
@@ -352,17 +320,20 @@ class _ProductsScreenState extends State<ProductsScreen> {
                                                                         rating:
                                                                             product.rating,
                                                                       );
-
-                                                                      final status =
-                                                                          await cartProvider.addProduct(
-                                                                            cartProduct,
-                                                                          );
+                                                                      final status = await cartProvider.addProduct(
+                                                                        cartProduct,
+                                                                        widget
+                                                                            .email,
+                                                                      );
                                                                       Future.delayed(
                                                                         Duration(
                                                                           milliseconds:
                                                                               500,
                                                                         ),
                                                                         () {
+                                                                          if (!context
+                                                                              .mounted)
+                                                                            return;
                                                                           showCustomSnackBar(
                                                                             context,
                                                                             status
@@ -388,7 +359,6 @@ class _ProductsScreenState extends State<ProductsScreen> {
                                                         SizedBox(height: 8),
                                                       ],
                                                     ),
-                                                    //if (!isInCart)
                                                   ),
                                                 ],
                                               ),
@@ -436,11 +406,14 @@ class _ProductsScreenState extends State<ProductsScreen> {
                                                       await wishListProvider
                                                           .removeProduct(
                                                             product.id,
-                                                            "checkinglogin@gmail.com",
+                                                            // "checkinglogin@gmail.com",
+                                                            widget.email,
                                                           );
                                                   Future.delayed(
                                                     Duration(milliseconds: 500),
                                                     () {
+                                                      if (!context.mounted)
+                                                        return;
                                                       showCustomSnackBar(
                                                         context,
                                                         status
@@ -461,16 +434,18 @@ class _ProductsScreenState extends State<ProductsScreen> {
                                                             product.description,
                                                         rating: product.rating,
                                                       );
-
                                                   final status =
                                                       await wishListProvider
                                                           .addProduct(
                                                             wishlistProduct,
-                                                            "checkinglogin@gmail.com",
+                                                            //"checkinglogin@gmail.com",
+                                                            widget.email,
                                                           );
                                                   Future.delayed(
                                                     Duration(milliseconds: 500),
                                                     () {
+                                                      if (!context.mounted)
+                                                        return;
                                                       showCustomSnackBar(
                                                         context,
                                                         status
@@ -621,11 +596,13 @@ class _ProductsScreenState extends State<ProductsScreen> {
                                         final status = await wishListProvider
                                             .removeProduct(
                                               product.id,
-                                              "checkinglogin@gmail.com",
+                                              // "checkinglogin@gmail.com",
+                                              widget.email,
                                             );
                                         Future.delayed(
                                           Duration(milliseconds: 500),
                                           () {
+                                            if (!mounted) return;
                                             showCustomSnackBar(
                                               context,
                                               status
@@ -646,11 +623,13 @@ class _ProductsScreenState extends State<ProductsScreen> {
                                         final status = await wishListProvider
                                             .addProduct(
                                               wishlistProduct,
-                                              "checkinglogin@gmail.com",
+                                              //"checkinglogin@gmail.com",
+                                              widget.email,
                                             );
                                         Future.delayed(
                                           Duration(milliseconds: 500),
                                           () {
+                                            if (!mounted) return;
                                             showCustomSnackBar(
                                               context,
                                               status
@@ -714,6 +693,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                 onPressed: () async {
                   if (controller.text.isEmpty) {
                     Future.delayed(Duration(milliseconds: 500), () {
+                      if (!context.mounted) return;
                       showCustomSnackBar(context, 'Enter something for search');
                     });
                     showCustomSnackBar(context, 'Enter something for search');
@@ -722,12 +702,13 @@ class _ProductsScreenState extends State<ProductsScreen> {
                   // here added await, cause in the search page, page is built before the response is recieved and the page is empty.
                   await productProvider.searchProduct(controller.text);
                   focusNode.unfocus();
-                  // ignore: use_build_context_synchronously
+                  if (!context.mounted) return;
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder:
                           (context) => SearchedProductsScreen(
                             searchQuery: controller.text,
+                            email: widget.email,
                           ),
                     ),
                   );
@@ -736,7 +717,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
               ),
               IconButton(
                 onPressed: () {
-                  showImageSourceDialog(context);
+                  _showImageSourceDialog(context);
                 },
                 icon: Icon(Icons.camera_alt_outlined),
               ),
@@ -747,7 +728,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
     );
   }
 
-  void showImageSourceDialog(BuildContext context) {
+  void _showImageSourceDialog(BuildContext context) {
     showModalBottomSheet(
       context: context,
       shape: BeveledRectangleBorder(),
@@ -762,7 +743,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                 leading: Icon(Icons.camera_alt),
                 title: Text('Take a Photo'),
                 onTap: () {
-                  pickImage(ImageSource.camera);
+                  _pickImage(ImageSource.camera);
                   Navigator.pop(context);
                 },
               ),
@@ -770,7 +751,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                 leading: Icon(Icons.photo_library),
                 title: Text('Upload from Gallery'),
                 onTap: () {
-                  pickImage(ImageSource.gallery);
+                  _pickImage(ImageSource.gallery);
                   Navigator.pop(context);
                 },
               ),
@@ -781,20 +762,19 @@ class _ProductsScreenState extends State<ProductsScreen> {
     );
   }
 
-  Map<String, String> labelMapping = {
+  final Map<String, String> _labelMapping = {
     'Outerwear': 'Clothes',
     'Jacket': 'Jacket',
     'Jeans': 'Pants',
     'T-shirt': 'Shirt',
     'Dress': 'Clothes',
-    // add more mappings based on what results you get
   };
 
-  String getCustomLabel(String modelLabel) {
-    return labelMapping[modelLabel] ?? modelLabel;
+  String _getCustomLabel(String modelLabel) {
+    return _labelMapping[modelLabel] ?? modelLabel;
   }
 
-  Future<void> pickImage(ImageSource source) async {
+  Future<void> _pickImage(ImageSource source) async {
     final picker = ImagePicker();
     final pickedImage = await picker.pickImage(source: source);
 
@@ -813,18 +793,13 @@ class _ProductsScreenState extends State<ProductsScreen> {
     if (labels.isNotEmpty) {
       final labelTexts = labels.map((label) => label.label).toList();
       final keyword = labelTexts.first;
-      print('**************************************');
-      print(labelTexts);
-      print('**************************************');
       print("ML Keyword: $keyword");
-      print('**************************************');
       String modelOutput = "Outerwear";
-      String customOutput = getCustomLabel(modelOutput);
+      String customOutput = _getCustomLabel(modelOutput);
       print('Custom Output: $customOutput');
     } else {
       print("No labels detected.");
     }
-
     imageLabeler.close();
   }
 
@@ -879,16 +854,13 @@ class _ProductsScreenState extends State<ProductsScreen> {
                               builder:
                                   (context) => CategoryProductsScreen(
                                     categoryName: category.categoryName,
+                                    email: widget.email,
                                   ),
                             ),
                           );
                         },
                         child: Padding(
-                          padding: const EdgeInsets.only(
-                            left: 8,
-                            //top: 10,
-                            //bottom: 10,
-                          ),
+                          padding: const EdgeInsets.only(left: 8),
                           child: CachedNetworkImage(
                             imageUrl: category.categoryImageUrl,
                             fit: BoxFit.cover,

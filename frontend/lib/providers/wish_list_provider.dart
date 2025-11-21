@@ -12,7 +12,6 @@ class WishListProvider with ChangeNotifier {
     return [..._wishListItems];
   }
 
-  // Function to add a new product
   Future<bool> addProduct(WishListItems wishListItem, String userId) async {
     _wishListItems.add(wishListItem);
     notifyListeners();
@@ -74,7 +73,7 @@ class WishListProvider with ChangeNotifier {
                     (product) => WishListItems.fromJson(product),
                   )
                   .toList();
-          print(_wishListItems);
+          //print(_wishListItems);
           notifyListeners();
           break;
         } else {
@@ -88,12 +87,4 @@ class WishListProvider with ChangeNotifier {
       }
     }
   }
-
-  // Future<void> moveToCart(user, prodId) async {
-  //   final response = await http.patch(Uri.parse('$url/cart/$user/$prodId'));
-  //   var jsonReponse = jsonDecode(response.body);
-  //   if (jsonReponse['status']) {
-  //     print("Moved to cart successfully");
-  //   }
-  // }
 }

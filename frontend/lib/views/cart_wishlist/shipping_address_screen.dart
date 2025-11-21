@@ -24,7 +24,6 @@ class _ShippingAddressScreenState extends State<ShippingAddressScreen> {
       context,
       listen: false,
     );
-    //final width = MediaQuery.of(context).size.width * 0.19;
     return Consumer<CartProvider>(
       builder: (context, cartProvider, child) {
         final cartItems = cartProvider.cartProducts;
@@ -48,12 +47,11 @@ class _ShippingAddressScreenState extends State<ShippingAddressScreen> {
                 shape: RoundedRectangleBorder(),
               ),
               onPressed: () async {
-                //the payment screen
                 double totalQuantity = cartItems.fold(0, (a, b) => a + b.price);
                 final status = await initPaymentSheet(totalQuantity);
                 if (status == "success") {
+                  if (!context.mounted) return;
                   Navigator.push(
-                    // ignore: use_build_context_synchronously
                     context,
                     MaterialPageRoute(
                       builder:
@@ -61,12 +59,9 @@ class _ShippingAddressScreenState extends State<ShippingAddressScreen> {
                               OrderStatusSplashScreen(status: 'success'),
                     ),
                   );
-                  //await.
-                  // remove cart items:
-                  cartProvider.clearCart("checkinglogin@gmail.com");
-                  //create order:
+                  cartProvider.clearCart(widget.email);
                   final status = await ordersProvider.createOrder(
-                    user: "krithiperu2002@gmail.com",
+                    user: widget.email,
                     products: cartItems,
                     paymentMethod: "credit card",
                     paymentStatus: "paid",
@@ -78,8 +73,8 @@ class _ShippingAddressScreenState extends State<ShippingAddressScreen> {
                   );
                   if (status) {
                     Future.delayed(Duration(milliseconds: 2000), () {
+                      if (!context.mounted) return;
                       Navigator.pushAndRemoveUntil(
-                        // ignore: use_build_context_synchronously
                         context,
                         MaterialPageRoute(
                           builder:
@@ -90,8 +85,8 @@ class _ShippingAddressScreenState extends State<ShippingAddressScreen> {
                     });
                   }
                 } else {
+                  if (!context.mounted) return;
                   Navigator.push(
-                    // ignore: use_build_context_synchronously
                     context,
                     MaterialPageRoute(
                       builder:
@@ -100,8 +95,8 @@ class _ShippingAddressScreenState extends State<ShippingAddressScreen> {
                     ),
                   );
                   Future.delayed(Duration(milliseconds: 2000), () {
+                    if (!context.mounted) return;
                     Navigator.pushAndRemoveUntil(
-                      // ignore: use_build_context_synchronously
                       context,
                       MaterialPageRoute(
                         builder:
@@ -123,7 +118,6 @@ class _ShippingAddressScreenState extends State<ShippingAddressScreen> {
             ),
           ),
           body:
-          // cartItems.isEmpty?
           CustomScrollView(
             slivers: [
               SliverToBoxAdapter(
@@ -148,7 +142,6 @@ class _ShippingAddressScreenState extends State<ShippingAddressScreen> {
                     Padding(
                       padding: const EdgeInsets.only(top: 8.0, bottom: 50),
                       child: Container(
-                        //height: 200,
                         width: MediaQuery.of(context).size.width,
                         color: Colors.white,
                         padding: const EdgeInsets.only(
@@ -178,22 +171,6 @@ class _ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                   ),
                                 ),
                                 SizedBox(width: 15),
-                                Container(
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: Colors.green,
-                                      width: 2,
-                                    ),
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: Text(
-                                    " Home ",
-                                    style: GoogleFonts.openSans(
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.green,
-                                    ),
-                                  ),
-                                ),
                               ],
                             ),
                             SizedBox(height: 7),
@@ -255,11 +232,13 @@ class _ShippingAddressScreenState extends State<ShippingAddressScreen> {
                               height: 70,
                             ),
                             SizedBox(width: 20),
-                            Text(
-                              'Estimated delivery by ${cartItems[index].estimatedDeliveryDate!.day.toString()} ${getMonth(cartItems[index].estimatedDeliveryDate!.month)} ${cartItems[index].estimatedDeliveryDate!.year.toString()}',
-                              style: GoogleFonts.openSans(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
+                            Expanded(
+                              child: Text(
+                                'Estimated delivery by ${cartItems[index].estimatedDeliveryDate!.day.toString()} ${getMonth(cartItems[index].estimatedDeliveryDate!.month)} ${cartItems[index].estimatedDeliveryDate!.year.toString()}',
+                                style: GoogleFonts.openSans(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             ),
                           ],
@@ -271,87 +250,6 @@ class _ShippingAddressScreenState extends State<ShippingAddressScreen> {
               ),
             ],
           ),
-          // : Column(
-          //   crossAxisAlignment: CrossAxisAlignment.start,
-          //   children: [
-          //     // Row(
-          //     //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          //     //   children: [
-          //     //     buildLine(width, true),
-          //     //     SizedBox(width: 3),
-          //     //     buildStep('Cart', true),
-          //     //     SizedBox(width: 3),
-          //     //     buildLine(width, true),
-          //     //     buildStep('Address', true),
-          //     //     SizedBox(width: 3),
-          //     //     buildLine(width, false),
-          //     //     buildStep('Payment', false),
-          //     //   ],
-          //     // ),
-          //     SizedBox(height: 50),
-          //     Container(
-          //       height: 200,
-          //       width: MediaQuery.of(context).size.width,
-          //       color: Colors.white,
-          //       child: Column(
-          //         crossAxisAlignment: CrossAxisAlignment.start,
-          //         children: [
-          //           Text(
-          //             "User name  (default)",
-          //             style: TextStyle(fontWeight: FontWeight.bold),
-          //           ),
-          //           Text("1370, 2nd Main Road", style: TextStyle()),
-          //           Text("Mobile: 7777777777", style: TextStyle()),
-          //         ],
-          //       ),
-          //     ),
-          //     SizedBox(height: 50),
-          //     Text(
-          //       " DELIVERY ESTIMATES",
-          //       style: TextStyle(fontWeight: FontWeight.w600),
-          //     ),
-          //     SizedBox(height: 10),
-          //     Container(
-          //       height: 200,
-          //       width: MediaQuery.of(context).size.width,
-          //       color: Colors.white,
-          //       // decoration: BoxDecoration(
-          //       //   color: Colors.white,
-          //       //   border: Border.all(color: Colors.grey),
-          //       //   borderRadius: BorderRadius.circular(10),
-          //       // ),
-          //       child: ListView.builder(
-          //         itemCount: cartItems.length,
-          //         itemBuilder: (context, index) {
-          //           return Container(
-          //             decoration: BoxDecoration(
-          //               border: Border(
-          //                 bottom: BorderSide(
-          //                   color: Colors.grey.shade200,
-          //                 ),
-          //               ),
-          //             ),
-          //             child: ListTile(
-          //               title: Row(
-          //                 mainAxisAlignment: MainAxisAlignment.start,
-          //                 children: [
-          //                   CachedNetworkImage(
-          //                     imageUrl: cartItems[index].imageUrl,
-          //                     width: 70,
-          //                     height: 70,
-          //                   ),
-          //                   Text(
-          //                     'Estimated delivery by ${cartItems[index].estimatedDeliveryDate!.day.toString()} March ${cartItems[index].estimatedDeliveryDate!.year.toString()}',
-          //                   ),
-          //                 ],
-          //               ),
-          //             ),
-          //           );
-          //         },
-          //       ),
-          //     ),
-          //   ],
-          // ),
         );
       },
     );

@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rive/rive.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -38,9 +39,9 @@ class LoginScreenState extends State<LoginScreen> {
     _controller = SimpleAnimation(_currentAnimation);
     _passwordFocusNode.addListener(() {
       if (_passwordFocusNode.hasFocus) {
-        _changeAnimation('hands_up'); // Hands go up when cursor is inside
+        _changeAnimation('hands_up');
       } else {
-        _changeAnimation('hands_down'); // Hands go down when cursor leaves
+        _changeAnimation('hands_down');
       }
     });
   }
@@ -48,8 +49,6 @@ class LoginScreenState extends State<LoginScreen> {
   void initSharedPref() async {
     prefs = await SharedPreferences.getInstance();
   }
-
-  //bool _loginFailed = false;
 
   Future<void> loginUser() async {
     if (_emailController.text.isNotEmpty &&
@@ -67,43 +66,42 @@ class LoginScreenState extends State<LoginScreen> {
       var jsonReponse = jsonDecode(response.body);
       if (jsonReponse['status']) {
         myToken = jsonReponse['token'];
-        prefs.setString('token', myToken);
+        Map<String, dynamic> decodedToken = JwtDecoder.decode(myToken);
+        final email = decodedToken['email'];
+        //final email = "shiro@gmail.com";
+        await prefs.setString('currentuser', email);
         _changeAnimation('success');
+        if (!mounted) return;
         showCustomSnackBar(
-          // ignore: use_build_context_synchronously
           context,
           'Login Successful!!',
           color: Colors.green.shade600,
         );
-        //TopNotification();
         setState(() {
-          //_loginFailed = true;
           _isLoading = true;
         });
         await Future.delayed(Duration(seconds: 6));
+        if (!mounted) return;
         Navigator.pushAndRemoveUntil(
-          // ignore: use_build_context_synchronously
           context,
           MaterialPageRoute(
-            builder: (context) => NavigationExample(token: myToken),
+            builder: (context) => NavigationExample(),
           ),
           (route) => false,
         );
       } else {
         _changeAnimation('fail');
+        if (!mounted) return;
         showCustomSnackBar(
-          // ignore: use_build_context_synchronously
           context,
           'Invalid credinationals, please try again!',
           color: Colors.red,
         );
         _emailController.clear();
         _passwordController.clear();
-        //_loginFailed = true;
         setState(() {
           _isButtonPressed = false;
         });
-        //_formKey.currentState!.validate();
       }
     }
   }
@@ -111,18 +109,6 @@ class LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // backgroundColor: Colors.white,
-      // appBar: AppBar(
-      //   backgroundColor: Colors.white,
-      //   title: Text(
-      //     'Holla, amigo!',
-      //     style: GoogleFonts.openSans(
-      //       fontSize: 30,
-      //       color: Colors.blueGrey,
-      //       fontWeight: FontWeight.bold,
-      //     ),
-      //   ),
-      // ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
@@ -141,11 +127,8 @@ class LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               SizedBox(
-                //color: Colors.amber,
                 height: 380,
                 child: RiveAnimation.asset(
-                  // 'assets/animated_login_character.riv',
-                  //'assets/login_screen_character.riv',
                   'assets/login_no_bg.riv',
                   controllers: [_controller],
                   stateMachines: [
@@ -154,7 +137,7 @@ class LoginScreenState extends State<LoginScreen> {
                   onInit: (Artboard artboard) {
                     var controller = StateMachineController.fromArtboard(
                       artboard,
-                      _currentAnimation, //need to give the animation name here.
+                      _currentAnimation,
                     );
                     if (controller != null) {
                       artboard.addController(controller);
@@ -185,10 +168,8 @@ class LoginScreenState extends State<LoginScreen> {
                           borderSide: BorderSide(
                             color: Colors.blueGrey,
                             width: 2,
-                          ), // On focus
+                          ), 
                         ),
-                        // errorText:
-                        //     _loginFailed ? "Invalid email ID provided!" : null,
                         errorStyle: GoogleFonts.openSans(
                           color: Colors.red,
                           fontSize: 15,
@@ -196,16 +177,10 @@ class LoginScreenState extends State<LoginScreen> {
                       ),
                       validator: (value) {
                         if (value!.isEmpty) {
-                          // errors['email'] = 'Please enter an email';
                           return 'Please enter an email';
                         }
                         return null;
                       },
-                      // onChanged: (value) {
-                      //   setState(() {
-                      //     _formKey.currentState!.validate();
-                      //   });
-                      // },
                     ),
                     const SizedBox(height: 20),
                     TextFormField(
@@ -223,7 +198,6 @@ class LoginScreenState extends State<LoginScreen> {
                             !isPasswordVisible
                                 ? Icons.visibility_off
                                 : Icons.visibility,
-                            // visibilityIcon,
                             color: Colors.blueGrey,
                           ),
                           onPressed: () {
@@ -241,12 +215,8 @@ class LoginScreenState extends State<LoginScreen> {
                           borderSide: BorderSide(
                             color: Colors.blueGrey,
                             width: 2,
-                          ), // On focus
+                          ),
                         ),
-                        // errorText:
-                        //     _loginFailed
-                        //         ? "Invalid password, check your password again."
-                        //         : null,
                         errorStyle: GoogleFonts.openSans(
                           color: Colors.red,
                           fontSize: 15,
@@ -258,11 +228,6 @@ class LoginScreenState extends State<LoginScreen> {
                         }
                         return null;
                       },
-                      // onChanged: (value) {
-                      //   setState(() {
-                      //     _formKey.currentState!.validate();
-                      //   });
-                      // },
                     ),
                     TextButton(
                       onPressed: () {
@@ -360,7 +325,7 @@ class LoginScreenState extends State<LoginScreen> {
 
   void _changeAnimation(String animationName) {
     setState(() {
-      _controller.isActive = false; // Stop the current animation
+      _controller.isActive = false;
       _controller = SimpleAnimation(animationName, autoplay: true);
     });
     _controller.isActive = true;

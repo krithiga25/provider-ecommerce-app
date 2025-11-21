@@ -6,9 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key, this.email});
-
-  final String? email;
+  const ProfileScreen({super.key});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -16,49 +14,56 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   late SharedPreferences prefs;
+  String? email;
+  bool isLoading = true;
 
   void initSharedPref() async {
     prefs = await SharedPreferences.getInstance();
-    prefs.remove('tokenn').then((removed) {
-      print(removed);
+    prefs.remove('currentuser');
+  }
+
+  Future<void> _loadUserData() async {
+    prefs = await SharedPreferences.getInstance();
+    email = prefs.getString('currentuser') ?? '';
+    setState(() {
+      isLoading = false;
     });
   }
 
   @override
+  void initState() {
+    _loadUserData();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (email == null || email!.isEmpty) {
+      return Scaffold(body: Center(child: Text("No user logged in")));
+    }
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(backgroundColor: Colors.white),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
-          //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Stack(
               alignment: Alignment.center,
               children: [
-                Image(
-                  image: AssetImage('assets/fox_profile.jpg'),
-                  // height: 30,
-                  width: 120,
-                ),
-                // Positioned(
-                //   bottom: 0,
-                //   right: 5,
-                //   child: FloatingActionButton.small(
-                //     onPressed: () {},
-                //     child: Icon(Icons.edit, size: 18),
-                //   ),
-                // ),
+                Image(image: AssetImage('assets/fox_profile.jpg'), width: 120),
               ],
             ),
             SizedBox(height: 10),
             Text(
-              widget.email!.split('@')[0],
+              email!.split('@')[0],
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             Text(
-              widget.email.toString(),
+              email.toString(),
               style: TextStyle(fontSize: 14, color: Colors.grey),
             ),
             SizedBox(height: 5),
@@ -96,12 +101,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         );
                       },
                     ),
-                    // ListTile(
-                    //   leading: Icon(Icons.payment),
-                    //   title: Text("Payment Methods"),
-                    //   trailing: Icon(Icons.arrow_forward_ios),
-                    //   onTap: () {}, // Navigate to payment methods
-                    // ),
                     ListTile(
                       leading: Icon(Icons.light_mode),
                       title: Text("Switch Themes"),
@@ -146,7 +145,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       title: Text("Delivered"),
                       trailing: Icon(Icons.arrow_forward_ios),
                       onTap: () {
-                        //navigate to the orders page with only the delivered data.
                         Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(
@@ -162,7 +160,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       title: Text("Processing"),
                       trailing: Icon(Icons.arrow_forward_ios),
                       onTap: () {
-                        //navigate to the orders page on the delivery items
                         Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(
@@ -214,7 +211,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             GestureDetector(
               onTap: () {
                 _logOutConfirmationDialog();
-              }, // Logout
+              },
               child: SizedBox(
                 height: 60,
                 child: Card(
@@ -273,7 +270,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   onPressed: () {
-                    prefs.remove('token');
+                    initSharedPref();
                     Navigator.of(context).pop();
                     Future.delayed(Duration(seconds: 3));
                     Navigator.pushAndRemoveUntil(

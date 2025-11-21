@@ -3,30 +3,23 @@ import 'package:ecommerce_provider/models/wish_list.dart';
 import 'package:ecommerce_provider/providers/cart_provider.dart';
 import 'package:ecommerce_provider/providers/wish_list_provider.dart';
 import 'package:ecommerce_provider/views/cart_wishlist/shipping_address_screen.dart';
-//import 'package:ecommerce_provider/views/shared/shared.dart';
+import 'package:ecommerce_provider/views/shared/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:rive/rive.dart' as rive;
 
 class CartScreen extends StatefulWidget {
-  final token;
+  // ignore: prefer_typing_uninitialized_variables
+  final email;
 
-  const CartScreen({super.key, this.token});
+  const CartScreen({super.key, this.email});
 
   @override
   State<CartScreen> createState() => _CartScreenState();
 }
 
 class _CartScreenState extends State<CartScreen> {
-  late String email;
-  @override
-  void initState() {
-    super.initState();
-    // Map<String, dynamic> decodedToken = JwtDecoder.decode(widget.token);
-    // email = decodedToken['email'];
-    email = 'krithiperu';
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,18 +44,16 @@ class _CartScreenState extends State<CartScreen> {
                           MaterialPageRoute(
                             builder:
                                 (context) =>
-                                    ShippingAddressScreen(email: email),
+                                    ShippingAddressScreen(email: widget.email),
                           ),
                         );
                       },
-                      //proceed for checkout.
                       child: Text(
                         "PLACE ORDER",
                         style: TextStyle(color: Colors.white),
                       ),
                     ),
                   ),
-          //backgroundColor: Colors.white70,
           appBar: AppBar(
             automaticallyImplyLeading: false,
             backgroundColor: Color(0xFFF7F7F7),
@@ -90,26 +81,12 @@ class _CartScreenState extends State<CartScreen> {
                   )
                   : CustomScrollView(
                     slivers: [
-                      // SliverToBoxAdapter(
-                      //   child: SizedBox(
-                      //     height: 50,
-                      //     child: Padding(
-                      //       padding: const EdgeInsets.symmetric(horizontal: 20),
-                      //       child: Text(
-                      //         "My cart",
-                      //         style: TextStyle(color: Colors.black, fontSize: 25),
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
-                      //here:
                       SliverList(
                         delegate: SliverChildBuilderDelegate(childCount: cartItems.length, (
                           ctx,
                           index,
                         ) {
                           final item = cartItems[index];
-                          //final quantity = cartProvider.getQuantity(item.id);
                           return SizedBox(
                             height: 200,
                             child: Container(
@@ -118,9 +95,6 @@ class _CartScreenState extends State<CartScreen> {
                                 vertical: 10,
                               ),
                               color: Colors.white,
-                              // shape: RoundedRectangleBorder(
-                              //   borderRadius: BorderRadius.circular(8),
-                              // ),
                               child: Consumer<WishListProvider>(
                                 builder: (context, wishListProvider, child) {
                                   return Stack(
@@ -141,15 +115,11 @@ class _CartScreenState extends State<CartScreen> {
                                               height: 140,
                                             ),
                                           ),
-                                          //SizedBox(width: 20),
                                           SizedBox(
                                             width: 200,
-                                            //color: Colors.yellow,
                                             child: Column(
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
-                                              // mainAxisAlignment:
-                                              //     MainAxisAlignment.start,
                                               children: [
                                                 Padding(
                                                   padding:
@@ -162,7 +132,6 @@ class _CartScreenState extends State<CartScreen> {
                                                     style: GoogleFonts.openSans(
                                                       fontWeight:
                                                           FontWeight.bold,
-                                                      //fontSize: 16,
                                                       color: Colors.grey,
                                                     ),
                                                   ),
@@ -174,20 +143,14 @@ class _CartScreenState extends State<CartScreen> {
                                                     fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
-
                                                 SizedBox(height: 10),
                                                 Row(
-                                                  // mainAxisAlignment:
-                                                  //     MainAxisAlignment
-                                                  //         .spaceBetween,
                                                   children: [
                                                     Container(
                                                       height: 35,
                                                       width: 105,
                                                       decoration: BoxDecoration(
                                                         color: Colors.black,
-                                                        // .redAccent
-                                                        // .shade200,
                                                         borderRadius:
                                                             BorderRadius.circular(
                                                               5,
@@ -209,6 +172,8 @@ class _CartScreenState extends State<CartScreen> {
                                                                 () => cartProvider
                                                                     .decreaseQuantity(
                                                                       item.id,
+                                                                      widget
+                                                                          .email,
                                                                     ),
                                                           ),
                                                           Text(
@@ -235,6 +200,8 @@ class _CartScreenState extends State<CartScreen> {
                                                                 () => cartProvider
                                                                     .increaseQuantity(
                                                                       item.id,
+                                                                      widget
+                                                                          .email,
                                                                     ),
                                                           ),
                                                         ],
@@ -274,7 +241,6 @@ class _CartScreenState extends State<CartScreen> {
                                                 ),
                                                 SizedBox(height: 10),
                                                 Row(
-                                                  // mainAxisAlignment: MainAxisAlignment.start,
                                                   children: [
                                                     Icon(
                                                       Icons
@@ -287,7 +253,6 @@ class _CartScreenState extends State<CartScreen> {
                                                         'Delivery by ${cartItems[index].estimatedDeliveryDate!.day.toString()} ${getMonth(cartItems[index].estimatedDeliveryDate!.month)} ${cartItems[index].estimatedDeliveryDate!.year.toString()}',
                                                         style: GoogleFonts.openSans(
                                                           fontSize: 12.5,
-                                                          //fontWeight: FontWeight.bold,
                                                         ),
                                                       ),
                                                     ),
@@ -326,40 +291,44 @@ class _CartScreenState extends State<CartScreen> {
                                                     await wishListProvider
                                                         .addProduct(
                                                           wishlistitem,
-                                                          "checkinglogin@gmail.com",
+                                                          widget.email,
                                                         );
-                                                print(status);
                                                 cartProvider.removeProduct(
                                                   item.id,
+                                                  widget.email,
                                                 );
-                                                // Future.delayed(
-                                                //   Duration(seconds: 5),
-                                                //   () {
-                                                //     showCustomSnackBar(
-                                                //       context,
-                                                //       status
-                                                //           ? "Product added to wishlist!"
-                                                //           : "Failed to add to wishlist",
-                                                //     );
-                                                //   },
-                                                // );
+                                                Future.delayed(
+                                                  Duration(seconds: 5),
+                                                  () {
+                                                    if (!context.mounted) return;
+                                                    showCustomSnackBar(
+                                                      context,
+                                                      status
+                                                          ? "Product added to wishlist!"
+                                                          : "Failed to add to wishlist",
+                                                    );
+                                                  },
+                                                );
                                               }
                                               if (option == 'delete') {
                                                 final status =
                                                     await cartProvider
-                                                        .removeProduct(item.id);
-                                                print(status);
-                                                // Future.delayed(
-                                                //   Duration(milliseconds: 500),
-                                                //   () {
-                                                //     showCustomSnackBar(
-                                                //       context,
-                                                //       status
-                                                //           ? "Product removed from cart!"
-                                                //           : "Failed to remove from cart!",
-                                                //     );
-                                                //   },
-                                                // );
+                                                        .removeProduct(
+                                                          item.id,
+                                                          widget.email,
+                                                        );
+                                                Future.delayed(
+                                                  Duration(milliseconds: 500),
+                                                  () {
+                                                    if (!context.mounted) return;
+                                                    showCustomSnackBar(
+                                                      context,
+                                                      status
+                                                          ? "Product removed from cart!"
+                                                          : "Failed to remove from cart!",
+                                                    );
+                                                  },
+                                                );
                                               }
                                             });
                                           },
@@ -376,9 +345,6 @@ class _CartScreenState extends State<CartScreen> {
                       SliverToBoxAdapter(
                         child: Container(
                           height: 250,
-                          // decoration: BoxDecoration(
-                          //   border: Border.all(color: Colors.grey.shade300),
-                          // ),
                           padding: EdgeInsets.symmetric(
                             vertical: 20,
                             horizontal: 20,
@@ -407,7 +373,7 @@ class _CartScreenState extends State<CartScreen> {
                                       ),
                                     ),
                                     Text(
-                                      '\u{20B9} ${cartItems.fold(0, (a, b) => a + b.price)}',
+                                      '\u{20B9} ${cartItems.fold(0, (a, b) => a + b.price * cartProvider.getQuantity(b.id))}',
                                       style: GoogleFonts.openSans(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w600,
@@ -458,7 +424,6 @@ class _CartScreenState extends State<CartScreen> {
                                     ),
                                   ],
                                 ),
-                                //Divider(thickness: 1),
                                 SizedBox(height: 30),
                                 Row(
                                   mainAxisAlignment:
@@ -472,7 +437,7 @@ class _CartScreenState extends State<CartScreen> {
                                       ),
                                     ),
                                     Text(
-                                      '\u{20B9} ${(cartItems.fold(0, (a, b) => a + b.price) * 0.018).ceilToDouble() + cartItems.fold(0, (a, b) => a + b.price)}',
+                                      '\u{20B9} ${(cartItems.fold(0, (a, b) => a + b.price) * 0.018).ceilToDouble() + cartItems.fold(0, (a, b) => a + b.price * cartProvider.getQuantity(b.id))}',
                                       style: GoogleFonts.openSans(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 16,
@@ -494,13 +459,11 @@ class _CartScreenState extends State<CartScreen> {
 
   Widget _emptyCart() {
     return Column(
-      // crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Container(
           color: Color(0xFFF7F7F7),
           height: 500,
           child: rive.RiveAnimation.asset(
-            // 'assets/empty_basket.riv',
             'assets/empty_bee.riv',
             stateMachines: [
               // 'Adding to basket - State Machine 1', //the name of the animation displayed at the top.
@@ -534,8 +497,6 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   void _showCartDialogOptions(
-    // CartProvider cartProvider,
-    // WishListProvider wishListProvider,
     BuildContext context,
     String imageUrl,
     Function(String) callback,
@@ -579,7 +540,6 @@ class _CartScreenState extends State<CartScreen> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  //SizedBox(height: 10),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
@@ -599,9 +559,6 @@ class _CartScreenState extends State<CartScreen> {
                     height: 40,
                     child: TextButton(
                       onPressed: () {
-                        // setState(() {
-                        //   _deleteOption = "wishlist";
-                        // });
                         callback("wishlist");
                         Navigator.pop(context);
                       },
@@ -618,9 +575,6 @@ class _CartScreenState extends State<CartScreen> {
                   SizedBox(height: 10),
                   TextButton(
                     onPressed: () {
-                      // setState(() {
-                      //   _deleteOption = "delete";
-                      // });
                       callback("delete");
                       Navigator.pop(context);
                     },

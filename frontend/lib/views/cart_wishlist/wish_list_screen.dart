@@ -10,8 +10,8 @@ import 'package:provider/provider.dart';
 import 'package:rive/rive.dart' as rive;
 
 class WishListScreen extends StatefulWidget {
-  const WishListScreen({super.key});
-
+  const WishListScreen({super.key, required this.email});
+  final String email;
   @override
   State<WishListScreen> createState() => _WishListScreenState();
 }
@@ -55,8 +55,8 @@ class _WishListScreenState extends State<WishListScreen> {
                     child: GridView.builder(
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         mainAxisExtent: 340,
-                        crossAxisCount: 2, // number of columns
-                        childAspectRatio: 1, // aspect ratio of each child
+                        crossAxisCount: 2,
+                        childAspectRatio: 1,
                       ),
                       itemCount: wishListProvider.wishListItems.length,
                       itemBuilder: (ctx, index) {
@@ -110,7 +110,6 @@ class _WishListScreenState extends State<WishListScreen> {
                                             ),
                                             child: Card(
                                               color: Colors.white70,
-                                              //elevation: 5,
                                               child: Padding(
                                                 padding: const EdgeInsets.all(
                                                   3,
@@ -179,15 +178,6 @@ class _WishListScreenState extends State<WishListScreen> {
                                     SizedBox(height: 3),
                                     Divider(height: 1),
                                     TextButton(
-                                      // style: ElevatedButton.styleFrom(
-                                      //   // backgroundColor:
-                                      //   //     Colors.purpleAccent.shade100,
-                                      //   shape: RoundedRectangleBorder(
-                                      //     borderRadius: BorderRadius.circular(
-                                      //       5,
-                                      //     ),
-                                      //   ),
-                                      // ),
                                       child: Center(
                                         child: Text(
                                           "MOVE TO CART",
@@ -206,12 +196,15 @@ class _WishListScreenState extends State<WishListScreen> {
                                           description: item.description,
                                           rating: item.rating,
                                         );
-
                                         final status = await cartProvider
-                                            .addProduct(cartProduct);
+                                            .addProduct(
+                                              cartProduct,
+                                              widget.email,
+                                            );
                                         Future.delayed(
                                           Duration(milliseconds: 500),
                                           () {
+                                            if (!context.mounted) return;
                                             showCustomSnackBar(
                                               context,
                                               status
@@ -220,9 +213,9 @@ class _WishListScreenState extends State<WishListScreen> {
                                             );
                                           },
                                         );
-                                        wishListProvider.removeProduct(
-                                          "checkinglogin@gmail.com",
+                                        await wishListProvider.removeProduct(
                                           item.id,
+                                          widget.email,
                                         );
                                       },
                                     ),
@@ -238,13 +231,11 @@ class _WishListScreenState extends State<WishListScreen> {
                                     ),
                                     onPressed: () async {
                                       final status = await wishListProvider
-                                          .removeProduct(
-                                            item.id,
-                                            "checkinglogin@gmail.com",
-                                          );
+                                          .removeProduct(item.id, widget.email);
                                       Future.delayed(
                                         Duration(milliseconds: 500),
                                         () {
+                                          if (!context.mounted) return;
                                           showCustomSnackBar(
                                             context,
                                             status
@@ -272,7 +263,6 @@ class _WishListScreenState extends State<WishListScreen> {
 
   Widget _emptyWishlist() {
     return Column(
-      // crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         SizedBox(
           height: 500,

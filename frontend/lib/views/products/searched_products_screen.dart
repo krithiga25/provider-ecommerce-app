@@ -13,8 +13,9 @@ import 'package:provider/provider.dart';
 import 'package:rive/rive.dart' as rive;
 
 class SearchedProductsScreen extends StatefulWidget {
-  const SearchedProductsScreen({super.key, required this.searchQuery});
+  const SearchedProductsScreen({super.key, required this.searchQuery, required this.email});
   final String searchQuery;
+  final String email;
 
   @override
   State<SearchedProductsScreen> createState() => _SearchedProductsScreenState();
@@ -41,6 +42,7 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
     sortedProducts = _originalProducts;
   }
 
+//this method not used : this page is not working properly.
   Widget _noResultsAnimation() {
   return Column(
     children: [
@@ -126,9 +128,6 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
         ),
       ),
       body:
-      // Consumer<ProductProvider>(
-      //   builder: (context, productProvider, child) {
-      //final productsList = productProvider.searchProducts;
       Consumer<CartProvider>(
         builder: (context, cartProvider, child) {
           return Consumer<WishListProvider>(
@@ -164,9 +163,6 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
                   )
                   : Stack(
                     children: [
-                      // ? Center(
-                      //   child: Text('Can not find products for your search!'),
-                      // ):
                       GridView.builder(
                         padding: const EdgeInsets.only(
                           top: 60,
@@ -245,15 +241,16 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
                                                             item.description,
                                                         rating: item.rating,
                                                       );
-
                                                   final status =
                                                       await cartProvider
                                                           .addProduct(
                                                             cartProduct,
+                                                            widget.email
                                                           );
                                                   Future.delayed(
                                                     Duration(milliseconds: 500),
                                                     () {
+                                                      if (!context.mounted) return;
                                                       showCustomSnackBar(
                                                         context,
                                                         status
@@ -287,6 +284,7 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
                                                           () => cartProvider
                                                               .decreaseQuantity(
                                                                 item.id,
+                                                                widget.email,
                                                               ),
                                                     ),
                                                     Text(
@@ -309,6 +307,7 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
                                                           () => cartProvider
                                                               .increaseQuantity(
                                                                 item.id,
+                                                                widget.email,
                                                               ),
                                                     ),
                                                   ],
@@ -335,11 +334,12 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
                                         final status = await wishListProvider
                                             .removeProduct(
                                               item.id,
-                                              "checkinglogin@gmail.com",
+                                              widget.email,
                                             );
                                         Future.delayed(
                                           Duration(milliseconds: 500),
                                           () {
+                                            if (!context.mounted) return;
                                             showCustomSnackBar(
                                               context,
                                               status
@@ -357,15 +357,15 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
                                           description: item.description,
                                           rating: item.rating,
                                         );
-
                                         final status = await wishListProvider
                                             .addProduct(
                                               wishlistProduct,
-                                              "checkinglogin@gmail.com",
+                                             widget.email,
                                             );
                                         Future.delayed(
                                           Duration(milliseconds: 500),
                                           () {
+                                            if (!context.mounted) return;
                                             showCustomSnackBar(
                                               context,
                                               status
@@ -417,7 +417,6 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              /// Sort Button
                               TextButton(
                                 onPressed: () => _showSortOptions(context),
                                 child: Row(
@@ -596,8 +595,6 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
           );
         },
       ),
-      //   },
-      // ),
     );
   }
 
@@ -667,8 +664,8 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
           max: 30000,
           divisions: 59,
           labels: RangeLabels(
-            '\$${_priceRange.start.round()}',
-            '\$${_priceRange.end.round()}',
+            '\u{20B9}${_priceRange.start.round()}',
+            '\u{20B9}${_priceRange.end.round()}',
           ),
           onChanged: (values) {
             setState(() {

@@ -17,7 +17,6 @@ class RegistrationScreenState extends State<RegistrationScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _userNameController = TextEditingController();
-  //bool _isValidate = false;
   bool isPasswordVisible = false;
   final _formKey = GlobalKey<FormState>();
 
@@ -28,7 +27,6 @@ class RegistrationScreenState extends State<RegistrationScreen> {
         "email": _emailController.text,
         "password": _passwordController.text,
       };
-
       var response = await http.post(
         Uri.parse('$url/registration'),
         headers: {"Content-Type": "application/json"},
@@ -36,37 +34,40 @@ class RegistrationScreenState extends State<RegistrationScreen> {
       );
       var jsonReponse = jsonDecode(response.body);
       if (jsonReponse['status']) {
+        if (!mounted) return;
         showCustomSnackBar(
-          // ignore: use_build_context_synchronously
           context,
           'Signed in successfully!',
           color: Colors.green.shade600,
+          duration: 2,
         );
-        await Future.delayed(Duration(seconds: 10));
+        await Future.delayed(Duration(seconds: 2));
+        if (!mounted) return;
+        showCustomSnackBar(
+          context,
+          'Taking you to Login Page',
+          color: Colors.black,
+          duration: 2,
+        );
+        await Future.delayed(Duration(seconds: 3));
+        if (!mounted) return;
         Navigator.pushAndRemoveUntil(
-          // ignore: use_build_context_synchronously
           context,
           MaterialPageRoute(builder: (context) => LoginScreen()),
           (route) => false,
         );
-        //set some notification - logged in!
       } else {
         _emailController.clear();
         _passwordController.clear();
         _userNameController.clear();
+        if (!mounted) return;
         showCustomSnackBar(
-          // ignore: use_build_context_synchronously
           context,
           'Something went wrong, please try again!',
           color: Colors.red,
         );
       }
     }
-    // else {
-    //   setState(() {
-    //     _isValidate = true;
-    //   });
-    // }
   }
 
   @override
@@ -97,7 +98,6 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                     TextFormField(
                       controller: _userNameController,
                       decoration: InputDecoration(
-                        //labelText: 'Username',
                         hintText: 'Enter your Name',
                         labelStyle: GoogleFonts.openSans(
                           color: Colors.blueGrey,
@@ -112,7 +112,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                           borderSide: BorderSide(
                             color: Colors.blueGrey,
                             width: 2,
-                          ), // On focus
+                          ),
                         ),
                         errorStyle: GoogleFonts.openSans(
                           color: Colors.red,
@@ -144,7 +144,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                           borderSide: BorderSide(
                             color: Colors.blueGrey,
                             width: 2,
-                          ), // On focus
+                          ),
                         ),
                         errorStyle: GoogleFonts.openSans(
                           color: Colors.red,
@@ -163,7 +163,6 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                       controller: _passwordController,
                       obscureText: !isPasswordVisible,
                       decoration: InputDecoration(
-                        //labelText: 'Password',
                         hintText: 'Enter a Password',
                         labelStyle: GoogleFonts.openSans(
                           color: Colors.blueGrey,
@@ -179,7 +178,6 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                           onPressed: () {
                             setState(() {
                               isPasswordVisible = !isPasswordVisible;
-                              // visibilityIcon = Icons.visibility;
                             });
                           },
                         ),
@@ -192,7 +190,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                           borderSide: BorderSide(
                             color: Colors.blueGrey,
                             width: 2,
-                          ), // On focus
+                          ),
                         ),
                         errorStyle: GoogleFonts.openSans(
                           color: Colors.red,
@@ -218,10 +216,6 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                     backgroundColor: WidgetStateProperty.all(Colors.blueGrey),
                   ),
                   onPressed: () async {
-                    // Register button pressed
-                    // print('Register button pressed');
-                    // print('Email: ${_emailController.text}');
-                    // print('Password: ${_passwordController.text}');
                     if (_formKey.currentState!.validate()) {
                       if (_passwordController.text.isNotEmpty &&
                           _emailController.text.isNotEmpty) {
@@ -305,7 +299,6 @@ class _TopNotificationState extends State<TopNotification> {
     return Scaffold(
       body: Stack(
         children: [
-          // Your page content here
           Positioned(
             top: _isVisible ? 0 : -50,
             left: 0,

@@ -2,21 +2,26 @@ import 'package:ecommerce_provider/providers/cart_provider.dart';
 import 'package:ecommerce_provider/providers/orders_provider.dart';
 import 'package:ecommerce_provider/providers/product_provider.dart';
 import 'package:ecommerce_provider/providers/wish_list_provider.dart';
+import 'package:ecommerce_provider/views/ai-assistant/chat_view.dart';
 import 'package:ecommerce_provider/views/cart_wishlist/cart_screen.dart';
 import 'package:ecommerce_provider/views/orders_payment/orders_screen.dart';
 import 'package:ecommerce_provider/views/products/products_screen.dart';
 import 'package:ecommerce_provider/views/cart_wishlist/wish_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+//import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final url =
-    //'http://192.168.29.93:3000'
-    //'https://fs-ecommerce-app.onrender.com';
-    'http://65.2.4.71:3000';
+    //'http://192.168.29.93:3000'; //loal host for windows
+    'http://192.168.29.224:3000';
+//'https://fs-ecommerce-app.onrender.com';
+//'http://65.2.4.71:3000'; //AWS EC2 instance
 
 class NavigationExample extends StatefulWidget {
   const NavigationExample({super.key, this.token, this.initialIndex});
 
+  // ignore: prefer_typing_uninitialized_variables
   final token;
   final int? initialIndex;
 
@@ -25,25 +30,36 @@ class NavigationExample extends StatefulWidget {
 }
 
 class _NavigationExampleState extends State<NavigationExample> {
+  String email = '';
+  late SharedPreferences prefs;
+
   @override
   void initState() {
+    initSharedPref();
     if (widget.initialIndex != null) {
       currentPageIndex = widget.initialIndex!;
     }
     super.initState();
-    Provider.of<ProductProvider>(context, listen: false).fetchProducts();
-    Provider.of<WishListProvider>(
-      context,
-      listen: false,
-    ).fetchWishlistProducts("checkinglogin@gmail.com");
-    Provider.of<CartProvider>(
-      context,
-      listen: false,
-    ).fetchCartProducts("checkinglogin@gmail.com");
-    Provider.of<OrdersProvider>(
-      context,
-      listen: false,
-    ).fetchOrders("krithiperu2002@gmail.com");
+  }
+
+  Future<void> initSharedPref() async {
+    prefs = await SharedPreferences.getInstance();
+    email = prefs.getString('currentuser')!;
+    //email = 'checkinggmail.com';
+    if (mounted) {
+      await Future.wait([
+        Provider.of<ProductProvider>(context, listen: false).fetchProducts(),
+        Provider.of<WishListProvider>(
+          context,
+          listen: false,
+        ).fetchWishlistProducts(email),
+        Provider.of<CartProvider>(
+          context,
+          listen: false,
+        ).fetchCartProducts(email),
+        Provider.of<OrdersProvider>(context, listen: false).fetchOrders(email),
+      ]);
+    }
     //Provider.of<OrdersProvider>(context, listen: false).updateDeliveryStatus();
   }
 
@@ -56,7 +72,6 @@ class _NavigationExampleState extends State<NavigationExample> {
       //   // backgroundColor: Color(0xFFFFFFFF),
       //   title: Text(currentPageIndex == 1 ? 'Wishlist' : 'Home'),
       //   automaticallyImplyLeading: false,
-
       // ),
       bottomNavigationBar: NavigationBar(
         backgroundColor: Color(0xFFF7F7F7),
@@ -72,28 +87,40 @@ class _NavigationExampleState extends State<NavigationExample> {
           NavigationDestination(label: 'wishlist', icon: Icon(Icons.favorite)),
           NavigationDestination(label: 'cart', icon: Icon(Icons.shopping_cart)),
           NavigationDestination(label: 'Orders', icon: Icon(Icons.receipt)),
+          NavigationDestination(
+            label: 'Assistant',
+            icon: Icon(Icons.man_3_sharp),
+          ),
         ],
       ),
       body:
           <Widget>[
             /// Home page
-            ProductsScreen(token: widget.token),
+            ProductsScreen(email: email),
             //ProductsScreen(),
 
             /// wishlist page
-            WishListScreen(),
+            WishListScreen(email: email),
 
             /// cart screen
-            CartScreen(token: widget.token),
+            CartScreen(email: email),
 
             /// orders page:
             OrdersPage(),
+
+            //assistant page:
+            ChatScreen(),
           ][currentPageIndex],
     );
   }
 }
 
-void showCustomSnackBar(BuildContext context, String message, {Color? color}) {
+void showCustomSnackBar(
+  BuildContext context,
+  String message, {
+  Color? color,
+  int? duration,
+}) {
   final snackBar = SnackBar(
     content: Text(message, style: TextStyle(color: Colors.white, fontSize: 16)),
     backgroundColor: color ?? Colors.black87,
@@ -101,9 +128,8 @@ void showCustomSnackBar(BuildContext context, String message, {Color? color}) {
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
     margin: EdgeInsets.all(16),
     elevation: 6,
-    duration: Duration(seconds: 3),
+    duration: Duration(seconds: duration ?? 2),
   );
-
   ScaffoldMessenger.of(context).showSnackBar(snackBar);
 }
 
