@@ -1,5 +1,3 @@
-//import 'dart:math';
-
 class CartProduct {
   final String id;
   final String title;

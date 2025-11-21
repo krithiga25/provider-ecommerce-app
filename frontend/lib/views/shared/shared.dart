@@ -13,9 +13,10 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final url =
-    //'http://192.168.29.93:3000'
-    //'https://fs-ecommerce-app.onrender.com';
-    'http://65.2.4.71:3000';
+    //'http://192.168.29.93:3000'; //loal host for windows
+    'http://192.168.29.224:3000';
+//'https://fs-ecommerce-app.onrender.com';
+//'http://65.2.4.71:3000'; //AWS EC2 instance
 
 class NavigationExample extends StatefulWidget {
   const NavigationExample({super.key, this.token, this.initialIndex});
@@ -44,6 +45,7 @@ class _NavigationExampleState extends State<NavigationExample> {
   Future<void> initSharedPref() async {
     prefs = await SharedPreferences.getInstance();
     email = prefs.getString('currentuser')!;
+    //email = 'checkinggmail.com';
     if (mounted) {
       await Future.wait([
         Provider.of<ProductProvider>(context, listen: false).fetchProducts(),
@@ -85,10 +87,10 @@ class _NavigationExampleState extends State<NavigationExample> {
           NavigationDestination(label: 'wishlist', icon: Icon(Icons.favorite)),
           NavigationDestination(label: 'cart', icon: Icon(Icons.shopping_cart)),
           NavigationDestination(label: 'Orders', icon: Icon(Icons.receipt)),
-          // NavigationDestination(
-          //   label: 'Assistant',
-          //   icon: Icon(Icons.man_3_sharp),
-          // ),
+          NavigationDestination(
+            label: 'Assistant',
+            icon: Icon(Icons.man_3_sharp),
+          ),
         ],
       ),
       body:
@@ -107,13 +109,18 @@ class _NavigationExampleState extends State<NavigationExample> {
             OrdersPage(),
 
             //assistant page:
-            //ChatScreen(),
+            ChatScreen(),
           ][currentPageIndex],
     );
   }
 }
 
-void showCustomSnackBar(BuildContext context, String message, {Color? color, int? duration}) {
+void showCustomSnackBar(
+  BuildContext context,
+  String message, {
+  Color? color,
+  int? duration,
+}) {
   final snackBar = SnackBar(
     content: Text(message, style: TextStyle(color: Colors.white, fontSize: 16)),
     backgroundColor: color ?? Colors.black87,
@@ -121,9 +128,8 @@ void showCustomSnackBar(BuildContext context, String message, {Color? color, int
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
     margin: EdgeInsets.all(16),
     elevation: 6,
-    duration: Duration(seconds: duration ?? 3),
+    duration: Duration(seconds: duration ?? 2),
   );
-
   ScaffoldMessenger.of(context).showSnackBar(snackBar);
 }
 

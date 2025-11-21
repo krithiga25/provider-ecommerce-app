@@ -42,6 +42,7 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
     sortedProducts = _originalProducts;
   }
 
+//this method not used : this page is not working properly.
   Widget _noResultsAnimation() {
   return Column(
     children: [
@@ -127,9 +128,6 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
         ),
       ),
       body:
-      // Consumer<ProductProvider>(
-      //   builder: (context, productProvider, child) {
-      //final productsList = productProvider.searchProducts;
       Consumer<CartProvider>(
         builder: (context, cartProvider, child) {
           return Consumer<WishListProvider>(
@@ -165,9 +163,6 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
                   )
                   : Stack(
                     children: [
-                      // ? Center(
-                      //   child: Text('Can not find products for your search!'),
-                      // ):
                       GridView.builder(
                         padding: const EdgeInsets.only(
                           top: 60,
@@ -246,24 +241,24 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
                                                             item.description,
                                                         rating: item.rating,
                                                       );
-
                                                   final status =
                                                       await cartProvider
                                                           .addProduct(
                                                             cartProduct,
                                                             widget.email
                                                           );
-                                                  // Future.delayed(
-                                                  //   Duration(milliseconds: 500),
-                                                  //   () {
-                                                  //     showCustomSnackBar(
-                                                  //       context,
-                                                  //       status
-                                                  //           ? "Product added to cart!"
-                                                  //           : "Failed to add to cart!",
-                                                  //     );
-                                                  //   },
-                                                  // );
+                                                  Future.delayed(
+                                                    Duration(milliseconds: 500),
+                                                    () {
+                                                      if (!context.mounted) return;
+                                                      showCustomSnackBar(
+                                                        context,
+                                                        status
+                                                            ? "Product added to cart!"
+                                                            : "Failed to add to cart!",
+                                                      );
+                                                    },
+                                                  );
                                                 },
                                               ),
                                             if (isInCart)
@@ -339,20 +334,20 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
                                         final status = await wishListProvider
                                             .removeProduct(
                                               item.id,
-                                              //"checkinglogin@gmail.com",
                                               widget.email,
                                             );
-                                        // Future.delayed(
-                                        //   Duration(milliseconds: 500),
-                                        //   () {
-                                        //     showCustomSnackBar(
-                                        //       context,
-                                        //       status
-                                        //           ? "Product removed from wishlist!"
-                                        //           : "Failed to remove from wishlist!",
-                                        //     );
-                                        //   },
-                                        // );
+                                        Future.delayed(
+                                          Duration(milliseconds: 500),
+                                          () {
+                                            if (!context.mounted) return;
+                                            showCustomSnackBar(
+                                              context,
+                                              status
+                                                  ? "Product removed from wishlist!"
+                                                  : "Failed to remove from wishlist!",
+                                            );
+                                          },
+                                        );
                                       } else {
                                         final wishlistProduct = WishListItems(
                                           id: item.id,
@@ -362,24 +357,23 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
                                           description: item.description,
                                           rating: item.rating,
                                         );
-
                                         final status = await wishListProvider
                                             .addProduct(
                                               wishlistProduct,
-                                             // "checkinglogin@gmail.com",
                                              widget.email,
                                             );
-                                        // Future.delayed(
-                                        //   Duration(milliseconds: 500),
-                                        //   () {
-                                        //     showCustomSnackBar(
-                                        //       context,
-                                        //       status
-                                        //           ? "Product added to wishlist!"
-                                        //           : "Failed to add to wishlist!",
-                                        //     );
-                                        //   },
-                                        // );
+                                        Future.delayed(
+                                          Duration(milliseconds: 500),
+                                          () {
+                                            if (!context.mounted) return;
+                                            showCustomSnackBar(
+                                              context,
+                                              status
+                                                  ? "Product added to wishlist!"
+                                                  : "Failed to add to wishlist!",
+                                            );
+                                          },
+                                        );
                                       }
                                     },
                                   ),
@@ -423,7 +417,6 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              /// Sort Button
                               TextButton(
                                 onPressed: () => _showSortOptions(context),
                                 child: Row(
@@ -602,8 +595,6 @@ class _SearchedProductsScreenState extends State<SearchedProductsScreen> {
           );
         },
       ),
-      //   },
-      // ),
     );
   }
 

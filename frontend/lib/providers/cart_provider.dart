@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class CartProvider with ChangeNotifier {
-  // this is private list, which can be accessed only from this class.
   List<CartProduct> _cartProducts = [];
 
   List<CartProduct> get cartProducts {
@@ -21,7 +20,6 @@ class CartProvider with ChangeNotifier {
     } else {
       _cartProducts.add(product);
     }
-
     notifyListeners();
     return await addToCart(
       //"checkinglogin@gmail.com",

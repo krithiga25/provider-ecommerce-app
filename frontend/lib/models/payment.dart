@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:http/http.dart' as http;
 
-// need to check the issue without retrieving the customer object.
 Future<String> initPaymentSheet(double amount) async {
   String status = '';
   try {

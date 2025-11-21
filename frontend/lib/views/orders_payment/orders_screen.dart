@@ -13,7 +13,6 @@ class OrdersPage extends StatefulWidget {
 }
 
 class _OrdersPageState extends State<OrdersPage> {
-
   @override
   Widget build(BuildContext context) {
     return Consumer<OrdersProvider>(
@@ -61,7 +60,6 @@ class _OrdersPageState extends State<OrdersPage> {
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
-                                //crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Column(
                                     crossAxisAlignment:
@@ -80,9 +78,6 @@ class _OrdersPageState extends State<OrdersPage> {
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      // Text(
-                                      //   orderProvider.orders[orderIndex].orderedDate,
-                                      // ),
                                     ],
                                   ),
                                   Text(
@@ -147,13 +142,11 @@ class _OrdersPageState extends State<OrdersPage> {
                                                                   .orderStatus ==
                                                               'cancelled'
                                                           ? Colors.red
-                                                          : Colors
-                                                              .blueAccent, // default color
+                                                          : Colors.blueAccent,
                                                 ),
                                               ),
                                             ),
                                           ),
-                                          //SizedBox(width: 20),
                                           Text(
                                             orderProvider
                                                         .orders[orderIndex]
@@ -165,7 +158,6 @@ class _OrdersPageState extends State<OrdersPage> {
                                                         .orderStatus ==
                                                     "transit"
                                                 ? "Estimated Arrival: ${DateFormat('dd-MM-yyyy').format(DateTime.parse(orderProvider.orders[orderIndex].deliveryDate))}"
-                                                //?'Estimated delivery by ${orderProvider.orders[orderIndex].deliveryDate.day.toString()} ${getMonth(cartItems[index].estimatedDeliveryDate!.month)} ${cartItems[index].estimatedDeliveryDate!.year.toString()}'
                                                 : "Delivered On: ${DateFormat('dd-MM-yyyy').format(DateTime.parse(orderProvider.orders[orderIndex].deliveryDate))}",
                                             style: GoogleFonts.openSans(
                                               fontSize: 14,

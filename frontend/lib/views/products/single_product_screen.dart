@@ -10,24 +10,40 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SingleProductScreen extends StatefulWidget {
   const SingleProductScreen({
     super.key,
     required this.id,
     this.isNew = false,
-    required this.email,
+    //required this.email,
   });
   final String id;
   final bool isNew;
-  final String email;
+  //final String email;
   @override
   State<SingleProductScreen> createState() => _SingleProductScreenState();
 }
 
 class _SingleProductScreenState extends State<SingleProductScreen> {
+  String email = '';
+  late SharedPreferences prefs;
   bool isInCart = false;
   Color _cartButtonColor = Colors.black;
+
+  @override
+  void initState() {
+    _loadUserData();
+    super.initState();
+  }
+
+  Future<void> _loadUserData() async {
+    prefs = await SharedPreferences.getInstance();
+    email = prefs.getString('currentuser') ?? '';
+    print(email);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<CartProvider>(
@@ -40,7 +56,6 @@ class _SingleProductScreenState extends State<SingleProductScreen> {
                 final product = products.singleWhere(
                   (id) => id.id == widget.id,
                 );
-                //final isInCart = cartProvider.isInCart(product.id);
                 final isFavorite = wishListProvider.isFavorite(product.id);
                 return Scaffold(
                   backgroundColor: Color(0xFFF7F7F7),
@@ -55,7 +70,6 @@ class _SingleProductScreenState extends State<SingleProductScreen> {
                     ),
                   ),
                   bottomNavigationBar: BottomAppBar(
-                    //color: Colors.white,
                     color: Color(0xFFF7F7F7),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -65,10 +79,6 @@ class _SingleProductScreenState extends State<SingleProductScreen> {
                           width: 160,
                           height: 45,
                           child: TextButton(
-                            // icon: Icon(
-                            //   isFavorite ? Icons.favorite : Icons.favorite_border,
-                            //   color: isFavorite ? Colors.red : null,
-                            // ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
@@ -96,16 +106,17 @@ class _SingleProductScreenState extends State<SingleProductScreen> {
                                     .removeProduct(
                                       product.id,
                                       //"checkinglogin@gmail.com",
-                                      widget.email,
+                                      email,
                                     );
-                                // Future.delayed(Duration(milliseconds: 500), () {
-                                //   showCustomSnackBar(
-                                //     context,
-                                //     status
-                                //         ? "Product removed from wishlist!"
-                                //         : "Failed to remove from wishlist!",
-                                //   );
-                                // });
+                                Future.delayed(Duration(milliseconds: 500), () {
+                                  if (!context.mounted) return;
+                                  showCustomSnackBar(
+                                    context,
+                                    status
+                                        ? "Product removed from wishlist!"
+                                        : "Failed to remove from wishlist!",
+                                  );
+                                });
                               } else {
                                 final wishlistProduct = WishListItems(
                                   id: product.id,
@@ -115,26 +126,21 @@ class _SingleProductScreenState extends State<SingleProductScreen> {
                                   description: product.description,
                                   rating: product.rating,
                                 );
-
                                 final status = await wishListProvider
-                                    .addProduct(
-                                      wishlistProduct,
-                                      //"checkinglogin@gmail.com",
-                                      widget.email,
-                                    );
-                                // Future.delayed(Duration(milliseconds: 500), () {
-                                //   showCustomSnackBar(
-                                //     context,
-                                //     status
-                                //         ? "Product added to wishlist!"
-                                //         : "Failed to add to wishlist!",
-                                //   );
-                                // });
+                                    .addProduct(wishlistProduct, email);
+                                Future.delayed(Duration(milliseconds: 500), () {
+                                  if (!context.mounted) return;
+                                  showCustomSnackBar(
+                                    context,
+                                    status
+                                        ? "Product added to wishlist!"
+                                        : "Failed to add to wishlist!",
+                                  );
+                                });
                               }
                             },
                           ),
                         ),
-                        //if (!isInCart)
                         Container(
                           width: 160,
                           height: 45,
@@ -154,28 +160,22 @@ class _SingleProductScreenState extends State<SingleProductScreen> {
                                         description: product.description,
                                         rating: product.rating,
                                       );
-
                                       final status = await cartProvider
-                                          .addProduct(
-                                            cartProduct,
-                                            widget.email,
+                                          .addProduct(cartProduct, email);
+                                      Future.delayed(
+                                        Duration(milliseconds: 500),
+                                        () {
+                                          if (!context.mounted) return;
+                                          showCustomSnackBar(
+                                            context,
+                                            status
+                                                ? "Product added to cart!"
+                                                : "Failed to add to cart!",
                                           );
-                                      // Future.delayed(
-                                      //   Duration(milliseconds: 500),
-                                      //   () {
-                                      //     showCustomSnackBar(
-                                      //       // ignore: use_build_context_synchronously
-                                      //       context,
-                                      //       status
-                                      //           ? "Product added to cart!"
-                                      //           : "Failed to add to cart!",
-                                      //     );
-                                      //   },
-                                      // );
-                                      //need to rest the selected size: // not working.
+                                        },
+                                      );
                                       setState(() {
                                         isInCart = true;
-                                        // _selectedSize = '';
                                         _cartButtonColor = Colors.grey.shade200;
                                       });
                                     }
@@ -190,11 +190,8 @@ class _SingleProductScreenState extends State<SingleProductScreen> {
                                         ),
                                         (route) => false,
                                       );
-                                      // Navigator.pop(context, 2);
                                     },
                             child: Row(
-                              //crossAxisAlignment: CrossAxisAlignment.center,
-                              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Icon(
                                   Icons.shopping_bag_outlined,
@@ -315,14 +312,6 @@ class _SingleProductScreenState extends State<SingleProductScreen> {
                             ),
                           ),
                           SizedBox(height: 10),
-                          // Text(
-                          //   product.description,
-                          //   style: GoogleFonts.openSans(
-                          //     fontSize: 15,
-                          //     fontWeight: FontWeight.w600,
-                          //     color: Colors.grey,
-                          //   ),
-                          // ),
                           ReadMoreText(
                             product.description,
                             style: GoogleFonts.openSans(
@@ -403,8 +392,7 @@ class _SingleProductScreenState extends State<SingleProductScreen> {
                                   ),
                                 ],
                               )
-                              : Container(), // or SizedBox();
-                          //reivews section
+                              : Container(),
                           SizedBox(height: 20),
                           Text(
                             'Reviews',
@@ -478,9 +466,6 @@ class _SingleProductScreenState extends State<SingleProductScreen> {
                                   );
                                 }).toList(),
                           ),
-
-                          //add a review:
-                          // Add Review section
                           Text(
                             'Add Review',
                             style: GoogleFonts.openSans(

@@ -12,7 +12,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 class CategoryProductsScreen extends StatefulWidget {
-  const CategoryProductsScreen({super.key, required this.categoryName, required this.email});
+  const CategoryProductsScreen({
+    super.key,
+    required this.categoryName,
+    required this.email,
+  });
   final String categoryName;
   final String email;
 
@@ -121,7 +125,6 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
                                       (context) => SingleProductScreen(
                                         id: item.id,
                                         isNew: item.isNew,
-                                        email: widget.email,
                                       ),
                                 ),
                               );
@@ -190,21 +193,23 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
                                                         await cartProvider
                                                             .addProduct(
                                                               cartProduct,
-                                                              widget.email
+                                                              widget.email,
                                                             );
-                                                    // Future.delayed(
-                                                    //   Duration(
-                                                    //     milliseconds: 500,
-                                                    //   ),
-                                                    //   () {
-                                                    //     showCustomSnackBar(
-                                                    //       context,
-                                                    //       status
-                                                    //           ? "Product added to cart!"
-                                                    //           : "Failed to add to cart!",
-                                                    //     );
-                                                    //   },
-                                                    // );
+                                                    Future.delayed(
+                                                      Duration(
+                                                        milliseconds: 500,
+                                                      ),
+                                                      () {
+                                                        if (!context.mounted)
+                                                          return;
+                                                        showCustomSnackBar(
+                                                          context,
+                                                          status
+                                                              ? "Product added to cart!"
+                                                              : "Failed to add to cart!",
+                                                        );
+                                                      },
+                                                    );
                                                   },
                                                 ),
                                               if (isInCart)
@@ -233,7 +238,7 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
                                                             () => cartProvider
                                                                 .decreaseQuantity(
                                                                   item.id,
-                                                                  widget.email
+                                                                  widget.email,
                                                                 ),
                                                       ),
                                                       Text(
@@ -258,7 +263,7 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
                                                             () => cartProvider
                                                                 .increaseQuantity(
                                                                   item.id,
-                                                                  widget.email
+                                                                  widget.email,
                                                                 ),
                                                       ),
                                                     ],
@@ -288,17 +293,18 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
                                                 //"checkinglogin@gmail.com",
                                                 widget.email,
                                               );
-                                          // Future.delayed(
-                                          //   Duration(milliseconds: 500),
-                                          //   () {
-                                          //     showCustomSnackBar(
-                                          //       context,
-                                          //       status
-                                          //           ? "Product removed from wishlist!"
-                                          //           : "Failed to remove from wishlist!",
-                                          //     );
-                                          //   },
-                                          // );
+                                          Future.delayed(
+                                            Duration(milliseconds: 500),
+                                            () {
+                                              if (!context.mounted) return;
+                                              showCustomSnackBar(
+                                                context,
+                                                status
+                                                    ? "Product removed from wishlist!"
+                                                    : "Failed to remove from wishlist!",
+                                              );
+                                            },
+                                          );
                                         } else {
                                           final wishlistProduct = WishListItems(
                                             id: item.id,
@@ -308,24 +314,24 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
                                             description: item.description,
                                             rating: item.rating,
                                           );
-
                                           final status = await wishListProvider
                                               .addProduct(
                                                 wishlistProduct,
                                                 //"checkinglogin@gmail.com",
-                                                widget.email
+                                                widget.email,
                                               );
-                                          // Future.delayed(
-                                          //   Duration(milliseconds: 500),
-                                          //   () {
-                                          //     showCustomSnackBar(
-                                          //       context,
-                                          //       status
-                                          //           ? "Product added to wishlist!"
-                                          //           : "Failed to add to wishlist!",
-                                          //     );
-                                          //   },
-                                          // );
+                                          Future.delayed(
+                                            Duration(milliseconds: 500),
+                                            () {
+                                              if (!context.mounted) return;
+                                              showCustomSnackBar(
+                                                context,
+                                                status
+                                                    ? "Product added to wishlist!"
+                                                    : "Failed to add to wishlist!",
+                                              );
+                                            },
+                                          );
                                         }
                                       },
                                     ),
@@ -335,12 +341,7 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
                                     top: 7,
                                     child:
                                         item.isNew
-                                            ?
-                                            // Positioned(
-                                            //   top: 10,
-                                            //   left: 10,
-                                            //   child:
-                                            Card(
+                                            ? Card(
                                               color: Colors.green,
                                               shape: RoundedRectangleBorder(
                                                 borderRadius:
@@ -357,7 +358,6 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
                                                   ),
                                                 ),
                                               ),
-                                              //),
                                             )
                                             : Card(
                                               color: Colors.white,
@@ -397,7 +397,6 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          /// Sort Button
                           TextButton(
                             onPressed: () => _showSortOptions(context),
                             child: Row(
@@ -472,14 +471,6 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
                                 },
                                 labelType: NavigationRailLabelType.all,
                                 destinations: [
-                                  // NavigationRailDestination(
-                                  //   padding: EdgeInsets.only(
-                                  //     left: 25,
-                                  //     right: 25,
-                                  //   ),
-                                  //   icon: Icon(Icons.category),
-                                  //   label: Text('Category'),
-                                  // ),
                                   NavigationRailDestination(
                                     padding: EdgeInsets.only(
                                       left: 25,
@@ -580,10 +571,7 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
           );
         },
       ),
-      //},
     );
-    //   },
-    // );
   }
 
   void _resetFilters() {
@@ -591,19 +579,14 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
       _newArrivals = false;
       _priceRange = const RangeValues(50, 3000);
       _selectedRating = null;
-
       sortedProducts = List.from(_originalProducts);
       _isFilterApplied = false;
-
       _showFilterPanel = false;
     });
   }
 
   Widget _buildFilterOptions() {
     switch (_selectedFilterIndex) {
-      // no category case, since it is already from the category data.
-      // case 0:
-      //   return _buildCategoryFilter();
       case 0:
         return _buildPriceFilter();
       case 1:
@@ -706,7 +689,6 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
                 product.price > _priceRange.end) {
               return false;
             }
-            //kept it as rating greater and equal to the selected rating
             if (_selectedRating != null && product.rating < _selectedRating!) {
               return false;
             }
@@ -724,12 +706,10 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
 
   void _showSortOptions(BuildContext context) {
     showModalBottomSheet(
-      //constraints: BoxConstraints(maxHeight: 800),
       backgroundColor: Colors.white,
       context: context,
       shape: BeveledRectangleBorder(),
       builder: (ctx) {
-        // List<Product> products = productsList.map((e) => e as Product).toList();
         return Padding(
           padding: const EdgeInsets.only(bottom: 40),
           child: Column(

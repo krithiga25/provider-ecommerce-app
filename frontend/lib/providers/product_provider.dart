@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import '../models/product.dart';
 import 'package:http/http.dart' as http;
 
-//android/app/src/main/res/values
 class ProductProvider with ChangeNotifier {
   List<Product> _products = [];
 
@@ -14,21 +13,18 @@ class ProductProvider with ChangeNotifier {
     return [..._products];
   }
 
-  //popular products:
   List<Product> _populuarProducts = [];
 
   List<Product> get popularProducts {
     return [..._populuarProducts];
   }
 
-  //newly added products:
   List<Product> _newlyAddedProducts = [];
 
   List<Product> get newlyAddedProducts {
     return [..._newlyAddedProducts];
   }
 
-  // search products:
   List<Product> _searchProducts = [];
 
   List<Product> get searchProducts {
@@ -37,7 +33,6 @@ class ProductProvider with ChangeNotifier {
 
   bool searchResults = true;
 
-  // category products:
   List<Product> _categoryProducts = [];
 
   List<Product> get categoryProducts {
@@ -50,7 +45,6 @@ class ProductProvider with ChangeNotifier {
     const int delay = 10;
     while (retries < maxRetries) {
       try {
-        print("products api hit once"); // change the delay time accordingly.
         final response = await http.get(Uri.parse('$url/products'));
         if (response.statusCode == 200) {
           final jsonResponse = jsonDecode(response.body);
@@ -60,7 +54,6 @@ class ProductProvider with ChangeNotifier {
               jsonData
                   .map<Product>((product) => Product.fromJson(product))
                   .toList();
-          //popular products:
           final selectiveProducts =
               jsonData
                   .where((product) => jsonData.indexOf(product) % 2 != 0)
@@ -69,8 +62,6 @@ class ProductProvider with ChangeNotifier {
               selectiveProducts
                   .map<Product>((product) => Product.popularProduct(product))
                   .toList();
-
-          //newly added products:
           _newlyAddedProducts =
               _products
                   .asMap()
@@ -78,8 +69,6 @@ class ProductProvider with ChangeNotifier {
                   .where((entry) => entry.key % 2 == 0)
                   .map((entry) => entry.value)
                   .toList();
-          // _newlyAddedProducts =
-
           notifyListeners();
           retries = maxRetries;
           return;
@@ -99,7 +88,6 @@ class ProductProvider with ChangeNotifier {
   Future<void> searchProduct(searchQuery) async {
     final response = await http.get(Uri.parse('$url/search/$searchQuery'));
     var jsonResponse = jsonDecode(response.body);
-    // need to give status in the backend.
     if (jsonResponse['searchResults'] != null) {
       final jsonData = jsonResponse['searchResults'];
       _searchProducts.clear();
