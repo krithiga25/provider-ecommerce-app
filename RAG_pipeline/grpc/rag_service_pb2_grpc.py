@@ -3,7 +3,7 @@
 import grpc
 import warnings
 
-import rag_service_pb2 as rag__service__pb2
+import grpc.rag_service_pb2 as rag__service__pb2 # type: ignore
 
 GRPC_GENERATED_VERSION = '1.74.0'
 GRPC_VERSION = grpc.__version__
