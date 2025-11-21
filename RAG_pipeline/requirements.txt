@@ -1,0 +1,9 @@
+langgraph
+langchain-google-genai
+langchain-community
+langchain-huggingface
+langchain-classic
+langchain-community
+sentence-transformers
+google-generativeai
+redis
