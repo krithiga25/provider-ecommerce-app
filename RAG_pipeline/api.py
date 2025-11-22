@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from rag import run_rag_query
+#from rag import run_rag_query
 from rag_graph import query_app
 
 app = Flask(__name__)
