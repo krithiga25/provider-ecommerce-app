@@ -26,11 +26,11 @@ load_dotenv()
 api_key = os.environ.get("GEMINI_API_KEY")
 genai.configure(api_key=api_key)
 #memory = MemorySaver()
-redis_client = Redis(host="localhost", port=6379, db=1)
-checkpointer = RedisSaver(
-    redis_client = redis_client,
-    #namespace="rag-mem:"
-)
+# redis_client = Redis(host="localhost", port=6379, db=1)
+# checkpointer = RedisSaver(
+#     redis_client = redis_client,
+#     #namespace="rag-mem:"
+# )
 #checkpointer.setup()
 
 from redis_cache import (
@@ -328,6 +328,10 @@ app = graph.compile()#checkpointer=checkpointer
 config = { 'configurable': { 'thread_id': '1'} }
 
 def query_app(state):
+    result = app.invoke(state, config={"configurable": {"thread_id": "user_123"}})
+    return result
+    
+def query_app_with_cache(state):
     #clear_cache()
     cached = exact_cache_get(state["query"])
     print("Cached value:", cached)
