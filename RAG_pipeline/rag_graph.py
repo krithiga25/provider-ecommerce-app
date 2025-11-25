@@ -13,7 +13,7 @@ from langchain_community.vectorstores import FAISS
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_classic.retrievers import EnsembleRetriever, BM25Retriever
+from langchain.retrievers import EnsembleRetriever, BM25Retriever
 from langchain_community.document_loaders import PyPDFLoader
 from pymongo import MongoClient
 from sentence_transformers import CrossEncoder

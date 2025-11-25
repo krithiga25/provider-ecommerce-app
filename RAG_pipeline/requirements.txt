@@ -1,15 +1,15 @@
 
 jsonschema
 python-dotenv
-langgraph
-langchain
-langchain-core
-langchain-community
+langgraph==1.0.1
+langchain==0.3.27
+langchain-core==0.3.80
+langchain-community==0.3.31
+langchain-text-splitters==0.3.11
+langchain-huggingface==0.3.1
 langchain-google-genai==2.0.0
 google-generativeai==0.7.0
 google-ai-generativelanguage==0.6.5
-langchain-huggingface
-langchain-text-splitters
 faiss-cpu
 sentence-transformers
 pymongo
