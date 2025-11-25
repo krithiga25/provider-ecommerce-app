@@ -18,3 +18,5 @@ redisvl
 numpy
 flask
 langgraph-checkpoint-redis
+gunicorn
+rank_bm25
