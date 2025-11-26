@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:ecommerce_provider/models/cart.dart';
 import 'package:ecommerce_provider/views/shared/shared.dart';
 import 'package:flutter/material.dart';
+import 'package:ecommerce_provider/models/users.dart';
 import 'package:http/http.dart' as http;
 
 class CartProvider with ChangeNotifier {
@@ -12,6 +13,9 @@ class CartProvider with ChangeNotifier {
   List<CartProduct> get cartProducts {
     return [..._cartProducts];
   }
+
+  Address? _userAddress;
+  Address? get userAddress => _userAddress;
 
   Future<bool> addProduct(CartProduct product, String userId) async {
     final index = _cartProducts.indexWhere((item) => item.id == product.id);
@@ -139,5 +143,43 @@ class CartProvider with ChangeNotifier {
     final response = await http.patch(Uri.parse('$url/wishlist/$user/$prodId'));
     var jsonReponse = jsonDecode(response.body);
     return jsonReponse['status'];
+  }
+
+  //shipping addess update:
+  Future<void> updateAddress(Map<String, dynamic> data) async {
+    final response = await http.post(
+      Uri.parse('$url/updateaddress'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(data),
+    );
+    if (response.statusCode == 200) {
+      _userAddress = Address(
+        email: data['email'],
+        shippingAddress: ShippingAddress.fromJson(data['shippingAddress']),
+      );
+      notifyListeners();
+    } else {
+      // Handle error
+      throw Exception('Failed to update address');
+    }
+  }
+
+  //fetch the shipping address.
+  Future<void> getAddress(String user) async {
+    final response = await http.get(
+      Uri.parse('$url/getaddress/$user'),
+      headers: {'Content-Type': 'application/json'},
+    );
+    final data = jsonDecode(response.body);
+    if (data['status'] == true) {
+      _userAddress = Address(
+        email: user,
+        shippingAddress: ShippingAddress.fromJson(data['address']),
+      );
+      notifyListeners();
+    } else {
+      print('Error fetching address: ${data['message']}');
+      throw Exception('Failed to update address');
+    }
   }
 }

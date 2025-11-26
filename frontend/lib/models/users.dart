@@ -1,16 +1,21 @@
 class Address {
+  String email;
   ShippingAddress shippingAddress;
 
-  Address({required this.shippingAddress});
+  Address({required this.email, required this.shippingAddress});
 
   factory Address.fromJson(Map<String, dynamic> json) {
     return Address(
+      email: json['email'],
       shippingAddress: ShippingAddress.fromJson(json['shippingAddress']),
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {'shippingAddress': shippingAddress.toJson()};
+    return {
+      'email': email,
+      'shippingAddress': shippingAddress.toJson(),
+    };
   }
 }
 

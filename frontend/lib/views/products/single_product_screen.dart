@@ -41,7 +41,6 @@ class _SingleProductScreenState extends State<SingleProductScreen> {
   Future<void> _loadUserData() async {
     prefs = await SharedPreferences.getInstance();
     email = prefs.getString('currentuser') ?? '';
-    print(email);
   }
 
   @override
