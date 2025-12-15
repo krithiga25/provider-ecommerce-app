@@ -146,14 +146,3 @@ Containerization & Deployment
 	•	Linux AMD64 compatible image
 	•	Production-ready Gunicorn setup
 	•	Deployed independently from backend for scalability
-
-
-⸻
-
-If you want, I can also:
-	•	Write a short LinkedIn project description
-	•	Create architecture diagrams
-	•	Make this README ATS-friendly
-	•	Add a demo section (screenshots / API examples)
-
-Just tell me 💙
