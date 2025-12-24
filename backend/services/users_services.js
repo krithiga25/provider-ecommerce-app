@@ -532,6 +532,26 @@ class UsersService {
     }
   }
 
+  static async getAddress(userId) {
+    try {
+      const user = await UserModel.findOne({ email: userId });
+      if (user) {
+        return {
+          status: true,
+          message: "Address fetched successfully",
+          address: user.address.shippingAddress,
+        };
+      } else {
+        return {
+          status: false,
+          message: "No address found for this user.",
+        };
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+  
   static async updateStatus(ordId, status) {
     try {
       const order = await OrderModel.findOne({ orderId: ordId });

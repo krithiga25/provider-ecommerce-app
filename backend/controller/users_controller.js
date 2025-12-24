@@ -319,6 +319,19 @@ exports.updateAddress = async (req, res) => {
   }
 };
 
+exports.getAddress = async (req, res) => {
+  try {
+    console.log("UserId:", req.params.userId);
+    const response = await UsersService.getAddress(req.params.userId);
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(400).json({
+      status: false,
+      message: "Failed to get address",
+      error: error.message,
+    });
+  }
+};
 exports.updateStatus = async (req, res) => {
   try {
     const response = await UsersService.updateStatus(req.params.ordId, req.body);

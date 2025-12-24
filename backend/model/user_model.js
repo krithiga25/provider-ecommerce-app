@@ -31,7 +31,7 @@ const userSchema = new Schema({
     },
     default: {
       shippingAddress: {
-        name: "Sam Joe",
+        name: "Default Name",
         address: "Default Address",
         city: "Default City",
         state: "Default State",
