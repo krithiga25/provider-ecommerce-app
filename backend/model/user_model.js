@@ -18,6 +18,10 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
+  uniqueCode: {
+    type: String,
+    unique: true
+  },
   address: {
     type: {
       shippingAddress: {
@@ -153,7 +157,14 @@ const orderSchema = new mongoose.Schema({
 //encrypting the password
 userSchema.pre("save", async function () {
   try {
-    var user = this;
+    const user = this;
+    if (!user.uniqueCode) {
+      user.uniqueCode = Math.random()
+        .toString(36)
+        .substring(2, 8)
+        .toUpperCase();
+    }
+    if (!user.isModified("password")) return;
     const salt = await bcrypt.genSalt(10);
     const hashpass = await bcrypt.hash(user.password, salt);
     user.password = hashpass;
@@ -171,6 +182,78 @@ userSchema.methods.comparePassword = async function (userPassword) {
   }
 };
 
+const friendConnectionSchema = new mongoose.Schema(
+  {
+    requester: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "users",
+      required: true
+    },
+    receiver: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "users",
+      required: true
+    },
+    status: {
+      type: String,
+      enum: ["pending", "accepted"],
+      default: "pending"
+    }
+  },
+  { timestamps: true }
+);
+
+const conversationSchema = new Schema(
+  {
+    participants: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "users",
+        required: true,
+      },
+    ],
+    lastMessageAt: {
+      type: Date,
+      default: Date.now,
+    },
+  },
+  { timestamps: true }
+);
+
+conversationSchema.index({ participants: 1 });
+
+const messageSchema = new Schema(
+  {
+    conversationId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Conversation",
+      required: true,
+    },
+    sender: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "users",
+      required: true,
+    },
+    productId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "products",
+      required: true,
+    },
+    reactions: {
+      heart: [{ type: mongoose.Schema.Types.ObjectId, ref: "users" }],
+      thumbsUp: [{ type: mongoose.Schema.Types.ObjectId, ref: "users" }],
+      thumbsDown: [{ type: mongoose.Schema.Types.ObjectId, ref: "users" }],
+    },
+  },
+  { timestamps: true }
+);
+
+const ConversationModel = mongoose.model("Conversation", friendConnectionSchema);
+
+const FriendConnectionModel = mongoose.model("FriendConnection", friendConnectionSchema);
+
+const MessageModel = mongoose.model("Message", messageSchema);
+
 const UserModel = mongoose.model("users", userSchema);
 
 const ProductModel = mongoose.model("products", productSchema);
@@ -187,4 +270,17 @@ module.exports = {
   WishlistModel,
   CartModel,
   OrderModel,
+  FriendConnectionModel,
+  ConversationModel,
 };
+
+// io.use((socket, next) => {
+//   const token = socket.handshake.auth.token;
+//   const decoded = jwt.verify(token, SECRET);
+//   socket.user = decoded;
+//   next();
+// });
+
+// Conversation.create({
+//   participants: [userA, userB]
+// });

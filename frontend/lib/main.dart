@@ -1,3 +1,4 @@
+import 'package:ecommerce_provider/providers/friend_request_provider.dart';
 import 'package:ecommerce_provider/providers/orders_provider.dart';
 import 'package:ecommerce_provider/providers/wish_list_provider.dart';
 import 'package:ecommerce_provider/views/login_register/login.dart';
@@ -27,6 +28,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => CartProvider()),
         ChangeNotifierProvider(create: (context) => WishListProvider()),
         ChangeNotifierProvider(create: (context) => OrdersProvider()),
+        ChangeNotifierProvider(create: (context) => FriendRequestProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

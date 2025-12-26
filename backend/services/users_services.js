@@ -551,7 +551,7 @@ class UsersService {
       throw error;
     }
   }
-  
+
   static async updateStatus(ordId, status) {
     try {
       const order = await OrderModel.findOne({ orderId: ordId });

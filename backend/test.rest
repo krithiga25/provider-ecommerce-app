@@ -1,10 +1,48 @@
-# AI query:
-POST http://localhost:3000/ask
-Content-Type: application/json
+GET http://localhost:3000/friends/requests
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OTRiOTNkNDk1NzQ1NjU3NTU1ZTZiNmUiLCJlbWFpbCI6InVzZXJiQHRlc3QuY29tIiwiaWF0IjoxNzY2NzIwNzY1LCJleHAiOjE3NjY4MDcxNjV9.TzlTtPqQs7YnATAgjs7PGY5xtxIP-qAc6KNn1-K6bVE
 
-{
-    "query" : "where are my orders"
-}
+# POST http://localhost:3000/friends/connect
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OTRiOGE3Yzk1NzQ1NjU3NTU1ZTZiNjkiLCJlbWFpbCI6InVzZXJhQHRlc3QuY29tIiwiaWF0IjoxNzY2NTYzMTY2LCJleHAiOjE3NjY2NDk1NjZ9.x2MedzZvMCHidqinlv4MWitd9Neae3Xr6jUiBqNZVBU
+# Content-Type: application/json
+
+# {
+#   "friendCode": "I18TBR"
+# }
+
+# POST http://localhost:3000/friends/accept
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OTRiOTNkNDk1NzQ1NjU3NTU1ZTZiNmUiLCJlbWFpbCI6InVzZXJiQHRlc3QuY29tIiwiaWF0IjoxNzY2NTcxOTgxLCJleHAiOjE3NjY2NTgzODF9.yz6nbKorcFTsQCydWfTUhPgzeNf5pI0fD1-hrX8w_xE
+# Content-Type: application/json
+
+# {
+#   "requestId": "694ba37cce74afaf88a4d4e3"
+# }
+
+# POST http://localhost:3000/login
+# Content-Type: application/json
+
+# {
+#   "email": "userB@test.com",
+#   "password": "password1234"
+# }
+
+# POST http://localhost:3000/registration
+# Content-Type: application/json
+
+# {
+#   "email": "userB@test.com",
+#   "password": "password1234"
+# }
+
+# AI query:
+# POST http://localhost:3000/ask
+# Content-Type: application/json
+
+# {
+#     "query" : "where are my orders"
+# }
+
+# GET http://localhost:3000/getaddress/shiro@gmail.com
+# Content-Type: application/json
 
 #update status:
 # PUT http://localhost:3000/updatestatus/ORDID174130

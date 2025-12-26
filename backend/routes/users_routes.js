@@ -3,6 +3,7 @@
 const router = require("express").Router();
 
 const controller = require("../controller/users_controller");
+const authMiddleware = require("../middleware/auth_middleware");
 
 // calling the register method in the controller to register the user, whenever it is the registration page
 router.post("/registration", controller.register);
@@ -60,4 +61,9 @@ router.get("/getaddress/:userId", controller.getAddress);
 
 router.post("/ask", controller.askAI);
 
+router.post("/friends/connect", authMiddleware, controller.connectFriend);
+
+router.post("/friends/accept", authMiddleware, controller.acceptFriendRequest);
+
+router.get("/friends/requests",authMiddleware, controller.getFriendRequests);
 module.exports = router;

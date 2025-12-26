@@ -9,7 +9,7 @@ app.get("/", (req, res) => {
   res.send("Backend for E-com app");
 });
 
-app.listen(3000, async () => {
-  console.log("Server started on port 3000");
+app.listen(port, "0.0.0.0", async () => {
+  console.log(`Server running on port ${port}`);
   await connection("ecomdb");
 });

@@ -1,4 +1,5 @@
 import 'package:ecommerce_provider/providers/cart_provider.dart';
+import 'package:ecommerce_provider/providers/friend_request_provider.dart';
 import 'package:ecommerce_provider/providers/orders_provider.dart';
 import 'package:ecommerce_provider/providers/product_provider.dart';
 import 'package:ecommerce_provider/providers/wish_list_provider.dart';
@@ -14,7 +15,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 final url =
     //'http://192.168.29.93:3000'; //loal host for windows
-    'http://192.168.29.224:3000';
+    //'http://192.168.29.224:3000';
+    //'http://localhost:3000'; //local host for mac
+    'http://10.0.2.2:3000'; //android emulator localhost
 //'https://fs-ecommerce-app.onrender.com';
 //'http://65.2.4.71:3000'; //AWS EC2 instance
 
@@ -58,6 +61,10 @@ class _NavigationExampleState extends State<NavigationExample> {
           listen: false,
         ).fetchCartProducts(email),
         Provider.of<OrdersProvider>(context, listen: false).fetchOrders(email),
+        Provider.of<FriendRequestProvider>(
+          context,
+          listen: false,
+        ).fetchFriendRequests(),
       ]);
     }
     //Provider.of<OrdersProvider>(context, listen: false).updateDeliveryStatus();

@@ -1,20 +1,13 @@
-//we will handle request and responses
-// and then hit the services layer
-
 const UsersService = require("../services/users_services");
+const FriendsService = require("../services/friends_services");
 
 const stripe = require("stripe")(process.env.STRIPE_S_KEY);
 
 exports.register = async (req, res, next) => {
   try {
-    // we are getting the email and the password from the request body.
     const { email, password } = req.body;
-
-    // sending the email and password to the service layer
-    //awaiting its response
     const response = await UsersService.registerUser(email, password);
     res.status(200).json(response);
-    //res.json({ status: true, success: "User registered successfully" });
   } catch (error) {
     res.status(400).json({
       status: false,
@@ -416,5 +409,49 @@ exports.askAI = async (req, res, next) => {
   } catch (error) {
     console.error("AI Controller Error:", error.message);
     res.status(500).json({ status: false, message: "AI Service failed", error: error.message });
+  }
+};
+
+exports.connectFriend = async (req, res) => {
+  try {
+    const { friendCode } = req.body;
+    const userId = req.user._id;
+    const response = await FriendsService.sendFriendRequest(userId, friendCode);
+    res.status(200).json(response);
+  } catch (error) {
+    console.error(error.message);
+    res.status(400).json({
+      status: false,
+      message: error.message
+    });
+  }
+};
+
+exports.acceptFriendRequest = async (req, res) => {
+  try {
+    await FriendsService.acceptFriendRequest(req, res);
+  } catch (error) {
+    console.error(error.message);
+    res.status(400).json({
+      status: false,
+      message: error.message
+    });
+  }
+}
+
+exports.getFriendRequests = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const requests = await FriendsService.getPendingRequests(userId);
+    console.log(requests);
+    res.status(200).json({
+      status: true,
+      requests: requests,
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: false,
+      message: error.message,
+    });
   }
 };
