@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ecommerce_provider/models/cart.dart';
 import 'package:ecommerce_provider/models/wish_list.dart';
 import 'package:ecommerce_provider/providers/cart_provider.dart';
+import 'package:ecommerce_provider/providers/friend_request_provider.dart';
 import 'package:ecommerce_provider/providers/product_provider.dart';
 import 'package:ecommerce_provider/providers/wish_list_provider.dart';
 import 'package:ecommerce_provider/views/shared/shared.dart';
@@ -13,15 +14,9 @@ import 'package:readmore/readmore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SingleProductScreen extends StatefulWidget {
-  const SingleProductScreen({
-    super.key,
-    required this.id,
-    this.isNew = false,
-    //required this.email,
-  });
+  const SingleProductScreen({super.key, required this.id, this.isNew = false});
   final String id;
   final bool isNew;
-  //final String email;
   @override
   State<SingleProductScreen> createState() => _SingleProductScreenState();
 }
@@ -295,20 +290,34 @@ class _SingleProductScreenState extends State<SingleProductScreen> {
                             ],
                           ),
                           SizedBox(height: 30),
-                          Container(
-                            padding: EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(4),
-                              color: Colors.black,
-                            ),
-                            child: Text(
-                              '  DESCRIPTION  ',
-                              style: GoogleFonts.openSans(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Container(
+                                padding: EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(4),
+                                  color: Colors.black,
+                                ),
+                                child: Text(
+                                  '  DESCRIPTION  ',
+                                  style: GoogleFonts.openSans(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white,
+                                  ),
+                                ),
                               ),
-                            ),
+                              IconButton(
+                                onPressed: () {
+                                  _getConversationsWidget(context, product.id);
+                                },
+                                icon: Icon(
+                                  Icons.ios_share_sharp,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
                           ),
                           SizedBox(height: 10),
                           ReadMoreText(
@@ -551,6 +560,97 @@ class _SingleProductScreenState extends State<SingleProductScreen> {
             );
           },
         );
+      },
+    );
+  }
+
+  void _getConversationsWidget(BuildContext context, String productId) {
+    showModalBottomSheet(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+      ),
+      context: context,
+      backgroundColor: Colors.white,
+      builder: (ctx) {
+        final friendRequestProvider = Provider.of<FriendRequestProvider>(
+          context,
+          listen: false,
+        );
+        final chatProvider = Provider.of<ChatProvider>(context, listen: false);
+        final conversations = friendRequestProvider.conversationIds;
+        return Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Text(
+                'Conversations',
+                style: GoogleFonts.openSans(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.blueGrey.shade700,
+                ),
+              ),
+            ),
+            Expanded(
+              child: ListView.builder(
+                itemCount: conversations.length,
+                itemBuilder: (context, index) {
+                  final conversation = conversations[index];
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                    child: ListTile(
+                      tileColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      title: Text(
+                        conversation.participants[1].name,
+                        style: GoogleFonts.openSans(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.blueGrey.shade700,
+                        ),
+                      ),
+                      subtitle: Text(
+                        'Tap to share product',
+                        style: GoogleFonts.openSans(
+                          fontSize: 14,
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
+                      trailing: Icon(Icons.send, color: Colors.blueGrey),
+                      onTap: () {
+                        chatProvider.connectAndJoin(
+                          token: friendRequestProvider.token,
+                          conversationId:
+                              friendRequestProvider.conversationIds[index].id,
+                        );
+                        chatProvider.sendProduct(
+                          friendRequestProvider.conversationIds[index].id,
+                          productId, //product 1
+                        );
+                        Navigator.of(ctx).pop();
+                        showCustomSnackBar(
+                          context,
+                          'Product shared successfully!',
+                          duration: 5,
+                        );
+                      },
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        );
+        //},
+        //);
       },
     );
   }

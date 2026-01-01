@@ -3,14 +3,14 @@ class FriendRequest {
   final String senderId;
   final String? receiverId;
   final String status;
-  final String requesterEmail;
+  final String requesterName;
 
   FriendRequest({
     required this.requestId,
     required this.senderId,
     required this.receiverId,
     required this.status,
-    required this.requesterEmail,
+    required this.requesterName,
   });
 
   factory FriendRequest.fromJson(Map<String, dynamic> json) {
@@ -18,7 +18,7 @@ class FriendRequest {
       requestId: json['_id'],
       senderId: json['requester']['_id'],
       receiverId: json['receiver'],
-      requesterEmail: json['requester']['email'],
+      requesterName: json['requester']['userName'],
       status: json['status'],
     );
   }
