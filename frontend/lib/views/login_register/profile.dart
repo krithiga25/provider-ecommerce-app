@@ -1,6 +1,7 @@
 import 'package:ecommerce_provider/views/login_register/login.dart';
 import 'package:ecommerce_provider/views/shared/shared.dart';
 import 'package:ecommerce_provider/views/shared/under_contruction.dart';
+import 'package:ecommerce_provider/views/shop_with_friends/shop_with_friends.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -114,6 +115,39 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         );
                       },
                     ),
+                    ListTile(
+                      leading: Icon(Icons.group_add_outlined),
+                      title: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("Shop with Friends"),
+                          Card(
+                            color: Colors.green,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(2),
+                              child: Text(
+                                "  New  ",
+                                style: GoogleFonts.openSans(
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      trailing: Icon(Icons.arrow_forward_ios),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => FriendsConnection(),
+                          ),
+                        );
+                      },
+                    ),
                   ],
                 ),
               ),
@@ -145,13 +179,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       title: Text("Delivered"),
                       trailing: Icon(Icons.arrow_forward_ios),
                       onTap: () {
-                        Navigator.pushAndRemoveUntil(
+                        Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder:
                                 (context) => NavigationExample(initialIndex: 3),
                           ),
-                          (route) => false,
                         );
                       },
                     ),
@@ -160,13 +193,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       title: Text("Processing"),
                       trailing: Icon(Icons.arrow_forward_ios),
                       onTap: () {
-                        Navigator.pushAndRemoveUntil(
+                        Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder:
                                 (context) => NavigationExample(initialIndex: 3),
                           ),
-                          (route) => false,
                         );
                       },
                     ),

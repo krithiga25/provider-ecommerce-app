@@ -1,13 +1,13 @@
 const mongoose = require("mongoose");
-const db = require("../config/database");
 const bcrypt = require("bcrypt");
-
-// schema is imported from the mongoose.
 const { Schema } = mongoose;
 
-//creating a new schema called userSchema
-// it will have the following documents in the collection.
 const userSchema = new Schema({
+  userName: {
+    type: String,
+    lowercase: true,
+    required: true,
+  },
   email: {
     type: String,
     lowercase: true,
@@ -17,6 +17,10 @@ const userSchema = new Schema({
   password: {
     type: String,
     required: true,
+  },
+  uniqueCode: {
+    type: String,
+    unique: true
   },
   address: {
     type: {
@@ -31,7 +35,7 @@ const userSchema = new Schema({
     },
     default: {
       shippingAddress: {
-        name: "Sam Joe",
+        name: "Default Name",
         address: "Default Address",
         city: "Default City",
         state: "Default State",
@@ -53,7 +57,6 @@ const productSchema = new Schema({
     type: String,
     required: true,
   },
-  //need to change it to double
   price: {
     type: Number,
     required: true,
@@ -88,7 +91,6 @@ const cartSchema = new mongoose.Schema(
       {
         product: { type: mongoose.Schema.Types.ObjectId, ref: "products" },
         quantity: Number,
-        //size: String,
       },
     ],
   },
@@ -136,7 +138,6 @@ const orderSchema = new mongoose.Schema({
       country: String,
     },
   },
-  //include delivery date.
   deliveryDate: {
     type: Date,
     default: () => {
@@ -150,10 +151,16 @@ const orderSchema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now },
 });
 
-//encrypting the password
 userSchema.pre("save", async function () {
   try {
-    var user = this;
+    const user = this;
+    if (!user.uniqueCode) {
+      user.uniqueCode = Math.random()
+        .toString(36)
+        .substring(2, 8)
+        .toUpperCase();
+    }
+    if (!user.isModified("password")) return;
     const salt = await bcrypt.genSalt(10);
     const hashpass = await bcrypt.hash(user.password, salt);
     user.password = hashpass;
@@ -171,6 +178,82 @@ userSchema.methods.comparePassword = async function (userPassword) {
   }
 };
 
+const friendConnectionSchema = new mongoose.Schema(
+  {
+    requester: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "users",
+      required: true
+    },
+    receiver: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "users",
+      required: true
+    },
+    status: {
+      type: String,
+      enum: ["pending", "accepted"],
+      default: "pending"
+    }
+  },
+  { timestamps: true }
+);
+
+const conversationSchema = new Schema(
+  {
+    participants: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "users",
+        required: true,
+      },
+    ],
+    lastMessageAt: {
+      type: Date,
+      default: Date.now,
+    },
+  },
+  { timestamps: true }
+);
+
+conversationSchema.index({ participants: 1 });
+
+const messageSchema = new Schema(
+  {
+    conversationId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Conversation",
+      required: true,
+    },
+    sender: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "users",
+      required: true,
+    },
+    product: {
+      id: String,
+      productName: String,
+      price: Number,
+      description: String,
+      image: String,
+      rating: Number,
+      category: String,
+    },
+    reactions: {
+      heart: [{ type: mongoose.Schema.Types.ObjectId, ref: "users" }],
+      thumbsUp: [{ type: mongoose.Schema.Types.ObjectId, ref: "users" }],
+      thumbsDown: [{ type: mongoose.Schema.Types.ObjectId, ref: "users" }],
+    },
+  },
+  { timestamps: true }
+);
+
+const ConversationModel = mongoose.model("Conversation", conversationSchema);
+
+const FriendConnectionModel = mongoose.model("FriendConnection", friendConnectionSchema);
+
+const MessageModel = mongoose.model("Message", messageSchema);
+
 const UserModel = mongoose.model("users", userSchema);
 
 const ProductModel = mongoose.model("products", productSchema);
@@ -187,4 +270,7 @@ module.exports = {
   WishlistModel,
   CartModel,
   OrderModel,
+  FriendConnectionModel,
+  ConversationModel,
+  MessageModel
 };

@@ -1,20 +1,13 @@
-//we will handle request and responses
-// and then hit the services layer
-
 const UsersService = require("../services/users_services");
+const FriendsService = require("../services/friends_services");
 
 const stripe = require("stripe")(process.env.STRIPE_S_KEY);
 
 exports.register = async (req, res, next) => {
   try {
-    // we are getting the email and the password from the request body.
-    const { email, password } = req.body;
-
-    // sending the email and password to the service layer
-    //awaiting its response
-    const response = await UsersService.registerUser(email, password);
+    const { userName, email, password } = req.body;
+    const response = await UsersService.registerUser(userName, email, password);
     res.status(200).json(response);
-    //res.json({ status: true, success: "User registered successfully" });
   } catch (error) {
     res.status(400).json({
       status: false,
@@ -24,35 +17,23 @@ exports.register = async (req, res, next) => {
   }
 };
 
-// check this one
 exports.login = async (req, res, next) => {
   try {
-    // we are getting the email and the password from the request body.
     const { email, password } = req.body;
-    //checks for the user.
     const user = await UsersService.checkUser(email);
-
     if (!user) {
       throw new Error("User not found");
     }
-
-    //if user found check for the password
     const isMatch = await user.comparePassword(password);
     if (isMatch == false) {
       throw new Error("Password invalid");
     }
-
-    //saving the user's id and the email in a variable
     let tokenData = { _id: user._id, email: user.email };
-
-    //generating a token based on the data, and secretkey
     const token = await UsersService.generateToken(
       tokenData,
       "secretkey",
       "1d"
     );
-
-    //sending the reponse with token
     res.status(200).json({ status: true, token: token });
   } catch (error) {
     res.status(400).json({
@@ -198,37 +179,6 @@ exports.clearCart = async (req, res, next) => {
     });
   }
 };
-
-// exports.moveToCart = async (req, res, next) => {
-//   try {
-//     const userId = req.params.userId;
-//     const productId = req.params.productId;
-//     const response = await UsersService.moveToCart(userId, productId);
-//     res.status(200).json(response);
-//   } catch (error) {
-//     res.status(400).json({
-//       status: false,
-//       message: "Unable to move to wishlist",
-//       error: error.message,
-//     });
-//   }
-// };
-
-// exports.moveToWishlist = async (req, res, next) => {
-//   try {
-//     const userId = req.params.userId;
-//     const productId = req.params.productId;
-//     const response = await UsersService.moveToWishlist(userId, productId);
-//     res.status(200).json(response);
-//   } catch (error) {
-//     res.status(400).json({
-//       status: false,
-//       message: "Unable to move to wishlist",
-//       error: error.message,
-//     });
-//   }
-// };
-
 exports.payment = async (req, res) => {
   try {
     const paymentResponse = await UsersService.payment(req.body);
@@ -239,20 +189,15 @@ exports.payment = async (req, res) => {
       .json({ status: false, message: "Payment failed", error: error.message });
   }
 };
-
 exports.paymentSheet = async (req, res) => {
   try {
     const { email, name, amount } = req.body;
-
-    // Create Customer if Not Exists
     let customer;
     const customers = await stripe.customers.list({ email: email });
     customer = customers.data.find((c) => c.email === email);
     if (!customer) {
       customer = await stripe.customers.create({ email: email, name: name });
     }
-
-    // Create Payment Intent
     const paymentIntent = await stripe.paymentIntents.create({
       amount: amount * 100, // Convert to cents
       currency: "inr",
@@ -319,6 +264,19 @@ exports.updateAddress = async (req, res) => {
   }
 };
 
+exports.getAddress = async (req, res) => {
+  try {
+    console.log("UserId:", req.params.userId);
+    const response = await UsersService.getAddress(req.params.userId);
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(400).json({
+      status: false,
+      message: "Failed to get address",
+      error: error.message,
+    });
+  }
+};
 exports.updateStatus = async (req, res) => {
   try {
     const response = await UsersService.updateStatus(req.params.ordId, req.body);
@@ -336,8 +294,6 @@ exports.newPayment = async (req, res) => {
   try {
     const { email, name, amount, cardNumber, expMonth, expYear, cvc } =
       req.body;
-
-    // 1️⃣ Create a Token from Card Details
     const token = await stripe.tokens.create({
       card: {
         number: cardNumber,
@@ -348,24 +304,19 @@ exports.newPayment = async (req, res) => {
     });
 
     console.log("token", token);
-
-    // 2️⃣ Create a Payment Method using the Token
     const paymentMethod = await stripe.paymentMethods.create({
       type: "card",
       card: { token: token.id },
       billing_details: { name, email },
     });
 
-    // 2️⃣ Create a Payment Intent and attach Payment Method
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: amount * 100, // Convert to smallest currency unit
+      amount: amount * 100,
       currency: "inr",
       payment_method: paymentMethod.id,
-      confirm: true, // Immediate confirmation
+      confirm: true,
       description: "E-commerce Payment",
     });
-
-    // 3️⃣ Return the final payment status
     res.json({
       success: true,
       status: paymentIntent.status,
@@ -374,21 +325,6 @@ exports.newPayment = async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 };
-
-// exports.getCategoryProducts = async (req, res) => {
-//   try {
-//     const response = await UsersService.getCategoryProducts(
-//       req.params.categoryName
-//     );
-//     res.status(200).json(response);
-//   } catch (error) {
-//     res.status(400).json({
-//       status: false,
-//       message: "Can't get category",
-//       error: error.message,
-//     });
-//   }
-// };
 
 exports.askAI = async (req, res, next) => {
   try {
@@ -403,5 +339,80 @@ exports.askAI = async (req, res, next) => {
   } catch (error) {
     console.error("AI Controller Error:", error.message);
     res.status(500).json({ status: false, message: "AI Service failed", error: error.message });
+  }
+};
+
+exports.connectFriend = async (req, res) => {
+  try {
+    const { friendCode } = req.body;
+    const userId = req.user._id;
+    const response = await FriendsService.sendFriendRequest(userId, friendCode);
+    res.status(200).json(response);
+  } catch (error) {
+    console.error(error.message);
+    res.status(400).json({
+      status: false,
+      message: error.message
+    });
+  }
+};
+
+exports.acceptFriendRequest = async (req, res) => {
+  try {
+    await FriendsService.acceptFriendRequest(req, res);
+  } catch (error) {
+    console.error(error.message);
+    res.status(400).json({
+      status: false,
+      message: error.message
+    });
+  }
+}
+
+exports.getFriendRequests = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const requests = await FriendsService.getPendingRequests(userId);
+    console.log(requests);
+    res.status(200).json({
+      status: true,
+      requests: requests,
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: false,
+      message: error.message,
+    });
+  }
+};
+
+exports.getConversation = async (req, res) => {
+  try {
+    const conversationId = req.params.conversationId;
+    const requests = await FriendsService.getConversation(conversationId);
+    res.status(200).json({
+      status: true,
+      requests: requests,
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: false,
+      message: error.message,
+    });
+  }
+};
+
+exports.getConversationIds = async (req, res) => {
+  try {
+    const requests = await FriendsService.getConversationIds(req, res);
+    res.status(200).json({
+      status: true,
+      requests: requests,
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: false,
+      message: error.message,
+    });
   }
 };

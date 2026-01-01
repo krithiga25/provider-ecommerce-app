@@ -66,6 +66,7 @@ class LoginScreenState extends State<LoginScreen> {
       var jsonReponse = jsonDecode(response.body);
       if (jsonReponse['status']) {
         myToken = jsonReponse['token'];
+        await prefs.setString('token', myToken);
         Map<String, dynamic> decodedToken = JwtDecoder.decode(myToken);
         final email = decodedToken['email'];
         //final email = "shiro@gmail.com";

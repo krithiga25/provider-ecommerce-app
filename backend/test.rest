@@ -1,10 +1,55 @@
-# AI query:
-POST http://localhost:3000/ask
-Content-Type: application/json
+GET http://localhost:3000/friends/conversation/69521fbdce4b6c6ef813de1e
 
-{
-    "query" : "where are my orders"
-}
+
+# GET http://localhost:3000/friends/requests
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OTUyMWJiYTBkZDg0NjQ3OGU2ZTYzM2IiLCJlbWFpbCI6InVzZXJiQHRlc3QuY29tIiwiaWF0IjoxNzY2OTg4OTUxLCJleHAiOjE3NjcwNzUzNTF9.kLTTh_VMhAEAi8yVvnwc05GWJU2VzomHvXTRVyrcRyg
+
+# POST http://localhost:3000/friends/connect
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OTUyMWJjOTBkZDg0NjQ3OGU2ZTYzM2UiLCJlbWFpbCI6InVzZXJhQHRlc3QuY29tIiwiaWF0IjoxNzY2OTg4Nzg5LCJleHAiOjE3NjcwNzUxODl9.ckkJr1hzTXFTx5NIajwGilbbP_pDg8g46I9BJmqOToU
+# Content-Type: application/json
+
+# {
+#   "friendCode": "68E5F6"
+# }
+
+# POST http://localhost:3000/friends/accept
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OTUyMWIxMTBkZDg0NjQ3OGU2ZTYzMzgiLCJlbWFpbCI6InVzZXJjQHRlc3QuY29tIiwiaWF0IjoxNzY2OTg5NzE0LCJleHAiOjE3NjcwNzYxMTR9.VzuSkMrAciAIpeVVQ7HpjA8nCXQIekyzr4S3dpN5tBQ
+# Content-Type: application/json
+
+# {
+#   "requestId": "69521c6a0dd846478e6e634a"
+# }
+
+# GET http://localhost:3000/friends/conversationIds
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OTUyMWJiYTBkZDg0NjQ3OGU2ZTYzM2IiLCJlbWFpbCI6InVzZXJiQHRlc3QuY29tIiwiaWF0IjoxNzY2OTg4OTUxLCJleHAiOjE3NjcwNzUzNTF9.kLTTh_VMhAEAi8yVvnwc05GWJU2VzomHvXTRVyrcRyg
+
+# POST http://localhost:3000/login
+# Content-Type: application/json
+
+# {
+#   "email": "userC@test.com",
+#   "password": "password12"
+# }
+
+# POST http://localhost:3000/registration
+# Content-Type: application/json
+
+# {
+#   "userName": "userA",
+#   "email": "userA@test.com",
+#   "password": "password123"
+# }
+
+# AI query:
+# POST http://localhost:3000/ask
+# Content-Type: application/json
+
+# {
+#     "query" : "where are my orders"
+# }
+
+# GET http://localhost:3000/getaddress/shiro@gmail.com
+# Content-Type: application/json
 
 #update status:
 # PUT http://localhost:3000/updatestatus/ORDID174130

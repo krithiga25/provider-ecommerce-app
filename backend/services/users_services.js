@@ -1,4 +1,3 @@
-// the DB CRUD operations will be performed here
 const {
   UserModel,
   ProductModel,
@@ -32,13 +31,9 @@ function rankProducts(products, tokens) {
 }
 
 class UsersService {
-  //we will call this function and then get the email and password
-  static async registerUser(email, password) {
-    // we will pass the email and password to the usermodel object created.
+  static async registerUser(userName, email, password) {
     try {
-      // creating a new document in the users collection.
-      // we are using the model that we created.
-      const createUser = new UserModel({ email, password });
+      const createUser = new UserModel({ userName, email, password });
       await createUser.save();
       return { status: true, success: "User registered successfully" };
     } catch (err) {
@@ -89,8 +84,6 @@ class UsersService {
 
   static async getProducts() {
     try {
-      // category based
-      //  const products = await ProductModel.find({ category: 'electronics' })
       const products = await ProductModel.find();
       return {
         status: true,
@@ -111,8 +104,6 @@ class UsersService {
         wishlist = new WishlistModel({ userId, products: [] });
         await wishlist.save();
       }
-
-      // Loop through each product ID and add it to the wishlist
       for (const id of ids) {
         const product = await ProductModel.findOne({ id });
         const productId = product._id;
@@ -121,7 +112,6 @@ class UsersService {
           { $addToSet: { products: productId } }
         );
       }
-
       return {
         status: true,
         message: "Products added to wishlist",
@@ -209,7 +199,6 @@ class UsersService {
                 products: {
                   product: productId,
                   quantity: product.quantity,
-                  //size: product.size,
                 },
               },
             }
@@ -264,7 +253,6 @@ class UsersService {
       const productInCart = cart.products.find((p) =>
         p.product.equals(productId)
       );
-      //console.log(productInCart.quantity);
       const quantity = productInCart.quantity;
 
       if (quantity > 1) {
@@ -409,7 +397,6 @@ class UsersService {
         ephemeralKey: ephemeralKey.secret,
         customer: customer.id,
         publishableKey: process.env.PUBLISH_KEY,
-        // "pk_test_51QvBubL4gE1upbxJftPvLWy2vQBXi1ciQwgS4eaZBQY9iV9m49N5BtSIK84nc9R7ruiHQau2GFm8fkmx7kNLmRZk00ZGZaIetJ",
       };
     } catch (error) {
       throw error;
@@ -532,6 +519,26 @@ class UsersService {
     }
   }
 
+  static async getAddress(userId) {
+    try {
+      const user = await UserModel.findOne({ email: userId });
+      if (user) {
+        return {
+          status: true,
+          message: "Address fetched successfully",
+          address: user.address.shippingAddress,
+        };
+      } else {
+        return {
+          status: false,
+          message: "No address found for this user.",
+        };
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
   static async updateStatus(ordId, status) {
     try {
       const order = await OrderModel.findOne({ orderId: ordId });
@@ -552,18 +559,6 @@ class UsersService {
       throw error;
     }
   }
-  // static async getCategoryProducts(categoryName) {
-  //   try {
-  //     const products = await ProductModel.find({ category: categoryName });
-  //     return {
-  //       status: true,
-  //       message: "Products received successfully",
-  //       products: products,
-  //     };
-  //   } catch (error) {
-  //     throw error;
-  //   }
-  // }
   static async sendToFlask(query) {
     try {
       console.log("Sending to flask");

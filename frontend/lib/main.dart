@@ -1,3 +1,5 @@
+import 'package:ecommerce_provider/models/socket_io.dart';
+import 'package:ecommerce_provider/providers/friend_request_provider.dart';
 import 'package:ecommerce_provider/providers/orders_provider.dart';
 import 'package:ecommerce_provider/providers/wish_list_provider.dart';
 import 'package:ecommerce_provider/views/login_register/login.dart';
@@ -21,12 +23,15 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SocketService socketService = SocketService();
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => ProductProvider()),
         ChangeNotifierProvider(create: (context) => CartProvider()),
         ChangeNotifierProvider(create: (context) => WishListProvider()),
         ChangeNotifierProvider(create: (context) => OrdersProvider()),
+        ChangeNotifierProvider(create: (context) => FriendRequestProvider()),
+        ChangeNotifierProvider(create: (context) => ChatProvider(socketService)),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
