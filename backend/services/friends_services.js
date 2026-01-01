@@ -1,5 +1,5 @@
 const {
-    FriendConnectionModel, UserModel
+    FriendConnectionModel, UserModel, ConversationModel, MessageModel
 } = require("../model/user_model");
 
 class FriendsService {
@@ -34,20 +34,31 @@ class FriendsService {
     static async acceptFriendRequest(req, res) {
         try {
             const { requestId } = req.body;
-            const userId = req.user._id;
+            const receiverId = req.user._id;
+            let newConversation;
 
             const request = await FriendConnectionModel.findById(requestId);
             if (!request) throw new Error("Request not found");
 
-            if (request.receiver.toString() !== userId) {
+            if (request.receiver.toString() !== receiverId) {
                 throw new Error("Not authorized");
             }
             request.status = "accepted";
+            console.log(request.requester, request.receiver);
             await request.save();
-
+            // Check if conversation already exists
+            const existingConversation = await ConversationModel.findOne({
+                participants: { $all: [request.requester, request.receiver] },
+            });
+            if (!existingConversation) {
+                newConversation = await ConversationModel.create({
+                    participants: [request.requester, request.receiver],
+                });
+            }
             res.status(200).json({
                 status: true,
-                message: "Friend request accepted"
+                message: "Friend request accepted",
+                conversationId: existingConversation ? existingConversation._id : newConversation._id,
             });
         } catch (error) {
             res.status(400).json({ status: false, message: error.message });
@@ -59,7 +70,7 @@ class FriendsService {
                 receiver: receiverId,
                 status: "pending",
             })
-                .populate("requester", "_id name email")
+                .populate("requester", "_id userName email")
                 .sort({ createdAt: -1 });
 
             return requests;
@@ -67,6 +78,28 @@ class FriendsService {
             throw error;
         }
     };
+    static async getConversationIds(req, res) {
+        try {
+            const userId = req.user._id;
+            const conversations = await ConversationModel.find({
+                participants: userId,
+            })
+                .populate("participants", "_id userName email")
+                .populate("lastMessageAt")
+                .sort({ updatedAt: -1 });
+
+            return conversations;
+        } catch (err) {
+            throw err;
+        }
+    };
+    static async getConversation(conversationId) {
+        const messages = await MessageModel.find({
+            conversationId,
+        })
+            .sort({ createdAt: 1 });
+        return messages;
+    }
 }
 
 module.exports = FriendsService;

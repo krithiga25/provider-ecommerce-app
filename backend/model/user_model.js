@@ -1,13 +1,13 @@
 const mongoose = require("mongoose");
-const db = require("../config/database");
 const bcrypt = require("bcrypt");
-
-// schema is imported from the mongoose.
 const { Schema } = mongoose;
 
-//creating a new schema called userSchema
-// it will have the following documents in the collection.
 const userSchema = new Schema({
+  userName: {
+    type: String,
+    lowercase: true,
+    required: true,
+  },
   email: {
     type: String,
     lowercase: true,
@@ -57,7 +57,6 @@ const productSchema = new Schema({
     type: String,
     required: true,
   },
-  //need to change it to double
   price: {
     type: Number,
     required: true,
@@ -92,7 +91,6 @@ const cartSchema = new mongoose.Schema(
       {
         product: { type: mongoose.Schema.Types.ObjectId, ref: "products" },
         quantity: Number,
-        //size: String,
       },
     ],
   },
@@ -140,7 +138,6 @@ const orderSchema = new mongoose.Schema({
       country: String,
     },
   },
-  //include delivery date.
   deliveryDate: {
     type: Date,
     default: () => {
@@ -154,7 +151,6 @@ const orderSchema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now },
 });
 
-//encrypting the password
 userSchema.pre("save", async function () {
   try {
     const user = this;
@@ -234,10 +230,14 @@ const messageSchema = new Schema(
       ref: "users",
       required: true,
     },
-    productId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "products",
-      required: true,
+    product: {
+      id: String,
+      productName: String,
+      price: Number,
+      description: String,
+      image: String,
+      rating: Number,
+      category: String,
     },
     reactions: {
       heart: [{ type: mongoose.Schema.Types.ObjectId, ref: "users" }],
@@ -248,7 +248,7 @@ const messageSchema = new Schema(
   { timestamps: true }
 );
 
-const ConversationModel = mongoose.model("Conversation", friendConnectionSchema);
+const ConversationModel = mongoose.model("Conversation", conversationSchema);
 
 const FriendConnectionModel = mongoose.model("FriendConnection", friendConnectionSchema);
 
@@ -272,15 +272,5 @@ module.exports = {
   OrderModel,
   FriendConnectionModel,
   ConversationModel,
+  MessageModel
 };
-
-// io.use((socket, next) => {
-//   const token = socket.handshake.auth.token;
-//   const decoded = jwt.verify(token, SECRET);
-//   socket.user = decoded;
-//   next();
-// });
-
-// Conversation.create({
-//   participants: [userA, userB]
-// });

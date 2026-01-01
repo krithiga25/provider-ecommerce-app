@@ -1,36 +1,43 @@
-GET http://localhost:3000/friends/requests
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OTRiOTNkNDk1NzQ1NjU3NTU1ZTZiNmUiLCJlbWFpbCI6InVzZXJiQHRlc3QuY29tIiwiaWF0IjoxNzY2NzIwNzY1LCJleHAiOjE3NjY4MDcxNjV9.TzlTtPqQs7YnATAgjs7PGY5xtxIP-qAc6KNn1-K6bVE
+GET http://localhost:3000/friends/conversation/69521fbdce4b6c6ef813de1e
+
+
+# GET http://localhost:3000/friends/requests
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OTUyMWJiYTBkZDg0NjQ3OGU2ZTYzM2IiLCJlbWFpbCI6InVzZXJiQHRlc3QuY29tIiwiaWF0IjoxNzY2OTg4OTUxLCJleHAiOjE3NjcwNzUzNTF9.kLTTh_VMhAEAi8yVvnwc05GWJU2VzomHvXTRVyrcRyg
 
 # POST http://localhost:3000/friends/connect
-# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OTRiOGE3Yzk1NzQ1NjU3NTU1ZTZiNjkiLCJlbWFpbCI6InVzZXJhQHRlc3QuY29tIiwiaWF0IjoxNzY2NTYzMTY2LCJleHAiOjE3NjY2NDk1NjZ9.x2MedzZvMCHidqinlv4MWitd9Neae3Xr6jUiBqNZVBU
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OTUyMWJjOTBkZDg0NjQ3OGU2ZTYzM2UiLCJlbWFpbCI6InVzZXJhQHRlc3QuY29tIiwiaWF0IjoxNzY2OTg4Nzg5LCJleHAiOjE3NjcwNzUxODl9.ckkJr1hzTXFTx5NIajwGilbbP_pDg8g46I9BJmqOToU
 # Content-Type: application/json
 
 # {
-#   "friendCode": "I18TBR"
+#   "friendCode": "68E5F6"
 # }
 
 # POST http://localhost:3000/friends/accept
-# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OTRiOTNkNDk1NzQ1NjU3NTU1ZTZiNmUiLCJlbWFpbCI6InVzZXJiQHRlc3QuY29tIiwiaWF0IjoxNzY2NTcxOTgxLCJleHAiOjE3NjY2NTgzODF9.yz6nbKorcFTsQCydWfTUhPgzeNf5pI0fD1-hrX8w_xE
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OTUyMWIxMTBkZDg0NjQ3OGU2ZTYzMzgiLCJlbWFpbCI6InVzZXJjQHRlc3QuY29tIiwiaWF0IjoxNzY2OTg5NzE0LCJleHAiOjE3NjcwNzYxMTR9.VzuSkMrAciAIpeVVQ7HpjA8nCXQIekyzr4S3dpN5tBQ
 # Content-Type: application/json
 
 # {
-#   "requestId": "694ba37cce74afaf88a4d4e3"
+#   "requestId": "69521c6a0dd846478e6e634a"
 # }
+
+# GET http://localhost:3000/friends/conversationIds
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OTUyMWJiYTBkZDg0NjQ3OGU2ZTYzM2IiLCJlbWFpbCI6InVzZXJiQHRlc3QuY29tIiwiaWF0IjoxNzY2OTg4OTUxLCJleHAiOjE3NjcwNzUzNTF9.kLTTh_VMhAEAi8yVvnwc05GWJU2VzomHvXTRVyrcRyg
 
 # POST http://localhost:3000/login
 # Content-Type: application/json
 
 # {
-#   "email": "userB@test.com",
-#   "password": "password1234"
+#   "email": "userC@test.com",
+#   "password": "password12"
 # }
 
 # POST http://localhost:3000/registration
 # Content-Type: application/json
 
 # {
-#   "email": "userB@test.com",
-#   "password": "password1234"
+#   "userName": "userA",
+#   "email": "userA@test.com",
+#   "password": "password123"
 # }
 
 # AI query:
